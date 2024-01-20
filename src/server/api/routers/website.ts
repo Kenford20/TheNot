@@ -6,6 +6,7 @@ import {
 } from "~/server/api/trpc";
 import { type Website, type User } from "~/app/utils/shared-types";
 import { formatDateNumber } from "~/app/utils/helpers";
+import { TRPCError } from "@trpc/server";
 
 export const websiteRouter = createTRPCRouter({
   hello: publicProcedure
@@ -115,66 +116,65 @@ export const websiteRouter = createTRPCRouter({
       });
     }),
 
-  //   fetchWeddingData: publicProcedure
-  //     .input(z.object({ subUrl: z.string() }))
-  //     .query(async ({ ctx, input }) => {
-  //       const currentWebsite = await ctx.prisma.website.findFirst({
-  //         where: {
-  //           subUrl: input.subUrl,
-  //         },
-  //       });
-  //       console.log("weeb,", currentWebsite);
+  fetchWeddingData: publicProcedure
+    .input(z.object({ subUrl: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const currentWebsite = await ctx.db.website.findFirst({
+        where: {
+          subUrl: input.subUrl,
+        },
+      });
 
-  //       if (!currentWebsite) {
-  //         throw new TRPCError({
-  //           code: "NOT_FOUND",
-  //           message: "This website does not exist.",
-  //         });
-  //       }
+      if (currentWebsite === null) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "This website does not exist.",
+        });
+      }
 
-  //       const weddingUser: User | null = await ctx.prisma.user.findFirst({
-  //         where: {
-  //           id: currentWebsite.userId,
-  //         },
-  //       });
+      const weddingUser: User | null = await ctx.db.user.findFirst({
+        where: {
+          id: currentWebsite.userId,
+        },
+      });
 
-  //       if (!weddingUser) {
-  //         throw new TRPCError({
-  //           code: "INTERNAL_SERVER_ERROR",
-  //           message: "Failed to fetch wedding website data.",
-  //         });
-  //       }
+      if (!weddingUser) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch wedding website data.",
+        });
+      }
 
-  //       const events = await ctx.prisma.event.findMany({
-  //         where: {
-  //           userId: currentWebsite.userId,
-  //         },
-  //       });
+      const events = await ctx.db.event.findMany({
+        where: {
+          userId: currentWebsite.userId,
+        },
+      });
 
-  //       const weddingDate = events.find(
-  //         (event) => event.name === "Wedding Day",
-  //       )?.date;
+      const weddingDate = events.find(
+        (event) => event.name === "Wedding Day",
+      )?.date;
 
-  //       const weddingData = {
-  //         groomFirstName: weddingUser.groomFirstName,
-  //         groomLastName: weddingUser.groomLastName,
-  //         brideFirstName: weddingUser.brideFirstName,
-  //         brideLastName: weddingUser.brideLastName,
-  //         date: {
-  //           standardFormat:
-  //             weddingDate?.toLocaleDateString("en-us", {
-  //               weekday: "long",
-  //               year: "numeric",
-  //               month: "short",
-  //               day: "numeric",
-  //             }) ?? "October 30, 2024",
-  //           numberFormat: formatDateNumber(weddingDate) ?? "10.30.2024",
-  //         },
-  //         password: currentWebsite.password,
-  //         daysRemaining: 100,
-  //         events,
-  //       };
+      const weddingData = {
+        groomFirstName: weddingUser.groomFirstName,
+        groomLastName: weddingUser.groomLastName,
+        brideFirstName: weddingUser.brideFirstName,
+        brideLastName: weddingUser.brideLastName,
+        date: {
+          standardFormat:
+            weddingDate?.toLocaleDateString("en-us", {
+              weekday: "long",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }) ?? "October 30, 2024",
+          numberFormat: formatDateNumber(weddingDate) ?? "10.30.2024",
+        },
+        password: currentWebsite.password,
+        daysRemaining: 100,
+        events,
+      };
 
-  //       return weddingData;
-  //     }),
+      return weddingData;
+    }),
 });
