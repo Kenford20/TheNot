@@ -1,6 +1,13 @@
 import { postRouter } from "~/server/api/routers/post";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { websiteRouter } from "./routers/website";
+import { dashboardRouter } from "./routers/dashboard";
+import { guestRouter } from "./routers/guest";
+import { eventRouter } from "./routers/event";
+import { householdRouter } from "./routers/household";
+import { giftRouter } from "./routers/gift";
+import { userRouter } from "./routers/user";
+import { invitationRouter } from "./routers/invitation";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +17,13 @@ import { websiteRouter } from "./routers/website";
 export const appRouter = createTRPCRouter({
   post: postRouter,
   website: websiteRouter,
+  dashboard: dashboardRouter,
+  guest: guestRouter,
+  event: eventRouter,
+  invitation: invitationRouter,
+  user: userRouter,
+  household: householdRouter,
+  gift: giftRouter,
 });
 
 // export type definition of API
