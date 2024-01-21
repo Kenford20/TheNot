@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { sharedStyles } from "~/app/utils/shared-styles";
-import WeddingWebsite from "./wedding";
 
 import { type Website } from "~/app/utils/shared-types";
 
 type PasswordPageProps = {
   website: Website;
-  // children: React.ReactNode,
+  children: React.ReactNode;
 };
 
-export default function PasswordPage({ website }: PasswordPageProps) {
+export default function PasswordPage({
+  website,
+  children: WeddingWebsite,
+}: PasswordPageProps) {
   const [passwordInput, setPasswordInput] = useState("");
   const [showError, setShowError] = useState(false);
   const [submittedPassword, setSubmittedPassword] = useState("");
@@ -20,6 +22,10 @@ export default function PasswordPage({ website }: PasswordPageProps) {
       sessionStorage.getItem("wws_password") ?? submittedPassword ?? "",
     );
   }, [submittedPassword]);
+
+  if (website.password !== null && submittedPassword === website?.password) {
+    return WeddingWebsite;
+  }
 
   const verifyPassword = () => {
     if (website.password === passwordInput) {
@@ -30,10 +36,7 @@ export default function PasswordPage({ website }: PasswordPageProps) {
     }
   };
 
-  return !website?.isPasswordEnabled ||
-    (website.password !== null && submittedPassword === website?.password) ? (
-    <div>WeddingWebsite</div> // <WeddingWebsite /> serverCompoonent that needs to be passed as a prop to this client component
-  ) : (
+  return (
     <div className="flex h-screen w-screen items-center justify-center">
       <div className="text-center">
         <h1 className="mb-5 text-2xl">Enter password to view this site</h1>

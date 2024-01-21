@@ -1,24 +1,14 @@
 import Link from "next/link";
-import { type Event } from "~/app/utils/shared-types";
 import Navbar from "./navbar";
 
-type TWeddingData = {
-  weddingData: {
-    groomFirstName: string;
-    groomLastName: string;
-    brideFirstName: string;
-    brideLastName: string;
-    date: {
-      standardFormat: string;
-      numberFormat: string;
-    };
-    password: string | null;
-    daysRemaining: number;
-    events: Event[];
-  };
+import { type WeddingPageData } from "~/app/utils/shared-types";
+
+type WeddingPageProps = {
+  weddingData: WeddingPageData;
+  path: string;
 };
 
-export default function WeddingPage({ weddingData }: TWeddingData) {
+export default function WeddingPage({ weddingData, path }: WeddingPageProps) {
   return (
     <main className='flex flex-col items-center justify-center gap-20 py-24 font-["Crimson_Text"] tracking-widest text-zinc-500'>
       <div className="text-center">
@@ -32,7 +22,7 @@ export default function WeddingPage({ weddingData }: TWeddingData) {
           <p className="text-lg">{weddingData.daysRemaining} Days To Go!</p>
         )}
       </div>
-      <Navbar />
+      <Navbar path={path} />
       <div className="w-48 text-center">
         image placeholder will need to look into uploading on dashboard and
         storing in some storage bucket to be fetched and rendered here s3

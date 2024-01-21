@@ -44,7 +44,7 @@ export const websiteRouter = createTRPCRouter({
       console.log("inputz", input);
       const subUrl =
         `${firstName}${lastName}and${partnerFirstName}${partnerLastName}`.toLowerCase();
-      const url = `${basePath}/websites/${subUrl}`;
+      const url = `${basePath}/${subUrl}`;
 
       await ctx.db.event.create({
         data: {
@@ -117,11 +117,11 @@ export const websiteRouter = createTRPCRouter({
     }),
 
   fetchWeddingData: publicProcedure
-    .input(z.object({ subUrl: z.string() }))
+    .input(z.object({ subUrl: z.string().nullable() }))
     .query(async ({ ctx, input }) => {
       const currentWebsite = await ctx.db.website.findFirst({
         where: {
-          subUrl: input.subUrl,
+          subUrl: input.subUrl ?? undefined,
         },
       });
 

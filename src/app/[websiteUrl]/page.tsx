@@ -1,6 +1,7 @@
 import { api } from "~/trpc/server";
 import PasswordPage from "../_components/website/password-page";
 import NotFoundPage from "../_components/404";
+import WeddingWebsite from "../_components/website/wedding";
 
 type RootRouteHandlerProps = {
   params: {
@@ -17,8 +18,12 @@ export default async function RootRouteHandler({
     websiteUrl,
   });
 
-  console.log("web", website);
   if (website === null) return <NotFoundPage />;
+  if (!website.isPasswordEnabled) return <WeddingWebsite />;
 
-  return <PasswordPage website={website} />;
+  return (
+    <PasswordPage website={website}>
+      <WeddingWebsite />
+    </PasswordPage>
+  );
 }

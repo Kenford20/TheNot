@@ -123,6 +123,20 @@ type Website = {
   password: string | null;
 };
 
+type WeddingPageData = {
+  groomFirstName: string;
+  groomLastName: string;
+  brideFirstName: string;
+  brideLastName: string;
+  date: {
+    standardFormat: string;
+    numberFormat: string;
+  };
+  password: string | null;
+  daysRemaining: number;
+  events: Event[];
+};
+
 export {
   type Event,
   type Invitation,
@@ -136,4 +150,5 @@ export {
   type HouseholdFormData,
   type FormInvites,
   type Website,
+  type WeddingPageData,
 };

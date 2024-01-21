@@ -1,54 +1,52 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 
-export default function Navbar() {
-  const router = useRouter();
+export default function Navbar({ path }: { path: string }) {
   return (
     <div className="px-20">
       <ul className="flex justify-between">
         <div className="flex gap-7">
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={router.asPath}>
+            <Link className="" href={path}>
               Home
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/our-story`}>
+            <Link className="" href={`${path}/our-story`}>
               Our Story
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/wedding-party`}>
+            <Link className="" href={`${path}/wedding-party`}>
               Wedding Party
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/photos`}>
+            <Link className="" href={`${path}/photos`}>
               Photos
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/q-a`}>
+            <Link className="" href={`${path}/q-a`}>
               Q + A
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/travel`}>
+            <Link className="" href={`${path}/travel`}>
               Travel
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/things-to-do`}>
+            <Link className="" href={`${path}/things-to-do`}>
               Things to Do
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/registry`}>
+            <Link className="" href={`${path}/registry`}>
               Registry
             </Link>
           </li>
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${router.asPath}/rsvp`}>
+            <Link className="" href={`${path}/rsvp`}>
               RSVP
             </Link>
           </li>
