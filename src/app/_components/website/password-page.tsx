@@ -1,36 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { sharedStyles } from "~/app/utils/shared-styles";
 
 import { type Website } from "~/app/utils/shared-types";
 
 type PasswordPageProps = {
   website: Website;
-  children: React.ReactNode;
+  setPasswordCookie: (value: string) => void;
 };
 
 export default function PasswordPage({
   website,
-  children: WeddingWebsite,
+  setPasswordCookie,
 }: PasswordPageProps) {
   const [passwordInput, setPasswordInput] = useState("");
   const [showError, setShowError] = useState(false);
-  const [submittedPassword, setSubmittedPassword] = useState("");
-  useEffect(() => {
-    setSubmittedPassword(
-      sessionStorage.getItem("wws_password") ?? submittedPassword ?? "",
-    );
-  }, [submittedPassword]);
-
-  if (website.password !== null && submittedPassword === website?.password) {
-    return WeddingWebsite;
-  }
 
   const verifyPassword = () => {
     if (website.password === passwordInput) {
-      setSubmittedPassword(passwordInput);
-      sessionStorage.setItem("wws_password", passwordInput);
+      setPasswordCookie(passwordInput);
     } else {
       setShowError(true);
     }

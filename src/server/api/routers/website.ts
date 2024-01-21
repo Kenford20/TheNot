@@ -4,7 +4,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { type Website, type User } from "~/app/utils/shared-types";
+import { type User } from "~/app/utils/shared-types";
 import { formatDateNumber } from "~/app/utils/helpers";
 import { TRPCError } from "@trpc/server";
 
@@ -30,7 +30,6 @@ export const websiteRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.auth.userId;
-      console.log("useze", userId);
 
       // TODO: needa check for dupes
       const {

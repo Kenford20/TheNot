@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import { api } from "~/trpc/server";
+import { cookies } from "next/headers";
 import PasswordPage from "../_components/website/password-page";
 import NotFoundPage from "../_components/404";
 import WeddingWebsite from "../_components/website/wedding";
+import Loading from "./loading";
 
 type RootRouteHandlerProps = {
   params: {
@@ -12,8 +15,6 @@ type RootRouteHandlerProps = {
 export default async function RootRouteHandler({
   params: { websiteUrl },
 }: RootRouteHandlerProps) {
-  console.log("url ", websiteUrl);
-
   const website = await api.website.getByUrl.query({
     websiteUrl,
   });
@@ -21,9 +22,20 @@ export default async function RootRouteHandler({
   if (website === null) return <NotFoundPage />;
   if (!website.isPasswordEnabled) return <WeddingWebsite />;
 
+  const hasPassword = cookies().get("wws_password")?.value === website.password;
+
+  const setPasswordCookie = async (value: string) => {
+    "use server";
+    cookies().set("wws_password", value);
+  };
+
   return (
-    <PasswordPage website={website}>
-      <WeddingWebsite />
-    </PasswordPage>
+    <Suspense fallback={<Loading />}>
+      {hasPassword ? (
+        <WeddingWebsite />
+      ) : (
+        <PasswordPage website={website} setPasswordCookie={setPasswordCookie} />
+      )}
+    </Suspense>
   );
 }
