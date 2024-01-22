@@ -93,7 +93,7 @@ export const dashboardRouter = createTRPCRouter({
       daysRemaining: 100,
     };
 
-    const guestListData = {
+    const dashboardData = {
       weddingData,
       totalGuests: await ctx.db.guest.count({
         where: {
@@ -158,6 +158,6 @@ export const dashboardRouter = createTRPCRouter({
       }),
     };
 
-    return guestListData;
+    return dashboardData;
   }),
 });
