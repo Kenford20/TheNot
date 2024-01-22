@@ -51,7 +51,7 @@ export default function HomeContent({
   };
 
   return (
-    <div className="">
+    <div>
       <div className="px-10">
         <div className="flex cursor-pointer items-center justify-center border py-16 transition-colors duration-300 ease-in-out hover:bg-gray-100">
           <div className="flex">
