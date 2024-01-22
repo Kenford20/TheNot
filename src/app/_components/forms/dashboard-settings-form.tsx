@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useDisablePageScroll } from "../hooks";
+import { sharedStyles } from "../../utils/shared-styles";
 import { IoMdClose } from "react-icons/io";
 import { BsTrash3 } from "react-icons/bs";
-
 import { LoadingSpinner } from "../loaders";
 import { Label } from "~/components/ui/label";
 import { Switch } from "~/components/ui/switch";
 
-import { useDisablePageScroll } from "../hooks";
-import { sharedStyles } from "../../utils/shared-styles";
+import SetPasswordView from "./website-settings/set-password";
+import EditUrlView from "./website-settings/edit-url";
 
 import { type Dispatch, type SetStateAction } from "react";
 import { type Website } from "../../utils/shared-types";
-import { useRouter } from "next/navigation";
-import SetPasswordView from "./website-settings/set-password";
 
 type DashboardSettingsFormProps = {
   setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
@@ -26,8 +26,8 @@ export default function DashboardSettingsForm({
   setIsWebsiteSettingsOpen,
   website,
 }: DashboardSettingsFormProps) {
-  const [showPasswordPage, setShowPasswordPage] = useState<boolean>(false);
-  const [showUrlPage, setShowUrlPage] = useState<boolean>(false);
+  const [showPasswordView, setShowPasswordView] = useState<boolean>(false);
+  const [showEditUrlView, setShowEditUrlView] = useState<boolean>(false);
 
   useDisablePageScroll();
 
@@ -36,18 +36,22 @@ export default function DashboardSettingsForm({
       <div
         className={`relative h-screen ${sharedStyles.sidebarFormWidth} bg-white`}
       >
-        {showPasswordPage ? (
+        {showPasswordView ? (
           <SetPasswordView
-            setShowPasswordPage={setShowPasswordPage}
+            setShowPasswordView={setShowPasswordView}
             password={website?.password ?? ""}
           />
-        ) : showUrlPage ? (
-          <EditUrlPage />
+        ) : showEditUrlView ? (
+          <EditUrlView
+            setShowEditUrlView={setShowEditUrlView}
+            websiteUrl={website?.subUrl ?? ""}
+          />
         ) : (
           <Main
             setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
             website={website}
-            setShowPasswordPage={setShowPasswordPage}
+            setShowPasswordView={setShowPasswordView}
+            setShowEditUrlView={setShowEditUrlView}
           />
         )}
       </div>
@@ -56,15 +60,17 @@ export default function DashboardSettingsForm({
 }
 
 type MainProps = {
-  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
   website: Website | null | undefined;
-  setShowPasswordPage: Dispatch<SetStateAction<boolean>>;
+  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
+  setShowPasswordView: Dispatch<SetStateAction<boolean>>;
+  setShowEditUrlView: Dispatch<SetStateAction<boolean>>;
 };
 
 const Main = ({
-  setIsWebsiteSettingsOpen,
   website,
-  setShowPasswordPage,
+  setIsWebsiteSettingsOpen,
+  setShowPasswordView,
+  setShowEditUrlView,
 }: MainProps) => {
   const router = useRouter();
   const [appearInSearchEngines, setAppearInSearchEngines] =
@@ -72,7 +78,7 @@ const Main = ({
 
   const updateWebsite = api.website.update.useMutation({
     onSuccess: () => {
-      setShowPasswordPage(false);
+      setShowPasswordView(false);
       router.refresh();
     },
     onError: (err) => {
@@ -83,7 +89,7 @@ const Main = ({
 
   const handleChange = (checked: boolean) => {
     if (!website?.isPasswordEnabled) {
-      setShowPasswordPage(true);
+      setShowPasswordView(true);
     } else {
       updateWebsite.mutate({
         isPasswordEnabled: checked,
@@ -148,7 +154,7 @@ const Main = ({
               <span>Guest Password</span>
               <button
                 className={`text-${sharedStyles.primaryColor}`}
-                onClick={() => setShowPasswordPage(true)}
+                onClick={() => setShowPasswordView(true)}
               >
                 Edit Password
               </button>
@@ -160,7 +166,10 @@ const Main = ({
       <div className="px-8 pb-5">
         <div className="flex justify-between">
           <h2 className="my-4 text-2xl font-bold">Your URL</h2>
-          <button className={`text-${sharedStyles.primaryColor}`}>
+          <button
+            className={`text-${sharedStyles.primaryColor}`}
+            onClick={() => setShowEditUrlView(true)}
+          >
             Edit URL
           </button>
         </div>
@@ -176,8 +185,4 @@ const Main = ({
       </div>
     </>
   );
-};
-
-const EditUrlPage = () => {
-  return <div></div>;
 };

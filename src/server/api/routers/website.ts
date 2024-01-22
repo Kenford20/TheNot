@@ -78,10 +78,31 @@ export const websiteRouter = createTRPCRouter({
       z.object({
         isPasswordEnabled: z.boolean().optional(),
         password: z.string().optional(),
-        url: z.string().optional(),
+        basePath: z.string().optional(),
+        subUrl: z
+          .string()
+          .regex(
+            new RegExp(/^\w+$/),
+            "Url should not contain any special characters!",
+          )
+          .optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      const url =
+        input.subUrl !== undefined
+          ? `${input.basePath}/${input.subUrl}`
+          : undefined;
+
+      await ctx.db.user.update({
+        where: {
+          id: ctx.auth.userId,
+        },
+        data: {
+          websiteUrl: url,
+        },
+      });
+
       return await ctx.db.website.update({
         where: {
           userId: ctx.auth.userId,
@@ -89,7 +110,8 @@ export const websiteRouter = createTRPCRouter({
         data: {
           isPasswordEnabled: input.isPasswordEnabled ?? undefined,
           password: input.password ?? undefined,
-          url: input.url ?? undefined,
+          subUrl: input.subUrl,
+          url,
         },
       });
     }),

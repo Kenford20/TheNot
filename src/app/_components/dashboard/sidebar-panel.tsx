@@ -13,14 +13,16 @@ export default function SidebarPanel({
     <section className="px-3">
       <div className="flex items-end justify-between border-b pb-8">
         <h2 className="text-xl font-semibold">Your Theme</h2>
-        <span className={`text-${sharedStyles.primaryColor} text-lg`}>
+        <span
+          className={`text-${sharedStyles.primaryColor} cursor-pointer text-lg hover:underline`}
+        >
           Browse Themes
         </span>
       </div>
       <div className="flex items-end justify-between border-b py-8">
         <h2 className="text-xl font-semibold">Privacy Settings</h2>
         <span
-          className={`text-${sharedStyles.primaryColor} text-lg`}
+          className={`text-${sharedStyles.primaryColor} cursor-pointer text-lg hover:underline`}
           onClick={() => setIsWebsiteSettingsOpen(true)}
         >
           Manage

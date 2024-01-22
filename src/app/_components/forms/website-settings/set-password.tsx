@@ -9,12 +9,12 @@ import { sharedStyles } from "../../../utils/shared-styles";
 import { type Dispatch, type SetStateAction } from "react";
 
 type SetPasswordViewProps = {
-  setShowPasswordPage: Dispatch<SetStateAction<boolean>>;
+  setShowPasswordView: Dispatch<SetStateAction<boolean>>;
   password: string;
 };
 
 export default function SetPasswordView({
-  setShowPasswordPage,
+  setShowPasswordView,
   password,
 }: SetPasswordViewProps) {
   const [passwordInput, setPasswordInput] = useState(password ?? "");
@@ -22,7 +22,7 @@ export default function SetPasswordView({
 
   const updateWebsite = api.website.update.useMutation({
     onSuccess: () => {
-      setShowPasswordPage(false);
+      setShowPasswordView(false);
       router.refresh();
     },
     onError: (err) => {
@@ -37,7 +37,7 @@ export default function SetPasswordView({
         <div className="flex gap-4">
           <span
             className="cursor-pointer"
-            onClick={() => setShowPasswordPage(false)}
+            onClick={() => setShowPasswordView(false)}
           >
             <GoArrowLeft size={28} />
           </span>
