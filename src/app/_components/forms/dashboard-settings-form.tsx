@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 import { IoMdClose } from "react-icons/io";
 import { BsTrash3 } from "react-icons/bs";
-import { GoArrowLeft } from "react-icons/go";
+
 import { LoadingSpinner } from "../loaders";
 import { Label } from "~/components/ui/label";
 import { Switch } from "~/components/ui/switch";
@@ -14,42 +14,20 @@ import { sharedStyles } from "../../utils/shared-styles";
 
 import { type Dispatch, type SetStateAction } from "react";
 import { type Website } from "../../utils/shared-types";
+import { useRouter } from "next/navigation";
+import SetPasswordView from "./website-settings/set-password";
 
-type TUpdateWebsiteParams = {
-  isPasswordEnabled?: boolean;
-  password?: string;
-  url?: string;
-};
-
-type WebsiteSettingsFormProps = {
+type DashboardSettingsFormProps = {
   setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
-  website: Website | null;
+  website: Website | null | undefined;
 };
 
-export default function WebsiteSettingsForm({
+export default function DashboardSettingsForm({
   setIsWebsiteSettingsOpen,
   website,
-}: WebsiteSettingsFormProps) {
+}: DashboardSettingsFormProps) {
   const [showPasswordPage, setShowPasswordPage] = useState<boolean>(false);
   const [showUrlPage, setShowUrlPage] = useState<boolean>(false);
-  const [updatedWebsite, setUpdatedWebsite] = useState<Website | null>(website);
-
-  const { mutate, isLoading: isUpdatingWebsite } =
-    api.website.update.useMutation({
-      onSuccess: (updated) => {
-        console.log("updates", updated);
-        setUpdatedWebsite(updated);
-        setShowPasswordPage(false);
-      },
-      onError: (err) => {
-        if (err) window.alert(err);
-        else window.alert("Failed to update website! Please try again later.");
-      },
-    });
-
-  const updateWebsite = (args: TUpdateWebsiteParams) => {
-    mutate({ ...args });
-  };
 
   useDisablePageScroll();
 
@@ -59,20 +37,16 @@ export default function WebsiteSettingsForm({
         className={`relative h-screen ${sharedStyles.sidebarFormWidth} bg-white`}
       >
         {showPasswordPage ? (
-          <SetPasswordPage
+          <SetPasswordView
             setShowPasswordPage={setShowPasswordPage}
-            password={updatedWebsite?.password ?? ""}
-            updateWebsite={updateWebsite}
-            isUpdatingWebsite={isUpdatingWebsite}
+            password={website?.password ?? ""}
           />
         ) : showUrlPage ? (
           <EditUrlPage />
         ) : (
           <Main
             setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
-            website={updatedWebsite}
-            updateWebsite={updateWebsite}
-            isUpdatingWebsite={isUpdatingWebsite}
+            website={website}
             setShowPasswordPage={setShowPasswordPage}
           />
         )}
@@ -83,28 +57,35 @@ export default function WebsiteSettingsForm({
 
 type MainProps = {
   setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
-  website: Website | null;
-  updateWebsite: (args: TUpdateWebsiteParams) => void;
-  isUpdatingWebsite: boolean;
+  website: Website | null | undefined;
   setShowPasswordPage: Dispatch<SetStateAction<boolean>>;
 };
 
 const Main = ({
   setIsWebsiteSettingsOpen,
   website,
-  updateWebsite,
-  isUpdatingWebsite,
   setShowPasswordPage,
 }: MainProps) => {
+  const router = useRouter();
   const [appearInSearchEngines, setAppearInSearchEngines] =
     useState<boolean>(false);
 
+  const updateWebsite = api.website.update.useMutation({
+    onSuccess: () => {
+      setShowPasswordPage(false);
+      router.refresh();
+    },
+    onError: (err) => {
+      if (err) window.alert(err);
+      else window.alert("Failed to update website! Please try again later.");
+    },
+  });
+
   const handleChange = (checked: boolean) => {
-    console.log("targz", checked);
     if (!website?.isPasswordEnabled) {
       setShowPasswordPage(true);
     } else {
-      updateWebsite({
+      updateWebsite.mutate({
         isPasswordEnabled: checked,
         password: "",
       });
@@ -146,7 +127,7 @@ const Main = ({
           <Label htmlFor="password-toggle" className="text-md">
             Require a Password
           </Label>
-          {isUpdatingWebsite ? (
+          {updateWebsite.isLoading ? (
             <LoadingSpinner size={20} />
           ) : (
             <Switch
@@ -194,71 +175,6 @@ const Main = ({
         </div>
       </div>
     </>
-  );
-};
-
-type SetPasswordPageProps = {
-  setShowPasswordPage: Dispatch<SetStateAction<boolean>>;
-  password: string;
-  updateWebsite: (args: TUpdateWebsiteParams) => void;
-  isUpdatingWebsite: boolean;
-};
-
-const SetPasswordPage = ({
-  setShowPasswordPage,
-  password,
-  updateWebsite,
-  isUpdatingWebsite,
-}: SetPasswordPageProps) => {
-  const [passwordInput, setPasswordInput] = useState(password ?? "");
-
-  return (
-    <div>
-      <div className="flex justify-between border-b p-5">
-        <div className="flex gap-4">
-          <span
-            className="cursor-pointer"
-            onClick={() => setShowPasswordPage(false)}
-          >
-            <GoArrowLeft size={28} />
-          </span>
-          <span className="border-r"></span>
-          <h1 className="text-2xl font-bold">Set a Password</h1>
-        </div>
-      </div>
-      <div className="px-5 py-7">
-        <p className="mb-5 font-thin tracking-tight">
-          Know who&apos;s in on your wedding plans by adding a password to your
-          site. Make sure it&apos;s easy for guests to remember (and for you to
-          share!).
-        </p>
-        <input
-          placeholder="Guest Password"
-          className="w-[100%] border p-3"
-          value={passwordInput}
-          onChange={(e) => setPasswordInput(e.target.value)}
-        />
-      </div>
-      <div
-        className={`fixed bottom-0 flex flex-col gap-3 border-t px-8 py-5 ${sharedStyles.sidebarFormWidth}`}
-      >
-        <button
-          disabled={isUpdatingWebsite}
-          className={`w-[100%] ${sharedStyles.primaryButton({
-            py: "py-2",
-            isLoading: isUpdatingWebsite,
-          })}`}
-          onClick={() =>
-            updateWebsite({
-              isPasswordEnabled: true,
-              password: passwordInput,
-            })
-          }
-        >
-          {isUpdatingWebsite ? "Processing..." : "Save Changes"}
-        </button>
-      </div>
-    </div>
   );
 };
 

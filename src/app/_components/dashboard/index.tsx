@@ -12,18 +12,19 @@ import DashboardControls from "./controls";
 import SidebarPanel from "./sidebar-panel";
 import HomeContent from "./section-content/home";
 import EventForm from "../forms/event-form";
-import WebsiteSettingsForm from "../forms/website-settings";
+import DashboardSettingsForm from "../forms/dashboard-settings-form";
 
 import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
-import { type EventFormData } from "~/app/utils/shared-types";
-
-type RouterOutput = inferRouterOutputs<AppRouter>;
+import {
+  type DashboardData,
+  type EventFormData,
+} from "~/app/utils/shared-types";
 
 export default function Dashboard({
   dashboardData,
 }: {
-  dashboardData: RouterOutput["dashboard"]["getByUserId"];
+  dashboardData: DashboardData;
 }) {
   console.log("dashz", dashboardData);
   const isEventFormOpen = useEventForm();
@@ -50,12 +51,12 @@ export default function Dashboard({
       {/* {isEventFormOpen && (
         <EventForm setEvents={setEvents} prefillFormData={prefillEvent} />
       )} */}
-      {/* {isWebsiteSettingsOpen && (
-        <WebsiteSettingsForm
+      {isWebsiteSettingsOpen && (
+        <DashboardSettingsForm
           setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
           website={dashboardData?.weddingData?.website}
         />
-      )} */}
+      )}
       <DashboardHeader
         websiteUrl={dashboardData?.weddingData?.website?.url}
         setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
@@ -64,7 +65,7 @@ export default function Dashboard({
         <RegistrySetup setShowRegistrySetup={setShowRegistrySetup} />
       )}
       <div
-        className={`mt-14 grid grid-cols-[3.25fr_300px] gap-7 ${sharedStyles.desktopPaddingSides}`}
+        className={`mt-14 grid grid-cols-[3fr_275px] gap-7 ${sharedStyles.desktopPaddingSides}`}
       >
         <div>
           <div className="flex justify-between pb-8">
@@ -99,7 +100,7 @@ export default function Dashboard({
           <PageSectionsTemplate title={"RSVP"} collapse={collapseSections}>
             <RsvpContent
               events={dashboardData?.events}
-              totalGuests={dashboardData?.totalGuests}
+              totalGuests={dashboardData?.totalGuests ?? 0}
             />
           </PageSectionsTemplate>
         </div>

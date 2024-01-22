@@ -18,14 +18,14 @@ interface EventWithGuestResponses extends Event {
 }
 
 type RsvpContentProps = {
-  events: EventWithGuestResponses[];
+  events: EventWithGuestResponses[] | undefined;
   totalGuests: number;
 };
 
 export default function RsvpContent({ events, totalGuests }: RsvpContentProps) {
   return (
     <div className="border-t">
-      {events.map((event) => {
+      {events?.map((event) => {
         const numInvitedGuests = totalGuests - event.guestResponses.notInvited;
         return (
           <div key={event.id} className="border-b px-10 pb-20 pt-10">

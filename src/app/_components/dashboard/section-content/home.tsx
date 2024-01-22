@@ -12,23 +12,14 @@ import {
 
 import { type Dispatch, type SetStateAction } from "react";
 import {
-  type WeddingData,
   type Event,
-  type Household,
   type EventFormData,
+  type DashboardData,
 } from "~/app/utils/shared-types";
-
-type DashboardData = {
-  events: Event[];
-  households: Household[];
-  totalEvents: number;
-  totalGuests: number;
-  weddingData: WeddingData;
-};
 
 type HomeContentProps = {
   dashboardData: DashboardData;
-  events: Event[];
+  events: Event[] | undefined;
   setPrefillEvent: Dispatch<SetStateAction<EventFormData | undefined>>;
 };
 
@@ -102,7 +93,7 @@ export default function HomeContent({
       <div className="px-10 py-5">
         <h2 className="mb-3 text-sm">Events</h2>
         <div className="grid auto-rows-[minmax(min-content,150px)] grid-cols-3 gap-5">
-          {events.map((event) => {
+          {events?.map((event) => {
             return (
               <div key={event.id} className="relative border p-6">
                 <button

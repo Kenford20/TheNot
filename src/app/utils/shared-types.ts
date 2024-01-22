@@ -1,3 +1,6 @@
+import { type inferRouterOutputs } from "@trpc/server";
+import { type AppRouter } from "~/server/api/root";
+
 type Event = {
   id: string;
   name: string;
@@ -137,6 +140,9 @@ type WeddingPageData = {
   events: Event[];
 };
 
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type DashboardData = RouterOutput["dashboard"]["getByUserId"];
+
 export {
   type Event,
   type Invitation,
@@ -151,4 +157,5 @@ export {
   type FormInvites,
   type Website,
   type WeddingPageData,
+  type DashboardData,
 };
