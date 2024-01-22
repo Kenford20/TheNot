@@ -14,8 +14,6 @@ import HomeContent from "./section-content/home";
 import EventForm from "../forms/event-form";
 import DashboardSettingsForm from "../forms/dashboard-settings-form";
 
-import { type inferRouterOutputs } from "@trpc/server";
-import { type AppRouter } from "~/server/api/root";
 import {
   type DashboardData,
   type EventFormData,
@@ -47,10 +45,7 @@ export default function Dashboard({
 
   return (
     <>
-      {/* TODO: need to refactor form components that interface with trpc endpoints and think about server/client component relations */}
-      {/* {isEventFormOpen && (
-        <EventForm setEvents={setEvents} prefillFormData={prefillEvent} />
-      )} */}
+      {isEventFormOpen && <EventForm prefillFormData={prefillEvent} />}
       {isWebsiteSettingsOpen && (
         <DashboardSettingsForm
           setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}

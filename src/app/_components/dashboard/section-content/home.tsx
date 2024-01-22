@@ -28,7 +28,6 @@ export default function HomeContent({
   events,
   setPrefillEvent,
 }: HomeContentProps) {
-  console.log("homez", events);
   const toggleEventForm = useToggleEventForm();
 
   const handleEditEvent = (event: Event) => {

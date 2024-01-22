@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "~/trpc/server";
+import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
 import { sharedStyles } from "../../utils/shared-styles";
 import { useToggleEventForm } from "../contexts/event-form-context";
 import { IoMdClose } from "react-icons/io";
 import { useDisablePageScroll } from "../hooks";
+
 import DeleteConfirmation from "./delete-confirmation";
 
-import { type Dispatch, type SetStateAction } from "react";
-import { type EventFormData, type Event } from "../../utils/shared-types";
+import { type EventFormData } from "../../utils/shared-types";
 
 type EventFormProps = {
-  setEvents: Dispatch<SetStateAction<Event[] | undefined>>;
   prefillFormData: EventFormData | undefined;
 };
 
@@ -27,60 +27,46 @@ const defaultFormData = {
   eventId: "",
 };
 
-export default function EventForm({
-  setEvents,
-  prefillFormData,
-}: EventFormProps) {
+export default function EventForm({ prefillFormData }: EventFormProps) {
+  const router = useRouter();
   const isEditMode = !!prefillFormData;
   const toggleEventForm = useToggleEventForm();
 
-  const { mutate: createEvent, isLoading: isCreatingEvent } =
-    api.event.create.useMutation({
-      onSuccess: (createdEvent) => {
-        toggleEventForm();
-        setEvents((prevEvents) =>
-          prevEvents ? [...prevEvents, createdEvent] : [createdEvent],
-        );
-      },
-      onError: (err) => {
-        const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-        if (errorMessage?.[0]) window.alert(errorMessage);
-        else window.alert("Failed to create event! Please try again later.");
-      },
-    });
+  const createEvent = api.event.create.useMutation({
+    onSuccess: () => {
+      toggleEventForm();
+      router.refresh();
+    },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
+      if (errorMessage?.[0]) window.alert(errorMessage);
+      else window.alert("Failed to create event! Please try again later.");
+    },
+  });
 
-  const { mutate: updateEvent, isLoading: isUpdatingEvent } =
-    api.event.update.useMutation({
-      onSuccess: (updatedEvent) => {
-        toggleEventForm();
-        setEvents((prevEvents) => {
-          if (!prevEvents) return [updatedEvent];
-          return prevEvents.map((prev) =>
-            prev.id === updatedEvent.id ? updatedEvent : prev,
-          );
-        });
-      },
-      onError: (err) => {
-        const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-        if (errorMessage?.[0]) window.alert(errorMessage);
-        else window.alert("Failed to update event! Please try again later.");
-      },
-    });
+  const updateEvent = api.event.update.useMutation({
+    onSuccess: () => {
+      toggleEventForm();
+      router.refresh();
+    },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
+      if (errorMessage?.[0]) window.alert(errorMessage);
+      else window.alert("Failed to update event! Please try again later.");
+    },
+  });
 
-  const { mutate: deleteEvent, isLoading: isDeletingEvent } =
-    api.event.delete.useMutation({
-      onSuccess: (deletedEventId) => {
-        toggleEventForm();
-        setEvents((prevEvents) =>
-          prevEvents?.filter((event) => event.id !== deletedEventId),
-        );
-      },
-      onError: (err) => {
-        const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-        if (errorMessage?.[0]) window.alert(errorMessage);
-        else window.alert("Failed to delete event! Please try again later.");
-      },
-    });
+  const deleteEvent = api.event.delete.useMutation({
+    onSuccess: () => {
+      toggleEventForm();
+      router.refresh();
+    },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
+      if (errorMessage?.[0]) window.alert(errorMessage);
+      else window.alert("Failed to delete event! Please try again later.");
+    },
+  });
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     useState<boolean>(false);
@@ -101,13 +87,14 @@ export default function EventForm({
 
   const handleSaveEvent = () => {
     if (isEditMode) {
-      updateEvent(eventFormData);
+      updateEvent.mutate(eventFormData);
     } else {
-      createEvent(eventFormData);
+      createEvent.mutate(eventFormData);
     }
   };
 
-  const isProcessing = isCreatingEvent || isUpdatingEvent || isDeletingEvent;
+  const isProcessing =
+    createEvent.isLoading || updateEvent.isLoading || deleteEvent.isLoading;
 
   return (
     <div className="fixed top-0 z-10 flex h-screen w-screen justify-end overflow-y-auto bg-transparent/[0.5]">
@@ -118,7 +105,9 @@ export default function EventForm({
             "Deleting this event will remove it from your website, and also erase any guest lists, RSVPs, and meals associated with it."
           }
           noHandler={() => setShowDeleteConfirmation(false)}
-          yesHandler={() => deleteEvent({ eventId: eventFormData.eventId })}
+          yesHandler={() =>
+            deleteEvent.mutate({ eventId: eventFormData.eventId })
+          }
         />
       )}
       <div className={`h-full ${sharedStyles.sidebarFormWidth} bg-white`}>
