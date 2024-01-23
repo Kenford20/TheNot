@@ -14,6 +14,7 @@ import GiftSection from "./guest/gift-section";
 import AddFormButtons from "./guest/add-buttons";
 import EditFormButtons from "./guest/edit-buttons";
 
+import { type SyntheticEvent } from "react";
 import {
   type FormInvites,
   type Event,
@@ -28,7 +29,7 @@ const defaultContactData = {
   state: undefined,
   country: undefined,
   zipCode: undefined,
-  phoneNumber: undefined,
+  phone: undefined,
   email: undefined,
   notes: undefined,
 };
@@ -65,8 +66,9 @@ type GuestFormProps = {
 
 export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
   useDisablePageScroll();
-  const router = useRouter();
   const toggleGuestForm = useToggleGuestForm();
+  const router = useRouter();
+  const [closeForm, setCloseForm] = useState<boolean>(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     useState<boolean>(false);
   const [householdFormData, setHouseholdFormData] = useState<HouseholdFormData>(
@@ -74,6 +76,34 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
   );
   const [deletedGuests, setDeletedGuests] = useState<number[]>([]);
   const isEditMode = !!prefillFormData;
+
+  const createGuests = api.household.create.useMutation({
+    onSuccess: () => {
+      closeForm && toggleGuestForm();
+      setHouseholdFormData(defaultHouseholdFormData(events));
+      router.refresh();
+    },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
+      if (errorMessage?.[0])
+        window.alert("Please fill in the full name for all guests!");
+      else window.alert("Failed to create guests! Please try again later.");
+    },
+  });
+
+  const updateHousehold = api.household.update.useMutation({
+    onSuccess: () => {
+      toggleGuestForm();
+      setHouseholdFormData(defaultHouseholdFormData(events));
+      router.refresh();
+    },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
+      if (errorMessage?.[0])
+        window.alert("Please fill in the full name for all guests!");
+      else window.alert("Failed to update party! Please try again later.");
+    },
+  });
 
   const deleteHousehold = api.household.delete.useMutation({
     onSuccess: () => {
@@ -101,11 +131,17 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
       : primaryContactName;
   };
 
-  const handleOnChange = (field: string, input: string) => {
+  const handleOnChange = ({
+    field,
+    inputValue,
+  }: {
+    field: string;
+    inputValue: string;
+  }) => {
     setHouseholdFormData((prev) => {
       return {
         ...prev,
-        [field]: input,
+        [field]: inputValue,
       };
     });
   };
@@ -128,6 +164,20 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
     });
   };
 
+  const handleOnSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    interface SubmitEvent extends Event {
+      submitter: HTMLButtonElement;
+    }
+    const submitButton = (e.nativeEvent as unknown as SubmitEvent).submitter;
+
+    if (submitButton.name === "add-button") {
+      createGuests.mutate(householdFormData);
+    } else {
+      updateHousehold.mutate({ ...householdFormData, deletedGuests });
+    }
+  };
+
   return (
     <div className="fixed top-0 z-50 flex h-screen w-screen justify-end overflow-y-scroll bg-transparent/[0.5] pb-24">
       {showDeleteConfirmation && (
@@ -144,8 +194,9 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
           }
         />
       )}
-      <div
+      <form
         className={`relative h-fit ${sharedStyles.sidebarFormWidth} bg-white`}
+        onSubmit={(e) => handleOnSubmit(e)}
       >
         <div className="flex justify-between border-b p-5">
           <h1 className="text-2xl font-bold">{getTitle()}</h1>
@@ -185,8 +236,10 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
           <textarea
             placeholder="Enter notes about your guests, like food allergies"
             value={householdFormData.notes}
-            onChange={(e) => handleOnChange("notes", e.target.value)}
-            className="h-32 w-full border p-3"
+            onChange={(e) =>
+              handleOnChange({ field: "notes", inputValue: e.target.value })
+            }
+            className="h-32 w-full rounded-lg border p-3"
             style={{ resize: "none" }}
           />
           {isEditMode && (
@@ -198,22 +251,16 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
         </div>
         {isEditMode ? (
           <EditFormButtons
-            events={events}
-            householdFormData={householdFormData}
-            deletedGuests={deletedGuests}
-            setHouseholdFormData={setHouseholdFormData}
+            isUpdatingHousehold={updateHousehold.isLoading}
             setShowDeleteConfirmation={setShowDeleteConfirmation}
-            defaultHouseholdFormData={defaultHouseholdFormData}
           />
         ) : (
           <AddFormButtons
-            events={events}
-            householdFormData={householdFormData}
-            setHouseholdFormData={setHouseholdFormData}
-            defaultHouseholdFormData={defaultHouseholdFormData}
+            isCreatingGuests={createGuests.isLoading}
+            setCloseForm={setCloseForm}
           />
         )}
-      </div>
+      </form>
     </div>
   );
 }

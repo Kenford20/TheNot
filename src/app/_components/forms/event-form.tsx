@@ -118,7 +118,13 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           }
         />
       )}
-      <div className={`h-full ${sharedStyles.sidebarFormWidth} bg-white`}>
+      <form
+        className={`h-full ${sharedStyles.sidebarFormWidth} bg-white`}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSaveEvent();
+        }}
+      >
         <div className="flex justify-between border-b p-5">
           <h1 className="text-xl font-semibold">
             {isEditMode ? "Edit Event" : "Add Event"}
@@ -191,12 +197,14 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
               Cancel
             </button>
             <button
+              id="save-event"
+              type="submit"
+              name="save-event"
               disabled={isProcessing}
               className={`w-1/2 ${sharedStyles.primaryButton({
                 py: "py-2",
                 isLoading: isProcessing,
               })}`}
-              onClick={() => handleSaveEvent()}
             >
               {isProcessing ? "Processing..." : "Save & Close"}
             </button>
@@ -204,7 +212,10 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           {isEditMode && (
             <button
               disabled={isProcessing}
-              onClick={() => setShowDeleteConfirmation(true)}
+              onClick={(e) => {
+                e.preventDefault();
+                setShowDeleteConfirmation(true);
+              }}
               className={`font-semibold ${
                 isProcessing ? "cursor-not-allowed" : "hover:underline"
               } ${
@@ -217,7 +228,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
             </button>
           )}
         </div>
-      </div>
+      </form>
     </div>
   );
 }

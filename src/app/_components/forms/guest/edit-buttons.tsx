@@ -1,44 +1,18 @@
-import { useRouter } from "next/navigation";
 import { sharedStyles } from "~/app/utils/shared-styles";
-import { api } from "~/trpc/react";
 import { useToggleGuestForm } from "../../contexts/guest-form-context";
 
-import { type Event, type HouseholdFormData } from "~/app/utils/shared-types";
 import { type Dispatch, type SetStateAction } from "react";
 
 type EditFormButtonsProps = {
-  events: Event[];
-  householdFormData: HouseholdFormData;
-  deletedGuests: number[];
-  setHouseholdFormData: Dispatch<SetStateAction<HouseholdFormData>>;
+  isUpdatingHousehold: boolean;
   setShowDeleteConfirmation: Dispatch<SetStateAction<boolean>>;
-  defaultHouseholdFormData: (events: Event[]) => HouseholdFormData;
 };
 
 export default function EditFormButtons({
-  events,
-  householdFormData,
-  deletedGuests,
-  setHouseholdFormData,
+  isUpdatingHousehold,
   setShowDeleteConfirmation,
-  defaultHouseholdFormData,
 }: EditFormButtonsProps) {
-  const router = useRouter();
   const toggleGuestForm = useToggleGuestForm();
-
-  const updateHousehold = api.household.update.useMutation({
-    onSuccess: () => {
-      toggleGuestForm();
-      setHouseholdFormData(defaultHouseholdFormData(events));
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
-      else window.alert("Failed to update party! Please try again later.");
-    },
-  });
 
   return (
     <div
@@ -47,40 +21,43 @@ export default function EditFormButtons({
     >
       <div className="flex gap-3 text-sm">
         <button
-          disabled={updateHousehold.isLoading}
+          disabled={isUpdatingHousehold}
           onClick={() => toggleGuestForm()}
           className={`w-1/2 ${sharedStyles.secondaryButton({
             py: "py-2",
-            isLoading: updateHousehold.isLoading,
+            isLoading: isUpdatingHousehold,
           })}`}
         >
           Cancel
         </button>
         <button
-          disabled={updateHousehold.isLoading}
+          id="edit-save"
+          name="edit-button"
+          type="submit"
+          disabled={isUpdatingHousehold}
           className={`w-1/2 ${sharedStyles.primaryButton({
             px: "px-2",
             py: "py-2",
-            isLoading: updateHousehold.isLoading,
+            isLoading: isUpdatingHousehold,
           })}`}
-          onClick={() =>
-            updateHousehold.mutate({ ...householdFormData, deletedGuests })
-          }
         >
-          {updateHousehold.isLoading ? "Processing..." : "Save"}
+          {isUpdatingHousehold ? "Processing..." : "Save"}
         </button>
       </div>
       <button
-        onClick={() => setShowDeleteConfirmation(true)}
+        onClick={(e) => {
+          e.preventDefault();
+          setShowDeleteConfirmation(true);
+        }}
         className={`text-sm font-bold ${
-          updateHousehold.isLoading ? "cursor-not-allowed" : "hover:underline"
+          isUpdatingHousehold ? "cursor-not-allowed" : "hover:underline"
         } ${
-          updateHousehold.isLoading
+          isUpdatingHousehold
             ? "text-pink-200"
             : `text-${sharedStyles.primaryColor}`
         }`}
       >
-        {updateHousehold.isLoading ? "Processing..." : "Delete Party"}
+        {isUpdatingHousehold ? "Processing..." : "Delete Party"}
       </button>
     </div>
   );
