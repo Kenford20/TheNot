@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDisablePageScroll } from "../hooks";
+import { useToggleEventForm } from "../contexts/event-form-context";
 import { api } from "~/trpc/react";
 import { sharedStyles } from "../../utils/shared-styles";
-import { useToggleEventForm } from "../contexts/event-form-context";
 import { IoMdClose } from "react-icons/io";
-import { useDisablePageScroll } from "../hooks";
-
 import DeleteConfirmation from "./delete-confirmation";
+import DateInput from "./event/date-input";
+import TimeSelections from "./event/time-selections";
 
 import { type EventFormData } from "../../utils/shared-types";
+import AnimatedInputLabel from "./animated-input-label";
 
 type EventFormProps = {
   prefillFormData: EventFormData | undefined;
@@ -28,9 +30,17 @@ const defaultFormData = {
 };
 
 export default function EventForm({ prefillFormData }: EventFormProps) {
-  const router = useRouter();
   const isEditMode = !!prefillFormData;
+  const router = useRouter();
   const toggleEventForm = useToggleEventForm();
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] =
+    useState<boolean>(false);
+  const [eventFormData, setEventFormData] = useState<EventFormData>(
+    prefillFormData ?? defaultFormData,
+  );
+
+  useDisablePageScroll();
 
   const createEvent = api.event.create.useMutation({
     onSuccess: () => {
@@ -68,19 +78,17 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
     },
   });
 
-  const [showDeleteConfirmation, setShowDeleteConfirmation] =
-    useState<boolean>(false);
-  const [eventFormData, setEventFormData] = useState<EventFormData>(
-    prefillFormData ?? defaultFormData,
-  );
-
-  useDisablePageScroll();
-
-  const handleOnChange = (field: string, input: string) => {
+  const handleOnChange = ({
+    field,
+    inputValue,
+  }: {
+    field: string;
+    inputValue: string;
+  }) => {
     setEventFormData((prev) => {
       return {
         ...prev,
-        [field]: input,
+        [field]: inputValue,
       };
     });
   };
@@ -115,65 +123,51 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           <h1 className="text-xl font-semibold">
             {isEditMode ? "Edit Event" : "Add Event"}
           </h1>
-          <span className="cursor-pointer" onClick={() => toggleEventForm()}>
-            <IoMdClose size={25} />
-          </span>
+          <IoMdClose
+            size={25}
+            className="cursor-pointer"
+            onClick={() => toggleEventForm()}
+          />
         </div>
         <div className="p-5">
           <h2 className="mb-3 text-xl font-semibold">Event Information</h2>
-          <div className="grid grid-cols-1 grid-rows-[repeat(6,50px)] gap-3">
-            <input
-              placeholder="Event Name*"
-              value={eventFormData.eventName ?? ""}
-              onChange={(e) => handleOnChange("eventName", e.target.value)}
-              className="w-100 border p-3"
+          <div className="grid grid-cols-1 grid-rows-[repeat(6,50px)] gap-5">
+            <AnimatedInputLabel
+              id="event-name"
+              inputValue={eventFormData.eventName}
+              fieldName="eventName"
+              labelText="Event Name*"
+              handleOnChange={handleOnChange}
             />
-
-            <input
-              placeholder="MM/DD/YYYY"
-              value={eventFormData.date ?? ""}
-              onChange={(e) => handleOnChange("date", e.target.value)}
-              className="w-100 border p-3"
+            <DateInput
+              date={eventFormData.date}
+              handleOnChange={handleOnChange}
             />
-            <div className="flex gap-3">
-              <select
-                value={eventFormData.startTime ?? ""}
-                onChange={(e) => handleOnChange("startTime", e.target.value)}
-                className="w-1/2 border p-3"
-              >
-                <option defaultValue="Start Time">Start Time</option>
-                <option>12:00 PM</option>
-                <option>12:15 PM</option>
-                <option>12:30 PM</option>
-              </select>
-              <select
-                value={eventFormData.endTime ?? ""}
-                onChange={(e) => handleOnChange("endTime", e.target.value)}
-                className="w-1/2 border p-3"
-              >
-                <option defaultValue="End Time">End Time</option>
-                <option>12:00 PM</option>
-                <option>12:15 PM</option>
-                <option>12:30 PM</option>
-              </select>
-            </div>
-            <input
-              placeholder="Venue Name"
-              value={eventFormData.venue ?? ""}
-              onChange={(e) => handleOnChange("venue", e.target.value)}
-              className="w-100 border p-3"
+            <TimeSelections
+              startTime={eventFormData.startTime}
+              endTime={eventFormData.endTime ?? ""}
+              handleOnChange={handleOnChange}
             />
-            <input
-              placeholder="Attire"
-              value={eventFormData.attire ?? ""}
-              onChange={(e) => handleOnChange("attire", e.target.value)}
-              className="w-100 border p-3"
+            <AnimatedInputLabel
+              id="event-venue"
+              inputValue={eventFormData.venue ?? ""}
+              fieldName="venue"
+              labelText="Venue Name"
+              handleOnChange={handleOnChange}
             />
-            <input
-              placeholder="Description"
-              value={eventFormData.description ?? ""}
-              onChange={(e) => handleOnChange("description", e.target.value)}
-              className="w-100 border p-3"
+            <AnimatedInputLabel
+              id="event-attire"
+              inputValue={eventFormData.attire ?? ""}
+              fieldName="attire"
+              labelText="Attire"
+              handleOnChange={handleOnChange}
+            />
+            <AnimatedInputLabel
+              id="event-description"
+              inputValue={eventFormData.description ?? ""}
+              fieldName="description"
+              labelText="Description"
+              handleOnChange={handleOnChange}
             />
           </div>
         </div>

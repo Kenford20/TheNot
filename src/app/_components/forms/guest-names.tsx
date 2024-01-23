@@ -1,5 +1,6 @@
 import { sharedStyles } from "../../utils/shared-styles";
 import { FiMinusCircle } from "react-icons/fi";
+import AnimatedInputLabel from "./animated-input-label";
 
 import { type Dispatch, type SetStateAction } from "react";
 import {
@@ -54,12 +55,20 @@ export const GuestNameForm = ({
     });
   };
 
-  const handleNameChange = (field: string, input: string, index: number) => {
+  const handleNameChange = ({
+    field,
+    inputValue,
+    guestIndex,
+  }: {
+    field: string;
+    inputValue: string;
+    guestIndex: number;
+  }) => {
     setHouseholdFormData((prev) => {
       return {
         ...prev,
         guestParty: prev.guestParty.map((guest, i) =>
-          i === index ? { ...guest, [field]: input } : guest,
+          i === guestIndex ? { ...guest, [field]: inputValue } : guest,
         ),
       };
     });
@@ -70,22 +79,26 @@ export const GuestNameForm = ({
       <div className="p-5">
         <h2 className="mb-3 text-2xl font-bold">Guest Name</h2>
         <div className="flex items-center justify-between gap-3">
-          <input
-            className="w-1/2 border p-3"
-            placeholder="First Name*"
-            value={guest.firstName}
-            onChange={(e) =>
-              handleNameChange("firstName", e.target.value, guestIndex)
-            }
-          />
-          <input
-            className="w-1/2 border p-3"
-            placeholder="Last Name*"
-            value={guest.lastName}
-            onChange={(e) =>
-              handleNameChange("lastName", e.target.value, guestIndex)
-            }
-          />
+          <div className="w-1/2">
+            <AnimatedInputLabel
+              id={`guest${guestIndex}-firstName`}
+              inputValue={guest.firstName}
+              fieldName="firstName"
+              labelText="First Name*"
+              guestIndex={guestIndex}
+              handleOnChange={handleNameChange}
+            />
+          </div>
+          <div className="w-1/2">
+            <AnimatedInputLabel
+              id={`guest${guestIndex}-lastName`}
+              inputValue={guest.lastName}
+              fieldName="lastName"
+              labelText="Last Name*"
+              guestIndex={guestIndex}
+              handleOnChange={handleNameChange}
+            />
+          </div>
           {guestIndex > 0 && (
             <div className="cursor-pointer" onClick={() => handleRemoveGuest()}>
               <FiMinusCircle size={28} color="gray" />

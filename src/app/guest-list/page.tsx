@@ -9,9 +9,5 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  return (
-    <main>
-      <GuestList dashboardData={dashboardData} />
-    </main>
-  );
+  return <GuestList dashboardData={dashboardData} />;
 }

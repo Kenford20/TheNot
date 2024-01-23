@@ -1,8 +1,16 @@
+import AnimatedInputLabel from "../animated-input-label";
+
 import { type HouseholdFormData } from "~/app/utils/shared-types";
 
 type ContactFormProps = {
   householdFormData: HouseholdFormData;
-  handleOnChange: (field: string, input: string) => void;
+  handleOnChange: ({
+    field,
+    inputValue,
+  }: {
+    field: string;
+    inputValue: string;
+  }) => void;
 };
 
 export default function ContactForm({
@@ -11,46 +19,59 @@ export default function ContactForm({
 }: ContactFormProps) {
   return (
     <div className="grid grid-cols-1 grid-rows-[repeat(5,50px)] gap-3">
-      <input
-        className="w-100 border p-3"
-        placeholder="Street Address"
-        value={householdFormData.address1}
-        onChange={(e) => handleOnChange("address1", e.target.value)}
+      <AnimatedInputLabel
+        id="household-address1"
+        inputValue={householdFormData.address1 ?? ""}
+        fieldName="address1"
+        labelText="Street Address"
+        handleOnChange={handleOnChange}
       />
-      <input
-        className="w-100 border p-3"
-        placeholder="Apt/Suite/Other"
-        value={householdFormData.address2}
-        onChange={(e) => handleOnChange("address2", e.target.value)}
+      <AnimatedInputLabel
+        id="household-address2"
+        inputValue={householdFormData.address2 ?? ""}
+        fieldName="address2"
+        labelText="Apt/Suite/Other"
+        handleOnChange={handleOnChange}
       />
+
       <div className="flex gap-3">
-        <input
-          className="w-1/2 border p-3"
-          placeholder="City"
-          value={householdFormData.city}
-          onChange={(e) => handleOnChange("city", e.target.value)}
-        />
+        <div className="w-1/2">
+          <AnimatedInputLabel
+            id="household-city"
+            inputValue={householdFormData.city ?? ""}
+            fieldName="city"
+            labelText="City"
+            handleOnChange={handleOnChange}
+          />
+        </div>
         <select
           value={householdFormData.state}
-          onChange={(e) => handleOnChange("state", e.target.value)}
-          className="w-1/4 border p-3"
+          onChange={(e) =>
+            handleOnChange({ field: "state", inputValue: e.target.value })
+          }
+          className="w-1/4 rounded-lg border p-3"
         >
           <option defaultValue="State">State</option>
           <option>AL</option>
           <option>AR</option>
           <option>WY</option>
         </select>
-        <input
-          className="w-1/4 border p-3"
-          placeholder="Zip Code"
-          value={householdFormData.zipCode}
-          onChange={(e) => handleOnChange("zipCode", e.target.value)}
-        />
+        <div className="w-1/4">
+          <AnimatedInputLabel
+            id="household-zipCode"
+            inputValue={householdFormData.zipCode ?? ""}
+            fieldName="zipCode"
+            labelText="Zip Code"
+            handleOnChange={handleOnChange}
+          />
+        </div>
       </div>
       <select
-        className="w-100 border p-3"
+        className="w-100 rounded-lg border p-3"
         value={householdFormData.country}
-        onChange={(e) => handleOnChange("country", e.target.value)}
+        onChange={(e) =>
+          handleOnChange({ field: "country", inputValue: e.target.value })
+        }
       >
         <option defaultValue="State">Country</option>
         <option>Murca</option>
@@ -58,20 +79,26 @@ export default function ContactForm({
         <option>Canada</option>
       </select>
       <div className="flex gap-3">
-        <input
-          type="tel"
-          className="w-1/2 border p-3"
-          placeholder="Phone"
-          value={householdFormData.phone}
-          onChange={(e) => handleOnChange("phone", e.target.value)}
-        />
-        <input
-          type="email"
-          className="w-1/2 border p-3"
-          placeholder="Email"
-          value={householdFormData.email}
-          onChange={(e) => handleOnChange("email", e.target.value)}
-        />
+        <div className="w-1/2">
+          <AnimatedInputLabel
+            id="household-phone"
+            type="tel"
+            inputValue={householdFormData.phone ?? ""}
+            fieldName="phone"
+            labelText="Phone"
+            handleOnChange={handleOnChange}
+          />
+        </div>
+        <div className="w-1/2">
+          <AnimatedInputLabel
+            id="household-email"
+            type="email"
+            inputValue={householdFormData.email ?? ""}
+            fieldName="email"
+            labelText="Email"
+            handleOnChange={handleOnChange}
+          />
+        </div>
       </div>
     </div>
   );
