@@ -9,8 +9,11 @@ import { api } from "~/trpc/react";
 import { IoMdClose } from "react-icons/io";
 import { GuestNameForm } from "./guest-names";
 import DeleteConfirmation from "./delete-confirmation";
+import ContactForm from "./guest/contact-form";
+import GiftSection from "./guest/gift-section";
+import AddFormButtons from "./guest/add-buttons";
+import EditFormButtons from "./guest/edit-buttons";
 
-import { type Dispatch, type SetStateAction } from "react";
 import {
   type FormInvites,
   type Event,
@@ -89,9 +92,10 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
     const primaryContact = prefillFormData.guestParty.find(
       (guest) => guest.isPrimaryContact,
     );
+    const numGuests = prefillFormData.guestParty.length;
     const primaryContactName =
       primaryContact?.firstName + " " + primaryContact?.lastName;
-    const numGuests = prefillFormData.guestParty.length;
+
     return numGuests > 1
       ? `${primaryContactName} + ${numGuests - 1}`
       : primaryContactName;
@@ -104,7 +108,6 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
         [field]: input,
       };
     });
-    console.log(householdFormData);
   };
 
   const handleAddGuestToParty = () => {
@@ -146,9 +149,11 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
       >
         <div className="flex justify-between border-b p-5">
           <h1 className="text-2xl font-bold">{getTitle()}</h1>
-          <span className="cursor-pointer" onClick={() => toggleGuestForm()}>
-            <IoMdClose size={25} />
-          </span>
+          <IoMdClose
+            size={25}
+            className="cursor-pointer"
+            onClick={() => toggleGuestForm()}
+          />
         </div>
         {householdFormData?.guestParty.map((guest, i) => {
           return (
@@ -172,70 +177,10 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
         </div>
         <div className="p-5">
           <h2 className="mb-3 text-2xl font-bold">Contact Information</h2>
-          <div className="grid grid-cols-1 grid-rows-[repeat(5,50px)] gap-3">
-            <input
-              className="w-100 border p-3"
-              placeholder="Street Address"
-              value={householdFormData.address1}
-              onChange={(e) => handleOnChange("address1", e.target.value)}
-            />
-            <input
-              className="w-100 border p-3"
-              placeholder="Apt/Suite/Other"
-              value={householdFormData.address2}
-              onChange={(e) => handleOnChange("address2", e.target.value)}
-            />
-            <div className="flex gap-3">
-              <input
-                className="w-1/2 border p-3"
-                placeholder="City"
-                value={householdFormData.city}
-                onChange={(e) => handleOnChange("city", e.target.value)}
-              />
-              <select
-                value={householdFormData.state}
-                onChange={(e) => handleOnChange("state", e.target.value)}
-                className="w-1/4 border p-3"
-              >
-                <option defaultValue="State">State</option>
-                <option>AL</option>
-                <option>AR</option>
-                <option>WY</option>
-              </select>
-              <input
-                className="w-1/4 border p-3"
-                placeholder="Zip Code"
-                value={householdFormData.zipCode}
-                onChange={(e) => handleOnChange("zipCode", e.target.value)}
-              />
-            </div>
-            <select
-              className="w-100 border p-3"
-              value={householdFormData.country}
-              onChange={(e) => handleOnChange("country", e.target.value)}
-            >
-              <option defaultValue="State">Country</option>
-              <option>Murca</option>
-              <option>Mexico</option>
-              <option>Canada</option>
-            </select>
-            <div className="flex gap-3">
-              <input
-                type="tel"
-                className="w-1/2 border p-3"
-                placeholder="Phone"
-                value={householdFormData.phone}
-                onChange={(e) => handleOnChange("phone", e.target.value)}
-              />
-              <input
-                type="email"
-                className="w-1/2 border p-3"
-                placeholder="Email"
-                value={householdFormData.email}
-                onChange={(e) => handleOnChange("email", e.target.value)}
-              />
-            </div>
-          </div>
+          <ContactForm
+            householdFormData={householdFormData}
+            handleOnChange={handleOnChange}
+          />
           <h2 className="my-4 text-2xl font-bold">My Notes</h2>
           <textarea
             placeholder="Enter notes about your guests, like food allergies"
@@ -258,246 +203,17 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
             deletedGuests={deletedGuests}
             setHouseholdFormData={setHouseholdFormData}
             setShowDeleteConfirmation={setShowDeleteConfirmation}
+            defaultHouseholdFormData={defaultHouseholdFormData}
           />
         ) : (
           <AddFormButtons
             events={events}
             householdFormData={householdFormData}
             setHouseholdFormData={setHouseholdFormData}
+            defaultHouseholdFormData={defaultHouseholdFormData}
           />
         )}
       </div>
     </div>
   );
 }
-
-type GiftSectionProps = {
-  setHouseholdFormData: Dispatch<SetStateAction<HouseholdFormData>>;
-  householdFormData: HouseholdFormData;
-};
-
-const GiftSection = ({
-  householdFormData,
-  setHouseholdFormData,
-}: GiftSectionProps) => {
-  const handleOnChange = (
-    key: string,
-    value: boolean | string,
-    updatedEvent: string,
-  ) => {
-    setHouseholdFormData((prev) => {
-      return {
-        ...prev,
-        gifts: prev.gifts?.map((gift) => {
-          if (gift.eventId === updatedEvent) {
-            return {
-              ...gift,
-              [key]: value,
-            };
-          }
-          return gift;
-        }),
-      };
-    });
-  };
-
-  return (
-    <>
-      <h2 className="my-4 text-2xl font-bold">Gifts</h2>
-      {householdFormData.gifts?.map((gift) => {
-        return (
-          <div key={gift.eventId} className="mb-6">
-            <h3 className="mb-3 text-lg font-semibold">{gift.event?.name}</h3>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <input
-                  className="h-6 w-6 cursor-pointer border p-3"
-                  style={{ accentColor: sharedStyles.primaryColorHex }}
-                  type="checkbox"
-                  id={`thank-you-event: ${gift.eventId}`}
-                  onChange={(e) =>
-                    handleOnChange("thankyou", e.target.checked, gift.eventId)
-                  }
-                  checked={gift.thankyou}
-                />
-                <label
-                  className={`cursor-pointer ${sharedStyles.ellipsisOverflow}`}
-                  htmlFor={`thank-you-event: ${gift.eventId}`}
-                >
-                  Thank You Sent
-                </label>
-              </div>
-              <input
-                placeholder="Gift Received"
-                className="w-[100%] border p-3"
-                value={gift.description ?? ""}
-                onChange={(e) =>
-                  handleOnChange("description", e.target.value, gift.eventId)
-                }
-              />
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-};
-
-type AddFormButtonsProps = {
-  events: Event[];
-  householdFormData: HouseholdFormData;
-  setHouseholdFormData: Dispatch<SetStateAction<HouseholdFormData>>;
-};
-
-const AddFormButtons = ({
-  events,
-  householdFormData,
-  setHouseholdFormData,
-}: AddFormButtonsProps) => {
-  const router = useRouter();
-  const toggleGuestForm = useToggleGuestForm();
-  const [closeForm, setCloseForm] = useState<boolean>(false);
-
-  const createGuests = api.household.create.useMutation({
-    onSuccess: () => {
-      closeForm && toggleGuestForm();
-      setHouseholdFormData(defaultHouseholdFormData(events));
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
-      else window.alert("Failed to create guests! Please try again later.");
-    },
-  });
-
-  return (
-    <div
-      className="fixed bottom-0 flex flex-col gap-3 border-t bg-white px-3 py-5"
-      style={{ width: "inherit" }}
-    >
-      <div className="flex gap-3 text-sm">
-        <button
-          disabled={createGuests.isLoading}
-          onClick={() => {
-            setCloseForm(true);
-            createGuests.mutate(householdFormData);
-          }}
-          className={`w-1/2 ${sharedStyles.secondaryButton({
-            py: "py-2",
-            isLoading: createGuests.isLoading,
-          })}`}
-        >
-          {createGuests.isLoading ? "Processing..." : "Save & Close"}
-        </button>
-        <button
-          disabled={createGuests.isLoading}
-          className={`w-1/2 ${sharedStyles.primaryButton({
-            px: "px-2",
-            py: "py-2",
-            isLoading: createGuests.isLoading,
-          })}`}
-          onClick={() => {
-            setCloseForm(false);
-            createGuests.mutate(householdFormData);
-          }}
-        >
-          {createGuests.isLoading
-            ? "Processing..."
-            : "Save & Add Another Guest"}
-        </button>
-      </div>
-      <button
-        onClick={() => toggleGuestForm()}
-        className={`text-sm font-semibold ${
-          createGuests.isLoading ? "cursor-not-allowed" : "hover:underline"
-        } ${
-          createGuests.isLoading
-            ? "text-pink-200"
-            : `text-${sharedStyles.primaryColor}`
-        }`}
-      >
-        Cancel
-      </button>
-    </div>
-  );
-};
-
-type EditFormButtonsProps = {
-  events: Event[];
-  householdFormData: HouseholdFormData;
-  deletedGuests: number[];
-  setHouseholdFormData: Dispatch<SetStateAction<HouseholdFormData>>;
-  setShowDeleteConfirmation: Dispatch<SetStateAction<boolean>>;
-};
-
-const EditFormButtons = ({
-  events,
-  householdFormData,
-  deletedGuests,
-  setHouseholdFormData,
-  setShowDeleteConfirmation,
-}: EditFormButtonsProps) => {
-  const router = useRouter();
-  const toggleGuestForm = useToggleGuestForm();
-
-  const updateHousehold = api.household.update.useMutation({
-    onSuccess: () => {
-      toggleGuestForm();
-      setHouseholdFormData(defaultHouseholdFormData(events));
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
-      else window.alert("Failed to update party! Please try again later.");
-    },
-  });
-
-  return (
-    <div
-      className="fixed bottom-0 flex flex-col gap-3 border-t bg-white px-3 py-5"
-      style={{ width: "inherit" }}
-    >
-      <div className="flex gap-3 text-sm">
-        <button
-          disabled={updateHousehold.isLoading}
-          onClick={() => toggleGuestForm()}
-          className={`w-1/2 ${sharedStyles.secondaryButton({
-            py: "py-2",
-            isLoading: updateHousehold.isLoading,
-          })}`}
-        >
-          Cancel
-        </button>
-        <button
-          disabled={updateHousehold.isLoading}
-          className={`w-1/2 ${sharedStyles.primaryButton({
-            px: "px-2",
-            py: "py-2",
-            isLoading: updateHousehold.isLoading,
-          })}`}
-          onClick={() =>
-            updateHousehold.mutate({ ...householdFormData, deletedGuests })
-          }
-        >
-          {updateHousehold.isLoading ? "Processing..." : "Save"}
-        </button>
-      </div>
-      <button
-        onClick={() => setShowDeleteConfirmation(true)}
-        className={`text-sm font-bold ${
-          updateHousehold.isLoading ? "cursor-not-allowed" : "hover:underline"
-        } ${
-          updateHousehold.isLoading
-            ? "text-pink-200"
-            : `text-${sharedStyles.primaryColor}`
-        }`}
-      >
-        {updateHousehold.isLoading ? "Processing..." : "Delete Party"}
-      </button>
-    </div>
-  );
-};
