@@ -83,9 +83,12 @@ export default function ContactForm({
           <AnimatedInputLabel
             id="household-phone"
             type="tel"
+            pattern="([+]\d{2})?\d{10}"
+            title="Please enter valid phone number"
             inputValue={householdFormData.phone ?? ""}
             fieldName="phone"
             labelText="Phone"
+            required={(householdFormData?.phone?.length ?? 0) > 0}
             handleOnChange={handleOnChange}
           />
         </div>
@@ -96,6 +99,7 @@ export default function ContactForm({
             inputValue={householdFormData.email ?? ""}
             fieldName="email"
             labelText="Email"
+            required={(householdFormData?.email?.length ?? 0) > 0}
             handleOnChange={handleOnChange}
           />
         </div>

@@ -20,7 +20,7 @@ export const householdRouter = createTRPCRouter({
         state: z.string().nullish().optional(),
         country: z.string().nullish().optional(),
         zipCode: z.string().nullish().optional(),
-        phoneNumber: z.string().nullish().optional(),
+        phone: z.string().nullish().optional(),
         email: z
           .string()
           .email({ message: "Not a valid email" })
@@ -30,8 +30,6 @@ export const householdRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      console.log("inputz", input);
-
       const userId = ctx.auth.userId;
 
       const household = await ctx.db.household.create({
@@ -43,7 +41,7 @@ export const householdRouter = createTRPCRouter({
           state: input?.state,
           country: input?.country,
           zipCode: input?.zipCode,
-          phone: input?.phoneNumber,
+          phone: input?.phone,
           email: input?.email,
           notes: input?.notes,
           gifts: {
@@ -97,8 +95,6 @@ export const householdRouter = createTRPCRouter({
         }),
       );
 
-      console.log("new guests", newGuests);
-
       if (!newGuests) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -121,7 +117,6 @@ export const householdRouter = createTRPCRouter({
           }),
         ),
       };
-      console.log("dataz", householdData);
 
       return householdData;
     }),
@@ -144,7 +139,7 @@ export const householdRouter = createTRPCRouter({
         state: z.string().nullish().optional(),
         country: z.string().nullish().optional(),
         zipCode: z.string().nullish().optional(),
-        phoneNumber: z.string().nullish().optional(),
+        phone: z.string().nullish().optional(),
         email: z
           .string()
           .email({ message: "Not a valid email" })
@@ -162,7 +157,6 @@ export const householdRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("inputz", input);
       const userId = ctx.auth.userId;
 
       const updatedHousehold = await ctx.db.household.update({
@@ -176,32 +170,10 @@ export const householdRouter = createTRPCRouter({
           state: input.state ?? undefined,
           country: input.country ?? undefined,
           zipCode: input.zipCode ?? undefined,
-          phone: input.phoneNumber ?? undefined,
+          phone: input.phone ?? undefined,
           email: input.email ?? undefined,
           notes: input.notes ?? undefined,
-          // guests: {
-          //   connect: {
-          //     invitations: {
-          //       every:
-          //     },
-          //   },
-          //   updateMany: {
-          //     where: {
-          //       householdId: input.householdId,
-          //     },
-          //     data: input.guestParty.map(guest => {
-          //       return {
-          //         firstName: guest.firstName,
-          //         lastName: guest.lastName,
-          //       }
-          //     }),
-
-          //   },
-          // },
         },
-        // include: {
-        //   guests: true,
-        // }
       });
 
       await ctx.db.guest.deleteMany({
@@ -214,8 +186,6 @@ export const householdRouter = createTRPCRouter({
 
       const updatedGuestParty = await Promise.all(
         input.guestParty.map(async (guest) => {
-          console.log("input invitez: ", guest.invites);
-
           const updatedGuest = await ctx.db.guest.upsert({
             where: {
               id: guest.guestId ?? -1, // db throws error if trying to upsert with undefined id - use unreachable integer as id to bring execution to the create block
@@ -265,18 +235,12 @@ export const householdRouter = createTRPCRouter({
           if (updatedInvitations.length !== Object.keys(guest.invites).length)
             return Promise.reject();
 
-          // console.log('updatedinvitatonz', updatedInvitations);
-
-          console.log("guestz", updatedGuest);
-
           return {
             ...updatedGuest,
             invitations: updatedInvitations,
           };
         }),
       );
-
-      console.log("updated guests", updatedGuestParty);
 
       if (!updatedHousehold || !updatedGuestParty) {
         throw new TRPCError({

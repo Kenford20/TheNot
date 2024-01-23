@@ -3,10 +3,13 @@ import { sharedStyles } from "~/app/utils/shared-styles";
 type AnimatedInputLabelProps = {
   id: string;
   type?: string;
+  pattern?: string;
+  title?: string;
   inputValue: string;
   fieldName?: string;
   labelText: string;
   guestIndex?: number;
+  required?: boolean;
   handleOnChange: ({
     field,
     inputValue,
@@ -21,20 +24,25 @@ type AnimatedInputLabelProps = {
 export default function AnimatedInputLabel({
   id,
   type,
+  pattern,
+  title,
   inputValue,
   fieldName,
   labelText,
   guestIndex,
+  required,
   handleOnChange,
 }: AnimatedInputLabelProps) {
   return (
     <div className="relative">
       <input
         type={type ?? "text"}
+        pattern={pattern}
+        title={title}
         id={id}
         placeholder=" "
         value={inputValue ?? ""}
-        required
+        required={required ?? false}
         onChange={(e) =>
           handleOnChange({
             field: fieldName ?? "",

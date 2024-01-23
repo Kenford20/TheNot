@@ -143,6 +143,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
               inputValue={eventFormData.eventName}
               fieldName="eventName"
               labelText="Event Name*"
+              required={true}
               handleOnChange={handleOnChange}
             />
             <DateInput

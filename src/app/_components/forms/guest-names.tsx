@@ -86,6 +86,7 @@ export const GuestNameForm = ({
               fieldName="firstName"
               labelText="First Name*"
               guestIndex={guestIndex}
+              required={true}
               handleOnChange={handleNameChange}
             />
           </div>
@@ -96,6 +97,7 @@ export const GuestNameForm = ({
               fieldName="lastName"
               labelText="Last Name*"
               guestIndex={guestIndex}
+              required={true}
               handleOnChange={handleNameChange}
             />
           </div>
