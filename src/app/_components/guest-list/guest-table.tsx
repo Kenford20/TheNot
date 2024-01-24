@@ -468,7 +468,7 @@ const InvitationDropdown = ({
         <select
           name="guestRSVP"
           value={rsvp}
-          id={`guest-rsvp-${guest.id}`}
+          id={`guest-rsvp-${guest.id}-${event.id}`}
           className="pr-3 font-light tracking-tight"
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => {

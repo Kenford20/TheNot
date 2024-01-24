@@ -82,6 +82,7 @@ export default function GuestSearchFilter({
     <div className="flex items-center">
       <div className="flex">
         <input
+          id="search-guests-input"
           className="h-12 w-64 border-2 px-3 py-2"
           placeholder="Find Guests"
           value={searchInput}
