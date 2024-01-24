@@ -1,5 +1,4 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { getServerAuthSession } from "~/server/auth";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 import { type Metadata } from "next";
@@ -12,8 +11,6 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   noStore();
-  const session = await getServerAuthSession();
-  console.log("sessionz, ", session);
 
   return (
     <>
