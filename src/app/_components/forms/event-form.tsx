@@ -152,7 +152,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
             />
             <TimeSelections
               startTime={eventFormData.startTime}
-              endTime={eventFormData.endTime ?? ""}
+              endTime={eventFormData.endTime}
               handleOnChange={handleOnChange}
             />
             <AnimatedInputLabel

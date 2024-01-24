@@ -44,4 +44,19 @@ function convertDate(date: Date | null) {
   return `${daysOfTheWeek[day]}, ${abbreviatedMonths[month]} ${datee + 1}`;
 }
 
-export { formatDateNumber, convertDate };
+// returns an array of times from 12pm to 11:45am (24hrs) in 15min increments
+function generateTimes() {
+  const times = [];
+  for (let i = 720; i <= 2145; i += 15) {
+    let hours = Math.floor(i / 60);
+    let minutes: number | string = i % 60;
+    if (minutes < 10) minutes = "0" + minutes.toString();
+    const ampm = hours % 24 < 12 ? "AM" : "PM";
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    times.push(`${hours}:${minutes} ${ampm}`);
+  }
+  return times;
+}
+
+export { formatDateNumber, convertDate, generateTimes };
