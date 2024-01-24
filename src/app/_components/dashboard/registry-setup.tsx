@@ -20,6 +20,7 @@ export default function RegistrySetup({
           src={PresentsImage}
           width="130"
           height="130"
+          priority={true}
         />
         <div className="ml-10 flex flex-col">
           <h2 className="text-2xl font-semibold">
