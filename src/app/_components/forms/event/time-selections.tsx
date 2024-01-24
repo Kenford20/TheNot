@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateTimes } from "~/app/utils/helpers";
 import { useOuterClick } from "../../hooks";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 type TimeSelectionsProps = {
   startTime: string | undefined;
@@ -43,11 +43,16 @@ export default function TimeSelections({
             Start Time
           </span>
           <span>{startTime ?? "Select Time"}</span>
-          <IoIosArrowDown size={20} />
+          {showStartTimes ? (
+            <IoIosArrowUp size={20} />
+          ) : (
+            <IoIosArrowDown size={20} />
+          )}
           {showStartTimes && (
             <TimeDropdown
               isOpen={showStartTimes}
               field="startTime"
+              selectedTime={startTime ?? ""}
               handleOnChange={handleOnChange}
             />
           )}
@@ -67,11 +72,16 @@ export default function TimeSelections({
             End Time
           </span>
           <span>{endTime ?? "Select Time"}</span>
-          <IoIosArrowDown size={20} />
+          {showEndTimes ? (
+            <IoIosArrowUp size={20} />
+          ) : (
+            <IoIosArrowDown size={20} />
+          )}
           {showEndTimes && (
             <TimeDropdown
               isOpen={showEndTimes}
               field="endTime"
+              selectedTime={endTime ?? ""}
               handleOnChange={handleOnChange}
             />
           )}
@@ -84,6 +94,7 @@ export default function TimeSelections({
 type TimeDropdownProps = {
   isOpen: boolean;
   field: string;
+  selectedTime: string;
   handleOnChange: ({
     field,
     inputValue,
@@ -93,7 +104,12 @@ type TimeDropdownProps = {
   }) => void;
 };
 
-const TimeDropdown = ({ isOpen, field, handleOnChange }: TimeDropdownProps) => {
+const TimeDropdown = ({
+  isOpen,
+  field,
+  selectedTime,
+  handleOnChange,
+}: TimeDropdownProps) => {
   const times = generateTimes();
   const handleChangeOption = (
     e: React.MouseEvent<HTMLLIElement>,
@@ -102,6 +118,11 @@ const TimeDropdown = ({ isOpen, field, handleOnChange }: TimeDropdownProps) => {
     const target = e.target as HTMLElement;
     handleOnChange({ field, inputValue: target.innerText });
   };
+  useEffect(() => {
+    document.getElementsByClassName("selected-startTime")[0]?.scrollIntoView();
+    document.getElementsByClassName("selected-endTime")[0]?.scrollIntoView();
+  }, []);
+
   return (
     <div
       className={`absolute left-0 top-12 z-20 h-60 w-full overflow-auto rounded-lg border border-b-pink-400 border-l-pink-400 border-r-pink-400 bg-white ${isOpen ?? "border-pink-400"}`}
@@ -110,7 +131,7 @@ const TimeDropdown = ({ isOpen, field, handleOnChange }: TimeDropdownProps) => {
         {times.map((time) => (
           <li
             key={time}
-            className="p-4 text-lg hover:bg-pink-100 hover:underline"
+            className={`p-4 text-lg hover:bg-pink-100 hover:underline ${selectedTime === time && `selected-${field} bg-pink-100 font-bold`}`}
             onClick={(e) => handleChangeOption(e, field)}
           >
             {time}
