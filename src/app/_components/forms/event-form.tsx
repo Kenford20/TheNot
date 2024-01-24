@@ -147,7 +147,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
               handleOnChange={handleOnChange}
             />
             <DateInput
-              date={eventFormData.date}
+              eventDate={eventFormData.date}
               handleOnChange={handleOnChange}
             />
             <TimeSelections

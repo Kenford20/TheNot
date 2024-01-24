@@ -1,3 +1,14 @@
+// format: January 1, 2024
+function formatDateStandard(date: Date | null | undefined) {
+  if (!date) return;
+  return date.toLocaleDateString("en-us", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+// format: 01.24.2024
 function formatDateNumber(date: Date | null | undefined) {
   if (!date) return;
   const d = new Date(date);
@@ -11,6 +22,7 @@ function formatDateNumber(date: Date | null | undefined) {
   return [month, day, year].join(".");
 }
 
+// format: Sunday, Jan. 1
 function convertDate(date: Date | null) {
   if (!date) return date;
   const day = date.getDay();
@@ -59,4 +71,4 @@ function generateTimes() {
   return times;
 }
 
-export { formatDateNumber, convertDate, generateTimes };
+export { formatDateStandard, formatDateNumber, convertDate, generateTimes };

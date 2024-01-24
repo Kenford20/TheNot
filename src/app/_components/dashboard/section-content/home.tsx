@@ -1,9 +1,9 @@
+import { useToggleEventForm } from "../../contexts/event-form-context";
+import { sharedStyles } from "../../../utils/shared-styles";
+import { convertDate, formatDateStandard } from "~/app/utils/helpers";
 import { CiLocationOn } from "react-icons/ci";
 import { BsPencil } from "react-icons/bs";
 import { TfiNewWindow } from "react-icons/tfi";
-import { sharedStyles } from "../../../utils/shared-styles";
-import { convertDate } from "~/app/utils/helpers";
-import { useToggleEventForm } from "../../contexts/event-form-context";
 import {
   AiOutlineCalendar,
   AiOutlineClockCircle,
@@ -31,11 +31,7 @@ export default function HomeContent({
   const toggleEventForm = useToggleEventForm();
 
   const handleEditEvent = (event: Event) => {
-    const standardDate = event?.date?.toLocaleDateString("en-us", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const standardDate = formatDateStandard(event.date);
 
     setPrefillEvent({
       eventName: event.name,
@@ -51,7 +47,7 @@ export default function HomeContent({
   };
 
   return (
-    <div>
+    <>
       <div className="px-10">
         <div className="flex cursor-pointer items-center justify-center border py-16 transition-colors duration-300 ease-in-out hover:bg-gray-100">
           <div className="flex">
@@ -150,13 +146,13 @@ export default function HomeContent({
                 size={25}
                 color={sharedStyles.primaryColorHex}
               />
-              <p className={`pl-2 text-${sharedStyles.primaryColor}`}>
+              <span className={`pl-2 text-${sharedStyles.primaryColor}`}>
                 Add Event
-              </p>
+              </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

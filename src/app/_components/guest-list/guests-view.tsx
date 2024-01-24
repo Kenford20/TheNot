@@ -1,19 +1,14 @@
+import { useEffect, useMemo, useState } from "react";
+import { useToggleGuestForm } from "../contexts/guest-form-context";
+import { useToggleEventForm } from "../contexts/event-form-context";
+import { formatDateStandard } from "~/app/utils/helpers";
+import { sharedStyles } from "~/app/utils/shared-styles";
 import { BiPencil } from "react-icons/bi";
+
 import GuestSearchFilter from "./guest-search-filter";
 import GuestTable from "./guest-table";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
-
-import { useToggleGuestForm } from "../contexts/guest-form-context";
-import { sharedStyles } from "~/app/utils/shared-styles";
-import { useToggleEventForm } from "../contexts/event-form-context";
-
+import { type Dispatch, type SetStateAction } from "react";
 import {
   type Event,
   type EventFormData,
@@ -182,11 +177,7 @@ const SelectedEventTableHeader = ({
   if (selectedEvent === undefined) return null;
 
   const handleEditEvent = (event: Event) => {
-    const standardDate = event?.date?.toLocaleDateString("en-us", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const standardDate = formatDateStandard(event.date);
 
     setPrefillEvent({
       eventName: event.name,
