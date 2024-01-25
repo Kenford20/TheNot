@@ -56,12 +56,12 @@ export default function Dashboard({
         websiteUrl={dashboardData?.weddingData?.website?.url}
         setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
       />
+      <hr className="relative -left-48 bottom-0 w-screen border-gray-300" />
       {showRegistrySetup && (
         <RegistrySetup setShowRegistrySetup={setShowRegistrySetup} />
       )}
-      <div
-        className={`mt-14 grid grid-cols-[3fr_275px] gap-7 ${sharedStyles.desktopPaddingSides}`}
-      >
+      <hr className="relative -left-48 bottom-0 w-screen border-gray-300" />
+      <div className="mt-14 grid grid-cols-[3fr_275px] gap-7">
         <div>
           <div className="flex justify-between pb-8">
             <h2 className="text-xl font-semibold">Pages</h2>

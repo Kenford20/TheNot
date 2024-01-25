@@ -1,6 +1,7 @@
 import { sharedStyles } from "../../utils/shared-styles";
 import { FiEdit2 } from "react-icons/fi";
 import { FaRegCopy } from "react-icons/fa";
+
 import { type Dispatch, type SetStateAction } from "react";
 
 type DashboardHeaderProps = {
@@ -13,10 +14,8 @@ export default function DashboardHeader({
   setIsWebsiteSettingsOpen,
 }: DashboardHeaderProps) {
   return (
-    <section className="border-b py-10">
-      <div
-        className={`flex items-center justify-between ${sharedStyles.desktopPaddingSides}`}
-      >
+    <section className="py-10">
+      <div className="flex items-center justify-between">
         <div className="">
           <h1 className="text-3xl font-bold">Your Website</h1>
           <div className="mt-2 flex">

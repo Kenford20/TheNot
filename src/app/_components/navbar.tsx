@@ -1,11 +1,13 @@
+import { sharedStyles } from "../utils/shared-styles";
 import { SignOutButton, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { sharedStyles } from "../utils/shared-styles";
 
 export default async function Navbar() {
   const user = await currentUser();
   return (
-    <div className={`border-b pt-5 ${sharedStyles.desktopPaddingSides}`}>
+    <div
+      className={`pt-5 ${sharedStyles.desktopPaddingSides} ${sharedStyles.minPageWidth}`}
+    >
       <h1 className="pb-4 text-3xl">{user?.firstName}</h1>
       <ul className="flex justify-between">
         <div className="flex gap-7">
@@ -45,6 +47,7 @@ export default async function Navbar() {
           <SignOutButton />
         </div>
       </ul>
+      <hr className="relative -left-48 bottom-0 w-screen border-gray-300" />
     </div>
   );
 }

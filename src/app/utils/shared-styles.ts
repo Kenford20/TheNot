@@ -1,4 +1,5 @@
-const desktopPaddingSides = "px-40";
+const minPageWidth = "min-w-[1610px]";
+const desktopPaddingSides = "px-48";
 const desktopPaddingSidesGuestList = "px-20";
 const verticalDivider = "px-3 text-neutral-300";
 const primaryColor = "pink-400";
@@ -55,6 +56,7 @@ const getRSVPcolor = (rsvp: string | null | undefined) => {
 };
 
 export const sharedStyles = {
+  minPageWidth,
   desktopPaddingSides,
   desktopPaddingSidesGuestList,
   verticalDivider,

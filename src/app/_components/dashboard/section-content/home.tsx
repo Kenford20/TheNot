@@ -95,38 +95,58 @@ export default function HomeContent({
                   className="absolute right-5 top-5"
                   onClick={() => handleEditEvent(event)}
                 >
-                  <BsPencil size={24} color={sharedStyles.primaryColorHex} />
+                  <BsPencil size={20} color={sharedStyles.primaryColorHex} />
                 </button>
                 <h3 className="mb-4 pr-5 text-lg font-semibold">
                   {event.name}
                 </h3>
                 <div className="flex flex-col gap-3 text-sm font-light">
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 text-xs">
                     <AiOutlineCalendar size={20} />
                     {!!event.date ? (
                       <p>{convertDate(event.date)}</p>
                     ) : (
-                      <button className="underline">Add date</button>
+                      <button
+                        className="underline"
+                        onClick={() => handleEditEvent(event)}
+                      >
+                        Add date
+                      </button>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 text-xs">
                     <AiOutlineClockCircle size={20} />
                     {!!event.startTime ? (
                       <p>{event.startTime.toString()}</p>
                     ) : (
-                      <button className="underline">Add time</button>
+                      <button
+                        className="underline"
+                        onClick={() => handleEditEvent(event)}
+                      >
+                        Add time
+                      </button>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 text-xs">
                     <CiLocationOn size={20} />
                     {!!event.venue ? (
                       <p>{event.venue}</p>
                     ) : (
                       <div className="flex gap-2">
-                        <button className="underline">Add venue</button>
+                        <button
+                          className="underline"
+                          onClick={() => handleEditEvent(event)}
+                        >
+                          Add venue
+                        </button>
                         <span className="text-neutral-300">|</span>
-                        <button className="underline">Browse venues</button>
-                        <TfiNewWindow size={18} />
+                        <button
+                          className="underline"
+                          onClick={() => handleEditEvent(event)}
+                        >
+                          Browse venues
+                        </button>
+                        <TfiNewWindow size={16} />
                       </div>
                     )}
                   </div>

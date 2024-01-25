@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { sharedStyles } from "../../utils/shared-styles";
+import Link from "next/link";
 import Image from "next/image";
 import PresentsImage from "../images/Birthday-Present-PNG-Pic.png";
 
@@ -13,7 +13,7 @@ export default function RegistrySetup({
   setShowRegistrySetup,
 }: RegistrySetupProps) {
   return (
-    <section className={`${sharedStyles.desktopPaddingSides} border-b py-10`}>
+    <section className="py-10">
       <div className="flex">
         <Image
           alt="registry gifts"
