@@ -196,7 +196,7 @@ model Invitation {
     eventId   String
     invitedAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    rsvp      String?
+    rsvp      String?  @default("Not Invited")
     userId    String
 
     @@id(name: "invitationId", [guestId, eventId])

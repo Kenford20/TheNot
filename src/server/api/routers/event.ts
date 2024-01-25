@@ -9,7 +9,7 @@ export const eventRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        eventName: z.string().nonempty({ message: "Event name required" }),
+        eventName: z.string().min(1, { message: "Event name required" }),
         date: z.string().optional(),
         startTime: z.string().optional(),
         endTime: z.string().optional(),
@@ -28,11 +28,12 @@ export const eventRouter = createTRPCRouter({
         attire,
         description,
       } = input;
+      const userId = ctx.auth.userId;
 
-      return await ctx.db.event.create({
+      const newEvent = await ctx.db.event.create({
         data: {
           name,
-          userId: ctx.auth.userId,
+          userId,
           date: date ? new Date(date) : undefined,
           startTime,
           endTime,
@@ -41,6 +42,28 @@ export const eventRouter = createTRPCRouter({
           description,
         },
       });
+
+      // create invitations for all pre-existing guests to relate to this new event being created
+      const guests = await ctx.db.guest.findMany({
+        where: {
+          userId,
+        },
+      });
+
+      await Promise.all(
+        guests.map(async (guest) => {
+          await ctx.db.invitation.create({
+            data: {
+              userId,
+              guestId: guest.id,
+              eventId: newEvent.id,
+              rsvp: "Not Invited",
+            },
+          });
+        }),
+      );
+
+      return newEvent;
     }),
 
   getAllByUserId: publicProcedure.query(async ({ ctx }) => {
