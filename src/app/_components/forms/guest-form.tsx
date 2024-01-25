@@ -179,7 +179,7 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
   };
 
   return (
-    <div className="fixed top-0 z-50 flex h-screen w-screen justify-end overflow-y-scroll bg-transparent/[0.5] pb-24">
+    <div className="fixed left-0 top-0 z-50 flex h-screen w-screen justify-end overflow-y-scroll bg-transparent/[0.5] pb-24">
       {showDeleteConfirmation && (
         <DeleteConfirmation
           isProcessing={deleteHousehold.isLoading}

@@ -105,7 +105,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
     createEvent.isLoading || updateEvent.isLoading || deleteEvent.isLoading;
 
   return (
-    <div className="fixed top-0 z-10 flex h-screen w-screen justify-end overflow-y-auto bg-transparent/[0.5]">
+    <div className="fixed left-0 top-0 z-10 flex h-screen w-screen justify-end overflow-y-auto bg-transparent/[0.5]">
       {showDeleteConfirmation && (
         <DeleteConfirmation
           isProcessing={isProcessing}
