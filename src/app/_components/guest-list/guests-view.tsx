@@ -64,9 +64,7 @@ export default function GuestsView({
           setPrefillEvent={setPrefillEvent}
         />
       )}
-      <div
-        className={`mb-8 flex justify-between ${sharedStyles.desktopPaddingSidesGuestList}`}
-      >
+      <div className="mb-8 flex justify-between">
         <GuestSearchFilter
           setFilteredHouseholds={setFilteredHouseholds}
           households={households}
@@ -111,7 +109,7 @@ const DefaultTableHeader = ({
 }: DefaultTableHeaderProps) => {
   return (
     <div>
-      <div className={`py-8 ${sharedStyles.desktopPaddingSidesGuestList}`}>
+      <div className="py-8">
         <span className="text-sm">
           TOTAL HOUSEHOLDS:{" "}
           <span className="font-bold">{households.length}</span>
@@ -194,9 +192,7 @@ const SelectedEventTableHeader = ({
 
   return (
     <div className="py-8">
-      <div
-        className={`${sharedStyles.desktopPaddingSidesGuestList} mb-3 flex items-center gap-2`}
-      >
+      <div className="mb-3 flex items-center gap-2">
         <h2 className="text-xl font-bold">{selectedEvent.name}</h2>
         <BiPencil
           size={22}
@@ -205,9 +201,7 @@ const SelectedEventTableHeader = ({
           onClick={() => handleEditEvent(selectedEvent)}
         />
       </div>
-      <div
-        className={`${sharedStyles.desktopPaddingSidesGuestList} flex gap-4`}
-      >
+      <div className="flex gap-4">
         <span className="text-md font-semibold">
           {totalGuests} Guests Invited:
         </span>

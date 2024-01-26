@@ -1,5 +1,7 @@
 import { api } from "~/trpc/server";
 import { redirect } from "next/navigation";
+import { sharedStyles } from "../utils/shared-styles";
+
 import GuestList from "../_components/guest-list";
 
 export default async function DashboardPage() {
@@ -9,5 +11,9 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  return <GuestList dashboardData={dashboardData} />;
+  return (
+    <main className={`${sharedStyles.desktopPaddingSidesGuestList}`}>
+      <GuestList dashboardData={dashboardData} />;
+    </main>
+  );
 }

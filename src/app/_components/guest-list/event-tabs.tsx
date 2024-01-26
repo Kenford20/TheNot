@@ -16,8 +16,8 @@ export default function EventsTabs({
   const toggleEventForm = useToggleEventForm();
 
   return (
-    <div className="border-b">
-      <ul className={`flex gap-5 ${sharedStyles.desktopPaddingSidesGuestList}`}>
+    <>
+      <ul className="flex gap-5">
         <li
           className={`cursor-pointer border-b-4 py-3 text-sm hover:border-gray-600 ${
             selectedEventId === "all" ? "border-gray-600" : "border-transparent"
@@ -50,6 +50,7 @@ export default function EventsTabs({
           + New Event
         </button>
       </ul>
-    </div>
+      <hr className="relative -left-20 bottom-0 w-screen border-gray-300" />
+    </>
   );
 }

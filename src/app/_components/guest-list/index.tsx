@@ -67,7 +67,7 @@ export default function GuestList({
   if (dashboardData === null) return <SomethingWentWrongPage />;
 
   return (
-    <main>
+    <>
       {isGuestFormOpen && (
         <GuestForm
           events={dashboardData?.events}
@@ -75,7 +75,7 @@ export default function GuestList({
         />
       )}
       {isEventFormOpen && <EventForm prefillFormData={prefillEvent} />}
-      <GuestHeader />
+      {/* <GuestHeader /> */}
       <EventsTabs
         events={dashboardData?.events}
         selectedEventId={selectedEventId}
@@ -91,6 +91,6 @@ export default function GuestList({
       ) : (
         <NoGuestsView setPrefillHousehold={setPrefillHousehold} />
       )}
-    </main>
+    </>
   );
 }

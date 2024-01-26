@@ -85,7 +85,7 @@ export default function GuestTable({
   };
 
   return (
-    <div className={sharedStyles.desktopPaddingSidesGuestList}>
+    <>
       <div className="max-h-[75vh] overflow-auto">
         <table>
           <tbody>
@@ -161,7 +161,7 @@ export default function GuestTable({
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
 

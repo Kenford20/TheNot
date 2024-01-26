@@ -82,6 +82,7 @@ const config = {
     "border-pink-400",
     "bg-pink-400",
     "px-40",
+    "px-20",
     "px-12",
     "py-3",
   ],
