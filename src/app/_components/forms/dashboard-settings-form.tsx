@@ -32,7 +32,7 @@ export default function DashboardSettingsForm({
   useDisablePageScroll();
 
   return (
-    <div className="fixed top-0 z-50 flex h-screen w-screen justify-end bg-transparent/[0.5] pb-24">
+    <div className="fixed left-0 top-0 z-50 flex h-screen w-screen justify-end bg-transparent/[0.5] pb-24">
       <div
         className={`relative h-screen ${sharedStyles.sidebarFormWidth} bg-white`}
       >
