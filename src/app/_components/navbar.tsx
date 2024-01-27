@@ -1,5 +1,5 @@
 import { sharedStyles } from "../utils/shared-styles";
-import { SignOutButton, currentUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default async function Navbar() {
@@ -44,7 +44,7 @@ export default async function Navbar() {
           </li>
         </div>
         <div className="pb-5">
-          <SignOutButton />
+          {user === null ? <SignInButton /> : <SignOutButton />}
         </div>
       </ul>
       <hr className="relative -left-48 bottom-0 w-screen border-gray-300" />
