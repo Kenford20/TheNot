@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Navbar({ path }: { path: string }) {
   return (
-    <div className="px-20">
+    <div className="mb-5 mt-10 px-20">
       <ul className="flex justify-between">
         <div className="flex gap-7">
           <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">

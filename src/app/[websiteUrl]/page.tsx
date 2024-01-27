@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 import PasswordPage from "../_components/website/password-page";
 import NotFoundPage from "../_components/404";
 import WeddingWebsite from "../_components/website/wedding";
-import Loading from "./loading";
 
 type RootRouteHandlerProps = {
   params: {
@@ -30,12 +29,12 @@ export default async function RootRouteHandler({
   };
 
   return (
-    <Suspense fallback={<Loading />}>
+    <main>
       {hasPassword ? (
         <WeddingWebsite />
       ) : (
         <PasswordPage website={website} setPasswordCookie={setPasswordCookie} />
       )}
-    </Suspense>
+    </main>
   );
 }
