@@ -22,6 +22,20 @@ function formatDateNumber(date: Date | null | undefined) {
   return [month, day, year].join(".");
 }
 
+// format: 2024-01-24 - this is the accepted format for HTML5 input pattern
+function formatDateHTML5(date: Date | null | undefined) {
+  if (!date) return;
+  const d = new Date(date);
+  let month = "" + (d.getMonth() + 1);
+  let day = "" + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+}
+
 // format: Sunday, Jan. 1
 function convertDate(date: Date | null) {
   if (!date) return date;
@@ -71,4 +85,10 @@ function generateTimes() {
   return times;
 }
 
-export { formatDateStandard, formatDateNumber, convertDate, generateTimes };
+export {
+  formatDateStandard,
+  formatDateNumber,
+  formatDateHTML5,
+  convertDate,
+  generateTimes,
+};

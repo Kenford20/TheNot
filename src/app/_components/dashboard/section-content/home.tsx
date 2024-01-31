@@ -1,6 +1,10 @@
 import { useToggleEventForm } from "../../contexts/event-form-context";
 import { sharedStyles } from "../../../utils/shared-styles";
-import { convertDate, formatDateStandard } from "~/app/utils/helpers";
+import {
+  convertDate,
+  formatDateHTML5,
+  formatDateStandard,
+} from "~/app/utils/helpers";
 import { CiLocationOn } from "react-icons/ci";
 import { BsPencil } from "react-icons/bs";
 import { TfiNewWindow } from "react-icons/tfi";
@@ -31,7 +35,7 @@ export default function HomeContent({
   const toggleEventForm = useToggleEventForm();
 
   const handleEditEvent = (event: Event) => {
-    const standardDate = formatDateStandard(event.date);
+    const standardDate = formatDateHTML5(event.date);
 
     setPrefillEvent({
       eventName: event.name,
