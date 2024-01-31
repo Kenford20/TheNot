@@ -461,9 +461,9 @@ const InvitationDropdown = ({
         )}`}
       ></span>
       {updateInvitation.isLoading ? (
-        <td className="m-auto w-[65%]">
+        <div className="m-auto w-[65%]">
           <LoadingSpinner />
-        </td>
+        </div>
       ) : (
         <select
           name="guestRSVP"

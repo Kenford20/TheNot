@@ -42,7 +42,7 @@ export default function GuestListSkeleton() {
             <div>
               <div>
                 {/* TableHeadings */}
-                <tr
+                <div
                   className="sticky top-0 grid min-w-fit items-center gap-12 border-b bg-white px-8 py-6 italic text-gray-600"
                   style={{
                     gridTemplateColumns:
@@ -56,7 +56,7 @@ export default function GuestListSkeleton() {
                   <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700"></div>
                   <div className="h-5 w-40 bg-gray-200 dark:bg-gray-700"></div>
                   <div className="h-5 w-28 bg-gray-200 dark:bg-gray-700"></div>
-                </tr>
+                </div>
 
                 {/* TableRows */}
                 {[1, 2, 3, 4, 5].map((count, i) => {
