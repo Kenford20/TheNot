@@ -1,13 +1,13 @@
-import { sharedStyles } from "../../utils/shared-styles";
+import { sharedStyles } from "../../../utils/shared-styles";
 import { FiMinusCircle } from "react-icons/fi";
-import AnimatedInputLabel from "./animated-input-label";
+import AnimatedInputLabel from "../animated-input-label";
 
 import { type Dispatch, type SetStateAction } from "react";
 import {
   type GuestFormData,
   type Event,
   type HouseholdFormData,
-} from "../../utils/shared-types";
+} from "../../../utils/shared-types";
 
 type GuestNameFormProps = {
   events: Event[];

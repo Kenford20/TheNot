@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDisablePageScroll } from "../hooks";
 import { useToggleEventForm } from "../contexts/event-form-context";
-import { api } from "~/trpc/react";
 import { sharedStyles } from "../../utils/shared-styles";
 import { IoMdClose } from "react-icons/io";
 import DeleteConfirmation from "./delete-confirmation";
 import DateInput from "./event/date-input";
 import TimeSelections from "./event/time-selections";
+import AnimatedInputLabel from "./animated-input-label";
 
 import { type EventFormData } from "../../utils/shared-types";
-import AnimatedInputLabel from "./animated-input-label";
+import { useEventFormActions } from "../hooks/forms/useEventFormActions";
+import SidePaneWrapper from "./wrapper";
 
 type EventFormProps = {
   prefillFormData: EventFormData | undefined;
@@ -31,7 +30,6 @@ const defaultFormData = {
 
 export default function EventForm({ prefillFormData }: EventFormProps) {
   const isEditMode = !!prefillFormData;
-  const router = useRouter();
   const toggleEventForm = useToggleEventForm();
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
@@ -40,43 +38,14 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
     prefillFormData ?? defaultFormData,
   );
 
-  useDisablePageScroll();
-
-  const createEvent = api.event.create.useMutation({
-    onSuccess: () => {
-      toggleEventForm();
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-      if (errorMessage?.[0]) window.alert(errorMessage);
-      else window.alert("Failed to create event! Please try again later.");
-    },
-  });
-
-  const updateEvent = api.event.update.useMutation({
-    onSuccess: () => {
-      toggleEventForm();
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-      if (errorMessage?.[0]) window.alert(errorMessage);
-      else window.alert("Failed to update event! Please try again later.");
-    },
-  });
-
-  const deleteEvent = api.event.delete.useMutation({
-    onSuccess: () => {
-      toggleEventForm();
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-      if (errorMessage?.[0]) window.alert(errorMessage);
-      else window.alert("Failed to delete event! Please try again later.");
-    },
-  });
+  const {
+    createEvent,
+    isCreatingEvent,
+    updateEvent,
+    isUpdatingEvent,
+    deleteEvent,
+    isDeletingEvent,
+  } = useEventFormActions();
 
   const handleOnChange = ({
     field,
@@ -95,31 +64,30 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
 
   const handleSaveEvent = () => {
     if (isEditMode) {
-      updateEvent.mutate(eventFormData);
+      updateEvent(eventFormData);
     } else {
-      createEvent.mutate(eventFormData);
+      createEvent(eventFormData);
     }
   };
 
-  const isProcessing =
-    createEvent.isLoading || updateEvent.isLoading || deleteEvent.isLoading;
+  const isProcessing = isCreatingEvent || isUpdatingEvent || isDeletingEvent;
+
+  if (showDeleteConfirmation) {
+    return (
+      <DeleteConfirmation
+        isProcessing={isProcessing}
+        disclaimerText={
+          "Deleting this event will remove it from your website, and also erase any guest lists, RSVPs, and meals associated with it."
+        }
+        noHandler={() => setShowDeleteConfirmation(false)}
+        yesHandler={() => deleteEvent({ eventId: eventFormData.eventId })}
+      />
+    );
+  }
 
   return (
-    <div className="fixed left-0 top-0 z-10 flex h-screen w-screen justify-end overflow-y-auto bg-transparent/[0.5]">
-      {showDeleteConfirmation && (
-        <DeleteConfirmation
-          isProcessing={isProcessing}
-          disclaimerText={
-            "Deleting this event will remove it from your website, and also erase any guest lists, RSVPs, and meals associated with it."
-          }
-          noHandler={() => setShowDeleteConfirmation(false)}
-          yesHandler={() =>
-            deleteEvent.mutate({ eventId: eventFormData.eventId })
-          }
-        />
-      )}
+    <SidePaneWrapper>
       <form
-        className={`h-full ${sharedStyles.sidebarFormWidth} bg-white`}
         onSubmit={(e) => {
           e.preventDefault();
           handleSaveEvent();
@@ -179,8 +147,7 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           </div>
         </div>
         <div
-          className="fixed bottom-0 flex flex-col gap-3 border-t px-8 py-5"
-          style={{ width: "inherit" }}
+          className={`fixed bottom-0 flex ${sharedStyles.sidebarFormWidth} flex-col gap-3 border-t px-8 py-5`}
         >
           <div className="flex gap-5">
             <button
@@ -212,17 +179,13 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           </div>
           {isEditMode && (
             <button
+              type="button"
               disabled={isProcessing}
-              onClick={(e) => {
-                e.preventDefault();
-                setShowDeleteConfirmation(true);
-              }}
+              onClick={() => setShowDeleteConfirmation(true)}
               className={`font-semibold ${
-                isProcessing ? "cursor-not-allowed" : "hover:underline"
-              } ${
                 isProcessing
-                  ? "text-pink-200"
-                  : `text-${sharedStyles.primaryColor}`
+                  ? "cursor-not-allowed text-pink-200"
+                  : `text-${sharedStyles.primaryColor} hover:underline`
               }`}
             >
               Remove Event
@@ -230,6 +193,6 @@ export default function EventForm({ prefillFormData }: EventFormProps) {
           )}
         </div>
       </form>
-    </div>
+    </SidePaneWrapper>
   );
 }

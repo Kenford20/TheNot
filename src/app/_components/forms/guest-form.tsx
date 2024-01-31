@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useToggleGuestForm } from "../contexts/guest-form-context";
-import { useDisablePageScroll } from "../hooks";
+import { useGuestFormActions } from "../hooks/forms/useGuestFormActions";
 import { sharedStyles } from "../../utils/shared-styles";
-import { api } from "~/trpc/react";
 import { IoMdClose } from "react-icons/io";
-import { GuestNameForm } from "./guest-names";
+import { GuestNameForm } from "./guest/guest-names";
+import SidePaneWrapper from "./wrapper";
 import DeleteConfirmation from "./delete-confirmation";
 import ContactForm from "./guest/contact-form";
 import GiftSection from "./guest/gift-section";
@@ -65,57 +64,28 @@ type GuestFormProps = {
 };
 
 export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
-  useDisablePageScroll();
+  const isEditMode = !!prefillFormData;
   const toggleGuestForm = useToggleGuestForm();
-  const router = useRouter();
   const [closeForm, setCloseForm] = useState<boolean>(false);
+  const [deletedGuests, setDeletedGuests] = useState<number[]>([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     useState<boolean>(false);
   const [householdFormData, setHouseholdFormData] = useState<HouseholdFormData>(
     prefillFormData ?? defaultHouseholdFormData(events),
   );
-  const [deletedGuests, setDeletedGuests] = useState<number[]>([]);
-  const isEditMode = !!prefillFormData;
 
-  const createGuests = api.household.create.useMutation({
-    onSuccess: () => {
-      closeForm && toggleGuestForm();
-      setHouseholdFormData(defaultHouseholdFormData(events));
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
-      else window.alert("Failed to create guests! Please try again later.");
-    },
-  });
+  const resetForm = () => {
+    setHouseholdFormData(defaultHouseholdFormData(events));
+  };
 
-  const updateHousehold = api.household.update.useMutation({
-    onSuccess: () => {
-      toggleGuestForm();
-      setHouseholdFormData(defaultHouseholdFormData(events));
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
-      else window.alert("Failed to update party! Please try again later.");
-    },
-  });
-
-  const deleteHousehold = api.household.delete.useMutation({
-    onSuccess: () => {
-      toggleGuestForm();
-      router.refresh();
-    },
-    onError: (err) => {
-      const errorMessage = err.data?.zodError?.fieldErrors?.eventName;
-      if (errorMessage?.[0]) window.alert(errorMessage);
-      else window.alert("Failed to delete event! Please try again later.");
-    },
-  });
+  const {
+    createGuests,
+    isCreatingGuests,
+    updateHousehold,
+    isUpdatingHousehold,
+    deleteHousehold,
+    isDeletingHousehold,
+  } = useGuestFormActions(closeForm, resetForm);
 
   const getTitle = () => {
     if (!isEditMode || !prefillFormData) return "Add Party";
@@ -172,30 +142,33 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
     const submitButton = (e.nativeEvent as unknown as SubmitEvent).submitter;
 
     if (submitButton.name === "add-button") {
-      createGuests.mutate(householdFormData);
+      createGuests(householdFormData);
     } else {
-      updateHousehold.mutate({ ...householdFormData, deletedGuests });
+      updateHousehold({ ...householdFormData, deletedGuests });
     }
   };
 
+  if (showDeleteConfirmation) {
+    return (
+      <DeleteConfirmation
+        isProcessing={isDeletingHousehold}
+        disclaimerText={
+          "Please confirm whether you would like to delete this party along with all its guests."
+        }
+        noHandler={() => setShowDeleteConfirmation(false)}
+        yesHandler={() =>
+          deleteHousehold({
+            householdId: householdFormData.householdId,
+          })
+        }
+      />
+    );
+  }
+
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-screen w-screen justify-end overflow-y-scroll bg-transparent/[0.5] pb-24">
-      {showDeleteConfirmation && (
-        <DeleteConfirmation
-          isProcessing={deleteHousehold.isLoading}
-          disclaimerText={
-            "Please confirm whether you would like to delete this party along with all its guests."
-          }
-          noHandler={() => setShowDeleteConfirmation(false)}
-          yesHandler={() =>
-            deleteHousehold.mutate({
-              householdId: householdFormData.householdId,
-            })
-          }
-        />
-      )}
+    <SidePaneWrapper>
       <form
-        className={`relative h-fit ${sharedStyles.sidebarFormWidth} bg-white`}
+        className={`pb-28 ${sharedStyles.sidebarFormWidth}`}
         onSubmit={(e) => handleOnSubmit(e)}
       >
         <div className="flex justify-between border-b p-5">
@@ -218,14 +191,13 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
             />
           );
         })}
-        <div className="mt-3 text-center">
-          <button
-            onClick={() => handleAddGuestToParty()}
-            className={`text-${sharedStyles.primaryColor}`}
-          >
-            + Add A Guest To This Party
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => handleAddGuestToParty()}
+          className={`m-auto w-full py-2 text-${sharedStyles.primaryColor}`}
+        >
+          + Add A Guest To This Party
+        </button>
         <div className="p-5">
           <h2 className="mb-3 text-2xl font-bold">Contact Information</h2>
           <ContactForm
@@ -251,16 +223,16 @@ export default function GuestForm({ events, prefillFormData }: GuestFormProps) {
         </div>
         {isEditMode ? (
           <EditFormButtons
-            isUpdatingHousehold={updateHousehold.isLoading}
+            isUpdatingHousehold={isUpdatingHousehold}
             setShowDeleteConfirmation={setShowDeleteConfirmation}
           />
         ) : (
           <AddFormButtons
-            isCreatingGuests={createGuests.isLoading}
+            isCreatingGuests={isCreatingGuests}
             setCloseForm={setCloseForm}
           />
         )}
       </form>
-    </div>
+    </SidePaneWrapper>
   );
 }

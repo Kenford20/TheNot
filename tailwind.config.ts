@@ -85,6 +85,7 @@ const config = {
     "px-20",
     "px-12",
     "py-3",
+    "w-[525px]",
   ],
 } satisfies Config;
 

@@ -1,4 +1,5 @@
 import { sharedStyles } from "../../utils/shared-styles";
+import SidePaneWrapper from "./wrapper";
 
 type DeleteConfirmationProps = {
   isProcessing: boolean;
@@ -14,10 +15,8 @@ export default function DeleteConfirmation({
   yesHandler,
 }: DeleteConfirmationProps) {
   return (
-    <div
-      className={`absolute z-50 flex h-full ${sharedStyles.sidebarFormWidth} items-center justify-center bg-white`}
-    >
-      <div className="flex flex-col justify-center gap-3 px-7 text-center">
+    <SidePaneWrapper>
+      <div className="flex h-screen flex-col justify-center gap-3 px-7 text-center">
         <h1 className="text-xl font-semibold">Are you sure?</h1>
         {disclaimerText && <p>{disclaimerText}</p>}
         <div className="mt-4 flex gap-5">
@@ -47,6 +46,6 @@ export default function DeleteConfirmation({
           </button>
         </div>
       </div>
-    </div>
+    </SidePaneWrapper>
   );
 }

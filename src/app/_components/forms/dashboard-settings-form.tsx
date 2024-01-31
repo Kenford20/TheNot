@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { useDisablePageScroll } from "../hooks";
 import { sharedStyles } from "../../utils/shared-styles";
 import { IoMdClose } from "react-icons/io";
 import { BsTrash3 } from "react-icons/bs";
@@ -13,6 +12,7 @@ import { Switch } from "~/components/ui/switch";
 
 import SetPasswordView from "./website-settings/set-password";
 import EditUrlView from "./website-settings/edit-url";
+import SidePaneWrapper from "./wrapper";
 
 import { type Dispatch, type SetStateAction } from "react";
 import { type Website } from "../../utils/shared-types";
@@ -29,33 +29,27 @@ export default function DashboardSettingsForm({
   const [showPasswordView, setShowPasswordView] = useState<boolean>(false);
   const [showEditUrlView, setShowEditUrlView] = useState<boolean>(false);
 
-  useDisablePageScroll();
-
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-screen w-screen justify-end bg-transparent/[0.5] pb-24">
-      <div
-        className={`relative h-screen ${sharedStyles.sidebarFormWidth} bg-white`}
-      >
-        {showPasswordView ? (
-          <SetPasswordView
-            setShowPasswordView={setShowPasswordView}
-            password={website?.password ?? ""}
-          />
-        ) : showEditUrlView ? (
-          <EditUrlView
-            setShowEditUrlView={setShowEditUrlView}
-            websiteUrl={website?.subUrl ?? ""}
-          />
-        ) : (
-          <Main
-            setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
-            website={website}
-            setShowPasswordView={setShowPasswordView}
-            setShowEditUrlView={setShowEditUrlView}
-          />
-        )}
-      </div>
-    </div>
+    <SidePaneWrapper>
+      {showPasswordView ? (
+        <SetPasswordView
+          setShowPasswordView={setShowPasswordView}
+          password={website?.password ?? ""}
+        />
+      ) : showEditUrlView ? (
+        <EditUrlView
+          setShowEditUrlView={setShowEditUrlView}
+          websiteUrl={website?.subUrl ?? ""}
+        />
+      ) : (
+        <Main
+          setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
+          website={website}
+          setShowPasswordView={setShowPasswordView}
+          setShowEditUrlView={setShowEditUrlView}
+        />
+      )}
+    </SidePaneWrapper>
   );
 }
 

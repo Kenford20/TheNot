@@ -16,8 +16,7 @@ export default function EditFormButtons({
 
   return (
     <div
-      className="fixed bottom-0 z-20 flex flex-col gap-3 border-t bg-white px-3 py-5"
-      style={{ width: "inherit" }}
+      className={`fixed bottom-0 z-20 flex ${sharedStyles.sidebarFormWidth} flex-col gap-3 border-t bg-white px-3 py-5`}
     >
       <div className="flex gap-3 text-sm">
         <button

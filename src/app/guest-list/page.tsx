@@ -13,7 +13,7 @@ export default async function DashboardPage() {
 
   return (
     <main className={`${sharedStyles.desktopPaddingSidesGuestList}`}>
-      <GuestList dashboardData={dashboardData} />;
+      <GuestList dashboardData={dashboardData} />
     </main>
   );
 }
