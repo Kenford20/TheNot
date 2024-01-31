@@ -9,6 +9,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 model Website {
@@ -101,6 +102,8 @@ model Guest {
     // answers          Answer[]         @relation(name: "Guest_Answer")
 
     @@index([householdId])
+    @@fulltext([firstName])
+    @@fulltext([lastName])
 }
 
 model Event {
@@ -196,7 +199,7 @@ model Invitation {
     eventId   String
     invitedAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    rsvp      String?  @default("Not Invited")
+    rsvp      String?  @default("Not Invited") // ['Invited', 'Accepted', 'Declined']
     userId    String
 
     @@id(name: "invitationId", [guestId, eventId])

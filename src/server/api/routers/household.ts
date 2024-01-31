@@ -1,6 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { type Household, type Invitation } from "~/app/utils/shared-types";
 
 export const householdRouter = createTRPCRouter({
@@ -290,5 +294,43 @@ export const householdRouter = createTRPCRouter({
       });
 
       return deletedHousehold.id;
+    }),
+
+  findBySearch: publicProcedure
+    .input(
+      z.object({
+        searchText: z
+          .string()
+          .min(2, { message: "Search input should be minimum 2 characters" }),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.household.findMany({
+        where: {
+          OR: [
+            {
+              guests: {
+                some: {
+                  firstName: {
+                    search: input.searchText,
+                  },
+                },
+              },
+            },
+            {
+              guests: {
+                some: {
+                  lastName: {
+                    search: input.searchText,
+                  },
+                },
+              },
+            },
+          ],
+        },
+        include: {
+          guests: true,
+        },
+      });
     }),
 });
