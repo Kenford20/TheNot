@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-export default function FinalStep() {
+import { type StepFormProps } from "~/app/utils/shared-types";
+
+export default function FinalStep({ goBack }: StepFormProps) {
   const [email, setEmail] = useState("");
   const weddingData = {
     groomFirstName: "foo",
@@ -34,6 +36,13 @@ export default function FinalStep() {
         type="submit"
       >
         SEND RSVP
+      </button>
+      <button
+        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        type="button"
+        onClick={() => goBack && goBack()}
+      >
+        BACK
       </button>
       <p className="text-xs underline">View Our Privacy Policy</p>
     </div>

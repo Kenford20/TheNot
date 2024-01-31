@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { type StepFormProps } from "~/app/utils/shared-types";
 
-export default function ConfirmNameForm() {
+export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
   const [selectedHousehold, setSelectedHousehold] = useState<string>();
 
   const matchedHouseholds = [
@@ -44,12 +45,14 @@ export default function ConfirmNameForm() {
       <button
         className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
         type="button"
+        onClick={() => goNext && goNext()}
       >
         CONTINUE
       </button>
       <button
         className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
         type="button"
+        onClick={() => goBack && goBack()}
       >
         SEARCH AGAIN
       </button>

@@ -5,7 +5,9 @@ import { AiOutlineCalendar } from "react-icons/ai";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { formatDateStandard } from "~/app/utils/helpers";
 
-export default function EventRsvpForm() {
+import { type StepFormProps } from "~/app/utils/shared-types";
+
+export default function EventRsvpForm({ goNext, goBack }: StepFormProps) {
   const event = {
     id: "123",
     name: "Wedding Day",
@@ -49,9 +51,17 @@ export default function EventRsvpForm() {
       </ul>
       <button
         className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
-        type="submit"
+        type="button"
+        onClick={() => goNext && goNext()}
       >
         CONTINUE
+      </button>
+      <button
+        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        type="submit"
+        onClick={() => goBack && goBack()}
+      >
+        BACK
       </button>
     </div>
   );

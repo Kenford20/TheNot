@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
-export default function QuestionOptionsForm() {
+import { type StepFormProps } from "~/app/utils/shared-types";
+
+export default function QuestionOptionsForm({ goNext, goBack }: StepFormProps) {
   const [selectedOption, setSelectedOption] = useState<number | undefined>();
   const question = {
     text: "What music?",
@@ -53,11 +55,9 @@ export default function QuestionOptionsForm() {
         })}
       </ul>
       <button
-        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
         type="button"
-        onClick={() =>
-          console.log("invoke function to move to next step of form")
-        }
+        onClick={() => goNext && goNext()}
       >
         CONTINUE
       </button>
@@ -65,10 +65,18 @@ export default function QuestionOptionsForm() {
         <button
           className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
           type="button"
+          onClick={() => goNext && goNext()}
         >
           SKIP
         </button>
       )}
+      <button
+        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        type="submit"
+        onClick={() => goBack && goBack()}
+      >
+        BACK
+      </button>
     </div>
   );
 }

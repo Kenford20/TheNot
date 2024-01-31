@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-export default function SendNoteForm() {
+import { type StepFormProps } from "~/app/utils/shared-types";
+
+export default function SendNoteForm({ goNext, goBack }: StepFormProps) {
   const [note, setNote] = useState("");
   return (
     <div className="flex flex-col gap-5">
@@ -11,17 +13,23 @@ export default function SendNoteForm() {
       <button
         className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
         type="button"
-        onClick={() =>
-          console.log("invoke function to move to next step of form")
-        }
+        onClick={() => goNext && goNext()}
       >
         CONTINUE
       </button>
       <button
         className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
         type="button"
+        onClick={() => goNext && goNext()}
       >
         SKIP
+      </button>
+      <button
+        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        type="button"
+        onClick={() => goBack && goBack()}
+      >
+        BACK
       </button>
     </div>
   );

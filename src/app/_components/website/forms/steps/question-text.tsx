@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-export default function QuestionTextForm() {
+import { type StepFormProps } from "~/app/utils/shared-types";
+
+export default function QuestionTextForm({ goNext, goBack }: StepFormProps) {
   const [answer, setAnswer] = useState("");
   const guestThatsAnswering = {
     firstName: "john",
@@ -26,9 +28,7 @@ export default function QuestionTextForm() {
       <button
         className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
         type="button"
-        onClick={() =>
-          console.log("invoke function to move to next step of form")
-        }
+        onClick={() => goNext && goNext()}
       >
         CONTINUE
       </button>
@@ -36,10 +36,18 @@ export default function QuestionTextForm() {
         <button
           className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
           type="button"
+          onClick={() => goNext && goNext()}
         >
           SKIP
         </button>
       )}
+      <button
+        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        type="submit"
+        onClick={() => goBack && goBack()}
+      >
+        BACK
+      </button>
     </div>
   );
 }

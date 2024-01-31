@@ -1,18 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { useUpdateRsvpForm } from "~/app/_components/contexts/rsvp-form-context";
+import { type StepFormProps } from "~/app/utils/shared-types";
+import { api } from "~/trpc/react";
 
-export default function FindYourInvitationForm() {
-  const [name, setName] = useState<string>();
+export default function FindYourInvitationForm({ goNext }: StepFormProps) {
+  const updateRsvpForm = useUpdateRsvpForm();
+  const [name, setName] = useState<string>("");
   const [showError, setShowError] = useState<boolean>(false);
+
+  const { refetch, isFetching } = api.household.findBySearch.useQuery(
+    { searchText: name },
+    {
+      enabled: false,
+      retry: false,
+    },
+  );
 
   const weddingData = {
     groomFirstName: "test",
     brideFirstName: "weebar",
   };
 
-  const findInvitation = () => {
-    // api call and query against input?
+  const handleOnSearch = () => {
+    void refetch().then((res) => {
+      if (res.error ?? res.data.length === 0) {
+        setShowError(true);
+      } else {
+        updateRsvpForm({ matches: res.data });
+        goNext && goNext();
+        console.log("res", res);
+      }
+    });
   };
 
   return (
@@ -25,7 +45,10 @@ export default function FindYourInvitationForm() {
       <input
         placeholder="Full Name"
         className="border border-gray-400 p-3"
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => {
+          setShowError(false);
+          setName(e.target.value);
+        }}
         value={name}
       />
       {showError && (
@@ -37,9 +60,9 @@ export default function FindYourInvitationForm() {
       <button
         className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
         type="button"
-        onClick={() => findInvitation()}
+        onClick={() => handleOnSearch()}
       >
-        FIND YOUR INVITATION
+        {isFetching ? "Searching..." : "FIND YOUR INVITATION"}
       </button>
     </div>
   );

@@ -140,6 +140,11 @@ type WeddingPageData = {
   events: Event[];
 };
 
+type StepFormProps = {
+  goNext?: () => void;
+  goBack?: () => void;
+};
+
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type DashboardData = RouterOutput["dashboard"]["getByUserId"];
 
@@ -158,4 +163,5 @@ export {
   type Website,
   type WeddingPageData,
   type DashboardData,
+  type StepFormProps,
 };
