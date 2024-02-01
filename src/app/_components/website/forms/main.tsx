@@ -24,11 +24,12 @@ type MainRsvpFormProps = {
   weddingData: RsvpPageData;
 };
 
+const NUM_STATIC_STEPS = 3; // find invitation step, confirm household step, and final step
+
 export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
   const { selectedHousehold } = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [numSteps, setNumSteps] = useState(8);
 
   useEffect(() => {
     updateRsvpForm({ weddingData });
@@ -39,7 +40,7 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
     alert("Submit Rsvp");
   }
 
-  const progress = ((currentStepIndex + 1) / numSteps) * 100;
+  const progress = useRef(((currentStepIndex + 1) / NUM_STATIC_STEPS) * 100);
 
   const generateDynamicStepForms = () => {
     const newSteps = weddingData?.events?.reduce(
@@ -70,12 +71,17 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
       },
       [],
     );
+    progress.current =
+      ((currentStepIndex + 1) / (newSteps.length + NUM_STATIC_STEPS)) * 100;
     return newSteps;
   };
 
   return (
     <div className="pb-20 font-serif">
-      <ProgressBar currentStepIndex={currentStepIndex} progress={progress} />
+      <ProgressBar
+        currentStepIndex={currentStepIndex}
+        progress={progress.current}
+      />
       <Link href="/foobarandloremipsum" className="absolute right-3 top-2">
         <IoMdClose size={25} className="cursor-pointer" />
       </Link>
@@ -89,6 +95,7 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
           <FindYourInvitationForm />
           <ConfirmNameForm />
           {...generateDynamicStepForms()}
+          {/* TODO: replace SendNoteForm for logic similar to above except reducing over website.questions instead for "general" questions */}
           <SendNoteForm />
           <FinalStep />
         </MultistepRsvpForm>
