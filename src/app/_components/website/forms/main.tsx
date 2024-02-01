@@ -1,36 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  useRsvpForm,
+  useUpdateRsvpForm,
+} from "../../contexts/rsvp-form-context";
 import { IoMdClose } from "react-icons/io";
-import { sharedStyles } from "~/app/utils/shared-styles";
-
+import Link from "next/link";
 import FindYourInvitationForm from "./steps/find-your-invitation";
 import ConfirmNameForm from "./steps/confirm-name";
 import EventRsvpForm from "./steps/event-rsvp";
 import QuestionTextForm from "./steps/question-text";
 import QuestionOptionsForm from "./steps/question-options";
 import FinalStep from "./steps/final-step";
+import MultistepRsvpForm from "./multi-step-form";
+import SendNoteForm from "./steps/send-note";
 
 import { type FormEvent } from "react";
-import { type Guest, type WeddingData } from "~/app/utils/shared-types";
-import MultistepRsvpForm from "./multi-step-form";
-import Link from "next/link";
-import SendNoteForm from "./steps/send-note";
-import { useRsvpForm } from "../../contexts/rsvp-form-context";
+import { type RsvpPageData } from "~/app/utils/shared-types";
+import React from "react";
 
 type MainRsvpFormProps = {
-  weddingData: WeddingData;
-  guestList: Guest[];
+  weddingData: RsvpPageData;
 };
 
-export default function MainRsvpForm({
-  weddingData,
-  guestList,
-}: MainRsvpFormProps) {
-  const rsvpFormData = useRsvpForm();
-  console.log("form", rsvpFormData);
+export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
+  const { selectedHousehold } = useRsvpForm();
+  const updateRsvpForm = useUpdateRsvpForm();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [numSteps, setNumSteps] = useState(8);
+
+  useEffect(() => {
+    updateRsvpForm({ weddingData });
+  }, []);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -38,6 +40,38 @@ export default function MainRsvpForm({
   }
 
   const progress = ((currentStepIndex + 1) / numSteps) * 100;
+
+  const generateDynamicStepForms = () => {
+    const newSteps = weddingData?.events?.reduce(
+      (acc: React.ReactNode[], event) => {
+        const invitedGuests = selectedHousehold?.guests.filter((guest) =>
+          guest.invitations.some(
+            (invite) =>
+              invite.eventId === event.id &&
+              ["Invited", "Accepted", "Declined"].includes(invite.rsvp ?? ""),
+          ),
+        );
+
+        if (invitedGuests !== undefined && invitedGuests.length > 0) {
+          acc.push(
+            <EventRsvpForm event={event} invitedGuests={invitedGuests} />,
+            <QuestionTextForm />,
+            <QuestionOptionsForm />,
+          );
+          // TODO: when questions are implemented
+          // for (let question of event.questions) {
+          //   invitedGuests.forEach(guest => {
+          //     if (question.type === 'text') acc.push(<QuestionTextForm question={question} guest={guest} />)
+          //     else acc.push(<QuestionOptionsForm question={question} guest={guest}/>)
+          //   })
+          // }
+        }
+        return acc;
+      },
+      [],
+    );
+    return newSteps;
+  };
 
   return (
     <div className="pb-20 font-serif">
@@ -54,9 +88,7 @@ export default function MainRsvpForm({
         >
           <FindYourInvitationForm />
           <ConfirmNameForm />
-          <EventRsvpForm />
-          <QuestionTextForm />
-          <QuestionOptionsForm />
+          {...generateDynamicStepForms()}
           <SendNoteForm />
           <FinalStep />
         </MultistepRsvpForm>

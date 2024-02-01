@@ -147,6 +147,8 @@ type StepFormProps = {
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type DashboardData = RouterOutput["dashboard"]["getByUserId"];
+type HouseholdSearch = RouterOutput["household"]["findBySearch"];
+type RsvpPageData = RouterOutput["website"]["fetchWeddingData"];
 
 export {
   type Event,
@@ -164,4 +166,6 @@ export {
   type WeddingPageData,
   type DashboardData,
   type StepFormProps,
+  type HouseholdSearch,
+  type RsvpPageData,
 };

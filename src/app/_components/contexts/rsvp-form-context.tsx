@@ -2,16 +2,33 @@
 
 import { createContext, useContext, useState } from "react";
 import { type ReactNode } from "react";
+import {
+  type RsvpPageData,
+  type HouseholdSearch,
+} from "~/app/utils/shared-types";
 
 type RsvpFormState = {
-  foobar?: string;
-  matches?: unknown;
+  matchedHouseholds?: HouseholdSearch;
+  selectedHousehold?: HouseholdSearch[0] | null;
+  weddingData: RsvpPageData;
 };
 
 const INITIAL_STATE: RsvpFormState = {
-  foobar: "baz",
-  // rsvp values for households + guests within their respective events
-  // questions and their answers: free response and multi choice types
+  matchedHouseholds: [],
+  selectedHousehold: null,
+  weddingData: {
+    groomFirstName: "",
+    groomLastName: "",
+    brideFirstName: "",
+    brideLastName: "",
+    date: {
+      standardFormat: "",
+      numberFormat: "",
+    },
+    password: null,
+    daysRemaining: 0,
+    events: [],
+  },
 };
 
 const RsvpFormContext = createContext(INITIAL_STATE);

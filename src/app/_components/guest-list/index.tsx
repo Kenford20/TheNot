@@ -7,7 +7,6 @@ import { useEventForm } from "../contexts/event-form-context";
 
 import GuestForm from "../forms/guest-form";
 import EventForm from "../forms/event-form";
-import GuestHeader from "./header";
 import EventsTabs from "./event-tabs";
 import NoGuestsView from "./no-guests-view";
 import GuestsView from "./guests-view";
@@ -75,7 +74,6 @@ export default function GuestList({
         />
       )}
       {isEventFormOpen && <EventForm prefillFormData={prefillEvent} />}
-      {/* <GuestHeader /> */}
       <EventsTabs
         events={dashboardData?.events}
         selectedEventId={selectedEventId}
