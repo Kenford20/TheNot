@@ -3,38 +3,47 @@
 import { useState } from "react";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import {
+  useRsvpForm,
+  useUpdateRsvpForm,
+} from "~/app/_components/contexts/rsvp-form-context";
 import { formatDateStandard } from "~/app/utils/helpers";
 
-import { type StepFormProps } from "~/app/utils/shared-types";
+import { type Dispatch, type SetStateAction } from "react";
+import {
+  type Guest,
+  type Event,
+  type StepFormProps,
+  type RsvpFormResponse,
+} from "~/app/utils/shared-types";
 
-export default function EventRsvpForm({ goNext, goBack }: StepFormProps) {
-  const event = {
-    id: "123",
-    name: "Wedding Day",
-    date: new Date("1/1/24"),
-    startTime: "12:00 PM",
-  };
-  const invitedGuests = [
-    {
-      id: "1",
-      firstName: "first",
-      lastName: "guest",
-    },
-    {
-      id: "2",
-      firstName: "second",
-      lastName: "guest",
-    },
-  ];
+interface EventRsvpFormProps extends StepFormProps {
+  event: Event;
+  invitedGuests: Guest[];
+}
+
+export default function EventRsvpForm({
+  goNext,
+  goBack,
+  event,
+  invitedGuests,
+}: EventRsvpFormProps) {
+  const rsvpFormData = useRsvpForm();
+  const updateRsvpForm = useUpdateRsvpForm();
+  const [rsvpResponses, setRsvpResponses] = useState<RsvpFormResponse[]>([]);
+
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-2xl tracking-widest">{event.name}</h2>
-      <div className="flex gap-2">
-        <AiOutlineCalendar size={20} />
-        <span>
-          {formatDateStandard(event.date)} at {event.startTime}
-        </span>
-      </div>
+      {!!event.date && (
+        <div className="flex gap-2">
+          <AiOutlineCalendar size={20} />
+          <span>
+            {formatDateStandard(event.date)}
+            {event.startTime && ` at ${event.startTime}`}
+          </span>
+        </div>
+      )}
       <ul>
         {invitedGuests.map((guest) => {
           return (
@@ -43,16 +52,26 @@ export default function EventRsvpForm({ goNext, goBack }: StepFormProps) {
                 <span>
                   {guest.firstName} {guest.lastName}
                 </span>
-                <RsvpSelection guestId={guest.id} />
+                <RsvpSelection
+                  eventId={event.id}
+                  guestId={guest.id}
+                  setRsvpResponses={setRsvpResponses}
+                />
               </div>
             </li>
           );
         })}
       </ul>
       <button
-        className={`mt-3 bg-gray-700 py-3 text-xl tracking-wide text-white`}
+        className={`mt-3 py-3 text-xl tracking-wide text-white ${rsvpResponses.length < invitedGuests.length ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
+        disabled={rsvpResponses.length < invitedGuests.length}
         type="button"
-        onClick={() => goNext && goNext()}
+        onClick={() => {
+          updateRsvpForm({
+            rsvpResponses: [...rsvpFormData.rsvpResponses, ...rsvpResponses],
+          });
+          goNext && goNext();
+        }}
       >
         CONTINUE
       </button>
@@ -67,23 +86,58 @@ export default function EventRsvpForm({ goNext, goBack }: StepFormProps) {
   );
 }
 
-function RsvpSelection({ guestId }: { guestId: string }) {
-  const [rsvpSelection, setRsvpSelection] = useState<"Accepted" | "Declined">();
+type RsvpSelectionProps = {
+  eventId: string;
+  guestId: number;
+  setRsvpResponses: Dispatch<SetStateAction<RsvpFormResponse[]>>;
+};
+
+function RsvpSelection({
+  eventId,
+  guestId,
+  setRsvpResponses,
+}: RsvpSelectionProps) {
+  const [rsvpSelection, setRsvpSelection] = useState<
+    "Attending" | "Declined"
+  >();
+  const handleOnSelect = (
+    rsvpSelection: "Attending" | "Declined",
+    currentGuestId: number,
+  ) => {
+    setRsvpSelection(rsvpSelection);
+    setRsvpResponses((prev) => {
+      const rsvpResponse = prev.find(
+        (response) => response.guestId === currentGuestId,
+      );
+      if (rsvpResponse === undefined) {
+        return [...prev, { eventId, guestId, rsvpSelection }];
+      }
+      return prev.map((response) =>
+        response.guestId === currentGuestId
+          ? { ...response, rsvpSelection }
+          : response,
+      );
+    });
+  };
   return (
     <div className="flex gap-3">
       <div
-        className={`flex w-32 cursor-pointer items-center justify-center gap-1 border border-gray-400 py-2 text-gray-400 ${rsvpSelection === "Accepted" && "bg-gray-700 text-white"}`}
-        onClick={() => setRsvpSelection("Accepted")}
+        className={`flex w-32 cursor-pointer items-center justify-center gap-1 border border-stone-400 py-2 ${rsvpSelection === "Attending" ? "bg-stone-700 text-white" : "text-stone-400"}`}
+        onClick={() => handleOnSelect("Attending", guestId)}
       >
-        {rsvpSelection === "Accepted" && <IoIosCheckmarkCircleOutline />}
-        Accept
+        {rsvpSelection === "Attending" && (
+          <IoIosCheckmarkCircleOutline size={20} />
+        )}
+        Accept{rsvpSelection === "Attending" && "ed"}
       </div>
       <div
-        className={`flex w-32 cursor-pointer items-center justify-center gap-1 border border-gray-400 py-2 text-gray-400 ${rsvpSelection === "Declined" && "bg-gray-700 text-white"}`}
-        onClick={() => setRsvpSelection("Declined")}
+        className={`flex w-32 cursor-pointer items-center justify-center gap-1 border border-stone-400 py-2 ${rsvpSelection === "Declined" ? "bg-stone-700 text-white" : "text-stone-400"}`}
+        onClick={() => handleOnSelect("Declined", guestId)}
       >
-        {rsvpSelection === "Declined" && <IoIosCheckmarkCircleOutline />}
-        Decline
+        {rsvpSelection === "Declined" && (
+          <IoIosCheckmarkCircleOutline size={20} />
+        )}
+        Decline{rsvpSelection === "Declined" && "d"}
       </div>
     </div>
   );
