@@ -1,25 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import {
+  useRsvpForm,
+  useUpdateRsvpForm,
+} from "~/app/_components/contexts/rsvp-form-context";
+
 import { type StepFormProps } from "~/app/utils/shared-types";
 
 export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
+  const { matchedHouseholds } = useRsvpForm();
+  const updateRsvpForm = useUpdateRsvpForm();
   const [selectedHousehold, setSelectedHousehold] = useState<string>();
-
-  const matchedHouseholds = [
-    {
-      id: "abc",
-      guests: "guestsingle",
-    },
-    {
-      id: "def",
-      guests: "guest & guestagain",
-    },
-    {
-      id: "xyz",
-      guests: "guest1, guest2, & guest3",
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-5">
@@ -27,25 +19,36 @@ export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
         we&apos;ve found you in the guest list. please confirm your name below
         to continue with your rsvp
       </h2>
-      {matchedHouseholds.map((household) => {
-        // would map thorugh guests and get their names here
+      {matchedHouseholds?.map((household) => {
         return (
           <div key={household.id} className="flex gap-5">
             <input
               type="radio"
               id={household.id}
               checked={selectedHousehold === household.id}
-              onClick={() => setSelectedHousehold(household.id)}
+              onChange={() => setSelectedHousehold(household.id)}
             />
-            <label htmlFor={household.id}>{household.guests}</label>
+            <label htmlFor={household.id}>
+              {household.guests
+                .map((guest) => `${guest.firstName} ${guest.lastName}`)
+                .join(", ")}
+            </label>
           </div>
         );
       })}
 
       <button
-        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
+        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white ${selectedHousehold === undefined ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
         type="button"
-        onClick={() => goNext && goNext()}
+        disabled={selectedHousehold === undefined}
+        onClick={() => {
+          updateRsvpForm({
+            selectedHousehold: matchedHouseholds?.find(
+              (household) => household.id === selectedHousehold,
+            ),
+          });
+          goNext && goNext();
+        }}
       >
         CONTINUE
       </button>

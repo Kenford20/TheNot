@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useUpdateRsvpForm } from "~/app/_components/contexts/rsvp-form-context";
-import { type StepFormProps } from "~/app/utils/shared-types";
 import { api } from "~/trpc/react";
+
+import { type StepFormProps } from "~/app/utils/shared-types";
 
 export default function FindYourInvitationForm({ goNext }: StepFormProps) {
   const updateRsvpForm = useUpdateRsvpForm();
@@ -24,11 +25,12 @@ export default function FindYourInvitationForm({ goNext }: StepFormProps) {
   };
 
   const handleOnSearch = () => {
+    // the method to conditionally execute client db queries?
     void refetch().then((res) => {
-      if (res.error ?? res.data.length === 0) {
+      if (res.error ?? res.data?.length === 0) {
         setShowError(true);
       } else {
-        updateRsvpForm({ matches: res.data });
+        updateRsvpForm({ matchedHouseholds: res.data });
         goNext && goNext();
         console.log("res", res);
       }
@@ -58,8 +60,9 @@ export default function FindYourInvitationForm({ goNext }: StepFormProps) {
         </p>
       )}
       <button
-        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
+        className={`mt-3 py-3 text-xl tracking-wide text-white ${name.length === 0 || isFetching ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
         type="button"
+        disabled={name.length === 0}
         onClick={() => handleOnSearch()}
       >
         {isFetching ? "Searching..." : "FIND YOUR INVITATION"}
