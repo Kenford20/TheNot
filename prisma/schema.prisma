@@ -164,7 +164,7 @@ model Event {
 // }
 
 // model Answer {
-//     text       String
+//     response   String
 //     guest      Guest?    @relation(name: "Guest_Answer", fields: [guestId], references: [id], onDelete: Cascade)
 //     guestId    Int
 //     question   Question? @relation(name: "Question_Answer", fields: [questionId], references: [id], onDelete: Cascade)
@@ -199,7 +199,7 @@ model Invitation {
     eventId   String
     invitedAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    rsvp      String?  @default("Not Invited") // ['Invited', 'Accepted', 'Declined']
+    rsvp      String?  @default("Not Invited") // ['Invited', 'Attending', 'Declined']
     userId    String
 
     @@id(name: "invitationId", [guestId, eventId])

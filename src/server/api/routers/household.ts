@@ -314,6 +314,17 @@ export const householdRouter = createTRPCRouter({
                   firstName: {
                     search: input.searchText,
                   },
+                  AND: [
+                    {
+                      invitations: {
+                        some: {
+                          rsvp: {
+                            in: ["Invited", "Attending", "Declined"],
+                          },
+                        },
+                      },
+                    },
+                  ],
                 },
               },
             },
@@ -323,13 +334,29 @@ export const householdRouter = createTRPCRouter({
                   lastName: {
                     search: input.searchText,
                   },
+                  AND: [
+                    {
+                      invitations: {
+                        some: {
+                          rsvp: {
+                            in: ["Invited", "Attending", "Declined"],
+                          },
+                        },
+                      },
+                    },
+                  ],
                 },
               },
             },
           ],
         },
-        include: {
-          guests: true,
+        select: {
+          id: true,
+          guests: {
+            include: {
+              invitations: true,
+            },
+          },
         },
       });
     }),

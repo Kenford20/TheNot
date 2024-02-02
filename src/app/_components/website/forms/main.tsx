@@ -16,9 +16,8 @@ import FinalStep from "./steps/final-step";
 import MultistepRsvpForm from "./multi-step-form";
 import SendNoteForm from "./steps/send-note";
 
-import { type FormEvent } from "react";
+import { type FormEvent, type ReactNode } from "react";
 import { type RsvpPageData } from "~/app/utils/shared-types";
-import React from "react";
 
 type MainRsvpFormProps = {
   weddingData: RsvpPageData;
@@ -43,34 +42,31 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
   const progress = useRef(((currentStepIndex + 1) / NUM_STATIC_STEPS) * 100);
 
   const generateDynamicStepForms = () => {
-    const newSteps = weddingData?.events?.reduce(
-      (acc: React.ReactNode[], event) => {
-        const invitedGuests = selectedHousehold?.guests.filter((guest) =>
-          guest.invitations.some(
-            (invite) =>
-              invite.eventId === event.id &&
-              ["Invited", "Accepted", "Declined"].includes(invite.rsvp ?? ""),
-          ),
-        );
+    const newSteps = weddingData?.events?.reduce((acc: ReactNode[], event) => {
+      const invitedGuests = selectedHousehold?.guests.filter((guest) =>
+        guest.invitations.some(
+          (invite) =>
+            invite.eventId === event.id &&
+            ["Invited", "Attending", "Declined"].includes(invite.rsvp ?? ""),
+        ),
+      );
 
-        if (invitedGuests !== undefined && invitedGuests.length > 0) {
-          acc.push(
-            <EventRsvpForm event={event} invitedGuests={invitedGuests} />,
-            <QuestionTextForm />,
-            <QuestionOptionsForm />,
-          );
-          // TODO: when questions are implemented
-          // for (let question of event.questions) {
-          //   invitedGuests.forEach(guest => {
-          //     if (question.type === 'text') acc.push(<QuestionTextForm question={question} guest={guest} />)
-          //     else acc.push(<QuestionOptionsForm question={question} guest={guest}/>)
-          //   })
-          // }
-        }
-        return acc;
-      },
-      [],
-    );
+      if (invitedGuests !== undefined && invitedGuests.length > 0) {
+        acc.push(
+          <EventRsvpForm event={event} invitedGuests={invitedGuests} />,
+          <QuestionTextForm />,
+          <QuestionOptionsForm />,
+        );
+        // TODO: when questions are implemented
+        // for (let question of event.questions) {
+        //   invitedGuests.forEach(guest => {
+        //     if (question.type === 'text') acc.push(<QuestionTextForm question={question} guest={guest} event={event} />)
+        //     else acc.push(<QuestionOptionsForm question={question} guest={guest} event={event} />)
+        //   })
+        // }
+      }
+      return acc;
+    }, []);
     progress.current =
       ((currentStepIndex + 1) / (newSteps.length + NUM_STATIC_STEPS)) * 100;
     return newSteps;
