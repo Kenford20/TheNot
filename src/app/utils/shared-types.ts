@@ -145,6 +145,18 @@ type StepFormProps = {
   goBack?: () => void;
 };
 
+type RsvpFormResponse = {
+  eventId: string;
+  guestId: number;
+  rsvpSelection: string;
+};
+
+type Answer = {
+  questionId: string;
+  guestId: number;
+  response: string;
+};
+
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type DashboardData = RouterOutput["dashboard"]["getByUserId"];
 type HouseholdSearch = RouterOutput["household"]["findBySearch"];
@@ -168,4 +180,6 @@ export {
   type StepFormProps,
   type HouseholdSearch,
   type RsvpPageData,
+  type RsvpFormResponse,
+  type Answer,
 };

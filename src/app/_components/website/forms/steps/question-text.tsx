@@ -1,11 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import {
+  useRsvpForm,
+  useUpdateRsvpForm,
+} from "~/app/_components/contexts/rsvp-form-context";
 
-import { type StepFormProps } from "~/app/utils/shared-types";
+import { type Guest, type StepFormProps } from "~/app/utils/shared-types";
 
-export default function QuestionTextForm({ goNext, goBack }: StepFormProps) {
+interface QuestionTextFormProps extends StepFormProps {
+  guest?: Guest;
+  // question: Question
+}
+
+export default function QuestionTextForm({
+  goNext,
+  goBack,
+  guest,
+}: QuestionTextFormProps) {
+  const rsvpFormData = useRsvpForm();
+  const updateRsvpForm = useUpdateRsvpForm();
   const [answer, setAnswer] = useState("");
+
   const guestThatsAnswering = {
     firstName: "john",
     lastName: "doe",
@@ -23,12 +39,25 @@ export default function QuestionTextForm({ goNext, goBack }: StepFormProps) {
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        className="h-40 border"
+        className="h-40 border p-3"
       />
       <button
-        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white`}
+        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white ${answer.length === 0 ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
         type="button"
-        onClick={() => goNext && goNext()}
+        onClick={() => {
+          updateRsvpForm({
+            answersToQuestions: [
+              ...rsvpFormData.answersToQuestions,
+              {
+                questionId: "123",
+                // TODO: update guestId when Questions are implemented - can remove optional in the prop types
+                guestId: guest?.id ?? 0,
+                response: answer,
+              },
+            ],
+          });
+          goNext && goNext();
+        }}
       >
         CONTINUE
       </button>

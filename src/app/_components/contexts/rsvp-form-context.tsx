@@ -5,17 +5,23 @@ import { type ReactNode } from "react";
 import {
   type RsvpPageData,
   type HouseholdSearch,
+  type RsvpFormResponse,
+  type Answer,
 } from "~/app/utils/shared-types";
 
 type RsvpFormState = {
   matchedHouseholds?: HouseholdSearch;
   selectedHousehold?: HouseholdSearch[0] | null;
+  rsvpResponses: RsvpFormResponse[];
+  answersToQuestions: Answer[];
   weddingData: RsvpPageData;
 };
 
 const INITIAL_STATE: RsvpFormState = {
   matchedHouseholds: [],
   selectedHousehold: null,
+  rsvpResponses: [],
+  answersToQuestions: [],
   weddingData: {
     groomFirstName: "",
     groomLastName: "",
