@@ -7,6 +7,7 @@ import {
 import { type User } from "~/app/utils/shared-types";
 import { formatDateNumber } from "~/app/utils/helpers";
 import { TRPCError } from "@trpc/server";
+import { TRPCClientError } from "@trpc/client";
 
 export const websiteRouter = createTRPCRouter({
   hello: publicProcedure
@@ -126,31 +127,28 @@ export const websiteRouter = createTRPCRouter({
     });
   }),
 
-  getByUrl: publicProcedure
-    .input(z.object({ websiteUrl: z.string().nullish() }))
+  getBySubUrl: publicProcedure
+    .input(z.object({ subUrl: z.string().nullish() }))
     .query(async ({ ctx, input }) => {
-      if (input.websiteUrl === undefined) return null;
+      if (input.subUrl === undefined) return null;
       return await ctx.db.website.findFirst({
         where: {
-          subUrl: input.websiteUrl ?? "",
+          subUrl: input.subUrl ?? "",
         },
       });
     }),
 
   fetchWeddingData: publicProcedure
-    .input(z.object({ subUrl: z.string().nullable() }))
+    .input(z.object({ subUrl: z.string() }))
     .query(async ({ ctx, input }) => {
       const currentWebsite = await ctx.db.website.findFirst({
         where: {
-          subUrl: input.subUrl ?? undefined,
+          subUrl: input.subUrl,
         },
       });
 
       if (currentWebsite === null) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "This website does not exist.",
-        });
+        throw new TRPCClientError("This website does not exist.");
       }
 
       const weddingUser: User | null = await ctx.db.user.findFirst({

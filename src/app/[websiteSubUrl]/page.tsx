@@ -6,15 +6,15 @@ import WeddingWebsite from "../_components/website/wedding";
 
 type RootRouteHandlerProps = {
   params: {
-    websiteUrl: string;
+    websiteSubUrl: string;
   };
 };
 
 export default async function RootRouteHandler({
-  params: { websiteUrl },
+  params: { websiteSubUrl },
 }: RootRouteHandlerProps) {
-  const website = await api.website.getByUrl.query({
-    websiteUrl,
+  const website = await api.website.getBySubUrl.query({
+    subUrl: websiteSubUrl,
   });
 
   if (website === null) return <NotFoundPage />;
