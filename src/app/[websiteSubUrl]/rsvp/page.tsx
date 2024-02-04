@@ -6,7 +6,7 @@ import { RsvpFormProvider } from "~/app/_components/contexts/rsvp-form-context";
 
 export default async function RsvpPage() {
   const headersList = headers();
-  const websiteSubUrl = headersList.get("next-url");
+  const websiteSubUrl = headersList.get("x-url");
 
   const weddingData = await api.website.fetchWeddingData
     .query({

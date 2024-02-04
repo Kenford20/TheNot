@@ -1,4 +1,5 @@
 import { authMiddleware } from "@clerk/nextjs";
+import { NextResponse } from "next/server";
 
 // This example protects all routes including api/trpc routes
 // Please edit this to allow other routes to be public as needed.
@@ -10,6 +11,18 @@ export default authMiddleware({
   },
   ignoredRoutes: [],
   //   debug: true,
+  afterAuth: (auth, req) => {
+    // Store current request url in a custom header, which you can read later
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-url", req.nextUrl.pathname);
+
+    return NextResponse.next({
+      request: {
+        // Apply new request headers
+        headers: requestHeaders,
+      },
+    });
+  },
 });
 
 export const config = {
