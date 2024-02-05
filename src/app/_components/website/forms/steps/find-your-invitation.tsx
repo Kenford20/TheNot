@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useUpdateRsvpForm } from "~/app/_components/contexts/rsvp-form-context";
+import {
+  useRsvpForm,
+  useUpdateRsvpForm,
+} from "~/app/_components/contexts/rsvp-form-context";
 import { api } from "~/trpc/react";
 
 import { type StepFormProps } from "~/app/utils/shared-types";
 
 export default function FindYourInvitationForm({ goNext }: StepFormProps) {
+  const { weddingData } = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
   const [name, setName] = useState<string>("");
   const [showError, setShowError] = useState<boolean>(false);
@@ -18,11 +22,6 @@ export default function FindYourInvitationForm({ goNext }: StepFormProps) {
       retry: false,
     },
   );
-
-  const weddingData = {
-    groomFirstName: "test",
-    brideFirstName: "weebar",
-  };
 
   const handleOnSearch = () => {
     // the method to conditionally execute client db queries?

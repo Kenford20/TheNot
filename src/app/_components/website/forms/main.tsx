@@ -22,6 +22,7 @@ import RsvpConfirmation from "../rsvp-confirmation";
 
 import { type ReactNode } from "react";
 import { type RsvpPageData } from "~/app/utils/shared-types";
+import { useConfirmReloadPage } from "../../hooks";
 
 type MainRsvpFormProps = {
   weddingData: RsvpPageData;
@@ -33,7 +34,7 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
   const rsvpFormData = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
   const [currentStep, setCurrentStep] = useState<number>(1);
-
+  useConfirmReloadPage();
   useEffect(() => {
     updateRsvpForm({ weddingData });
   }, []);

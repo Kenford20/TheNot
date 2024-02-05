@@ -13,8 +13,7 @@ const useGuestFormActions = (closeForm: boolean, resetForm: () => void) => {
     },
     onError: (err) => {
       const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
+      if (errorMessage?.[0]) window.alert(errorMessage);
       else window.alert("Failed to create guests! Please try again later.");
     },
   });
@@ -27,8 +26,7 @@ const useGuestFormActions = (closeForm: boolean, resetForm: () => void) => {
     },
     onError: (err) => {
       const errorMessage = err.data?.zodError?.fieldErrors?.guestParty;
-      if (errorMessage?.[0])
-        window.alert("Please fill in the full name for all guests!");
+      if (errorMessage?.[0]) window.alert(errorMessage);
       else window.alert("Failed to update party! Please try again later.");
     },
   });

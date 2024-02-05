@@ -154,7 +154,11 @@ type RsvpFormResponse = {
 type Answer = {
   questionId: string;
   guestId: number;
-  response: string;
+  response: {
+    type: string;
+    answer?: string;
+    selectedOptionId?: string;
+  };
 };
 
 type RouterOutput = inferRouterOutputs<AppRouter>;

@@ -61,4 +61,26 @@ const useMultistepForm = (steps: ReactElement[]) => {
   };
 };
 
-export { useDisablePageScroll, useOuterClick, useMultistepForm };
+const useConfirmReloadPage = () => {
+  useEffect(() => {
+    const preventUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Changes you made may not be saved.";
+    };
+
+    if (typeof window !== undefined) {
+      window.addEventListener("beforeunload", preventUnload);
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", preventUnload);
+    };
+  });
+};
+
+export {
+  useDisablePageScroll,
+  useOuterClick,
+  useMultistepForm,
+  useConfirmReloadPage,
+};
