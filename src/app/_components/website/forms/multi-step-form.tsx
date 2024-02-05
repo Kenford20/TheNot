@@ -2,23 +2,23 @@ import React, { type Dispatch, type SetStateAction } from "react";
 
 type MultistepRsvpFormProps = {
   children: React.ReactNode;
-  currentIndex: number;
-  setCurrentStepIndex: Dispatch<SetStateAction<number>>;
+  currentStep: number;
+  setCurrentStep: Dispatch<SetStateAction<number>>;
 };
 
 export default function MultistepRsvpForm({
   children,
-  currentIndex,
-  setCurrentStepIndex,
+  currentStep,
+  setCurrentStep,
 }: MultistepRsvpFormProps) {
   const goNext = () => {
-    setCurrentStepIndex((prev) => prev + 1);
+    setCurrentStep((prev) => prev + 1);
   };
   const goBack = () => {
-    setCurrentStepIndex((prev) => prev - 1);
+    setCurrentStep((prev) => prev - 1);
   };
 
-  const currentStepForm = React.Children.toArray(children)[currentIndex];
+  const currentStepForm = React.Children.toArray(children)[currentStep - 1]; // -1 because currentStep is 1 indexed
 
   if (
     React.isValidElement<{ goNext: () => void; goBack: () => void }>(

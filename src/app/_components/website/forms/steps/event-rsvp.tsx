@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { formatDateStandard } from "~/app/utils/helpers";
 import {
   useRsvpForm,
   useUpdateRsvpForm,
 } from "~/app/_components/contexts/rsvp-form-context";
-import { formatDateStandard } from "~/app/utils/helpers";
 
 import { type Dispatch, type SetStateAction } from "react";
 import {
@@ -110,11 +110,11 @@ function RsvpSelection({
         (response) => response.guestId === currentGuestId,
       );
       if (rsvpResponse === undefined) {
-        return [...prev, { eventId, guestId, rsvpSelection }];
+        return [...prev, { eventId, guestId, rsvp: rsvpSelection }];
       }
       return prev.map((response) =>
         response.guestId === currentGuestId
-          ? { ...response, rsvpSelection }
+          ? { ...response, rsvp: rsvpSelection }
           : response,
       );
     });

@@ -148,7 +148,7 @@ type StepFormProps = {
 type RsvpFormResponse = {
   eventId: string;
   guestId: number;
-  rsvpSelection: string;
+  rsvp: string;
 };
 
 type Answer = {
