@@ -196,4 +196,46 @@ export const websiteRouter = createTRPCRouter({
 
       return weddingData;
     }),
+
+  submitRsvpForm: protectedProcedure
+    .input(
+      z.object({
+        rsvpResponses: z.array(
+          z.object({
+            eventId: z.string(),
+            guestId: z.number(),
+            rsvp: z.string(),
+          }),
+        ),
+        answersToQuestions: z.array(
+          z.object({
+            guestId: z.number(),
+            questionId: z.string(),
+            response: z.object({
+              type: z.string(),
+              answer: z.string().optional(),
+            }),
+            selectedOptionId: z.string().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await Promise.all(
+        input.rsvpResponses.map(async (response) => {
+          await ctx.db.invitation.update({
+            where: {
+              invitationId: {
+                guestId: response.guestId,
+                eventId: response.eventId,
+              },
+            },
+            data: {
+              rsvp: response.rsvp,
+            },
+          });
+        }),
+      );
+      // TODO: will need to mutate Answer and OptionResponse tables
+    }),
 });
