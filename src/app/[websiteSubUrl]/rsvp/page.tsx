@@ -6,19 +6,21 @@ import NotFoundPage from "~/app/_components/404";
 
 export default async function RsvpPage() {
   const headersList = headers();
-  const websiteSubUrl = headersList.get("x-url");
+  const path = headersList.get("x-url");
+  const websiteSubUrl = path?.replace("/", "").replace("/rsvp", "") ?? "";
 
   const weddingData = await api.website.fetchWeddingData
-    .query({
-      subUrl: websiteSubUrl?.replace("/", "").replace("/rsvp", "") ?? "",
-    })
+    .query({ subUrl: websiteSubUrl })
     .catch((err) => console.log("website#fetchWeddingData error", err));
 
   if (weddingData === undefined) return <NotFoundPage />;
 
   return (
     <RsvpFormProvider>
-      <MainRsvpForm weddingData={weddingData} />
+      <MainRsvpForm
+        weddingData={weddingData}
+        basePath={`/${websiteSubUrl}` ?? "/"}
+      />
     </RsvpFormProvider>
   );
 }

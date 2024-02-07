@@ -61,21 +61,21 @@ const useMultistepForm = (steps: ReactElement[]) => {
   };
 };
 
-const useConfirmReloadPage = () => {
+const useConfirmReloadPage = (shouldPreventUnload: boolean) => {
   useEffect(() => {
     const preventUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = "Changes you made may not be saved.";
     };
 
-    if (typeof window !== undefined) {
+    if (typeof window !== undefined && shouldPreventUnload) {
       window.addEventListener("beforeunload", preventUnload);
     }
 
     return () => {
       window.removeEventListener("beforeunload", preventUnload);
     };
-  });
+  }, [shouldPreventUnload]);
 };
 
 export {
