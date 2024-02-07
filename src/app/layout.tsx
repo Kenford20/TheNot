@@ -6,11 +6,17 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { EventFormProvider } from "./_components/contexts/event-form-context";
 import { GuestFormProvider } from "./_components/contexts/guest-form-context";
+import { type Viewport } from "next/types";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  width: "device-width",
+};
 
 export const metadata = {
   title: "Create T3 App",
