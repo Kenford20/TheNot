@@ -6,10 +6,10 @@ import {
   useRsvpForm,
   useUpdateRsvpForm,
 } from "../../contexts/rsvp-form-context";
-import Link from "next/link";
+import { useConfirmReloadPage } from "../../hooks";
+import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import DefaultBanner from "../../images/default-banner.jpg";
-import { IoMdClose } from "react-icons/io";
 import FindYourInvitationForm from "./steps/find-your-invitation";
 import ConfirmNameForm from "./steps/confirm-name";
 import EventRsvpForm from "./steps/event-rsvp";
@@ -22,19 +22,23 @@ import RsvpConfirmation from "../rsvp-confirmation";
 
 import { type ReactNode } from "react";
 import { type RsvpPageData } from "~/app/utils/shared-types";
-import { useConfirmReloadPage } from "../../hooks";
 
 type MainRsvpFormProps = {
   weddingData: RsvpPageData;
+  basePath: string;
 };
 
 const NUM_STATIC_STEPS = 5; // find invitation step, confirm household step, final step, and confirmation
 
-export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
+export default function MainRsvpForm({
+  weddingData,
+  basePath,
+}: MainRsvpFormProps) {
   const rsvpFormData = useRsvpForm();
+  const numSteps = useRef(NUM_STATIC_STEPS);
   const updateRsvpForm = useUpdateRsvpForm();
   const [currentStep, setCurrentStep] = useState<number>(1);
-  useConfirmReloadPage();
+  useConfirmReloadPage(currentStep > 1 && currentStep < numSteps.current);
   useEffect(() => {
     updateRsvpForm({ weddingData });
   }, []);
@@ -44,7 +48,6 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
       setCurrentStep((prev) => prev + 1);
     },
   });
-  const numSteps = useRef(NUM_STATIC_STEPS);
   const progress = (currentStep / numSteps.current) * 100;
 
   const generateDynamicStepForms = useCallback(() => {
@@ -84,13 +87,9 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
         currentStep={currentStep}
         progress={progress}
         numSteps={numSteps.current}
+        basePath={basePath}
       />
-      <Link href="/foobarandloremipsum" className="absolute right-3 top-2">
-        <IoMdClose size={25} className="cursor-pointer" />
-      </Link>
-      {/* theme */}
-      {/* <div className="mb-2.5 h-40 w-full bg-gray-200 dark:bg-gray-700"></div> */}
-      <div className="relative h-48">
+      <div className="relative mt-20 h-48">
         <Image
           alt="Pink Romantic Fresh Art Wedding Banner Background from pngtree.com"
           src={DefaultBanner}
@@ -98,7 +97,7 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
         />
       </div>
       <form
-        className="m-auto w-[500px] py-5"
+        className="m-auto w-[450px] py-5"
         onSubmit={(e) => {
           e.preventDefault();
           submitRsvpForm.mutate(rsvpFormData);
@@ -114,7 +113,10 @@ export default function MainRsvpForm({ weddingData }: MainRsvpFormProps) {
           {/* TODO: replace SendNoteForm for logic similar to above except reducing over website.questions instead for "general" questions */}
           <SendNoteForm />
           <SendRsvp isFetching={submitRsvpForm.isLoading} />
-          <RsvpConfirmation />
+          <RsvpConfirmation
+            basePath={basePath}
+            setCurrentStep={setCurrentStep}
+          />
         </MultistepRsvpForm>
       </form>
     </div>
@@ -125,13 +127,27 @@ const ProgressBar = ({
   currentStep,
   progress,
   numSteps,
+  basePath,
 }: {
   currentStep: number;
   progress: number;
   numSteps: number;
+  basePath: string;
 }) => {
   return (
-    <div className="relative px-10 py-1 text-center">
+    <div className="fixed top-0 z-10 w-full bg-white px-10 py-1 text-center">
+      <IoMdClose
+        size={25}
+        className="absolute right-3 top-2 z-20 cursor-pointer"
+        onClick={() => {
+          if (
+            currentStep > 1 &&
+            window.confirm("Are you sure? Your RSVP has not been sent.")
+          ) {
+            window.location.href = basePath;
+          }
+        }}
+      />
       <h1 className="py-3 text-2xl">RSVP</h1>
       <div className="relative mb-2.5 h-3 w-full rounded-full bg-gray-200">
         <div
@@ -139,7 +155,7 @@ const ProgressBar = ({
           style={{
             width:
               currentStep < 3
-                ? "1%"
+                ? "3%"
                 : currentStep === numSteps - 1
                   ? "99%"
                   : `${progress}%`,

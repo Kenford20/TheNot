@@ -149,6 +149,7 @@ type RsvpFormResponse = {
   eventId: string;
   guestId: number;
   rsvp: string;
+  guestName: string;
 };
 
 type Answer = {

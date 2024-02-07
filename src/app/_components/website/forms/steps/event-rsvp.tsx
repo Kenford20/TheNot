@@ -56,6 +56,7 @@ export default function EventRsvpForm({
                   eventId={event.id}
                   guestId={guest.id}
                   setRsvpResponses={setRsvpResponses}
+                  guestName={`${guest.firstName} ${guest.lastName}`}
                 />
               </div>
             </li>
@@ -90,12 +91,14 @@ type RsvpSelectionProps = {
   eventId: string;
   guestId: number;
   setRsvpResponses: Dispatch<SetStateAction<RsvpFormResponse[]>>;
+  guestName: string;
 };
 
 function RsvpSelection({
   eventId,
   guestId,
   setRsvpResponses,
+  guestName,
 }: RsvpSelectionProps) {
   const [rsvpSelection, setRsvpSelection] = useState<
     "Attending" | "Declined"
@@ -110,7 +113,7 @@ function RsvpSelection({
         (response) => response.guestId === currentGuestId,
       );
       if (rsvpResponse === undefined) {
-        return [...prev, { eventId, guestId, rsvp: rsvpSelection }];
+        return [...prev, { eventId, guestId, rsvp: rsvpSelection, guestName }];
       }
       return prev.map((response) =>
         response.guestId === currentGuestId
