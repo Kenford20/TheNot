@@ -62,7 +62,7 @@ export default function FindYourInvitationForm({ goNext }: StepFormProps) {
         className={`mt-3 py-3 text-xl tracking-wide text-white ${name.length === 0 || isFetching ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
         type="button"
         disabled={name.length === 0}
-        onClick={() => handleOnSearch()}
+        onClick={handleOnSearch}
       >
         {isFetching ? "Searching..." : "FIND YOUR INVITATION"}
       </button>
