@@ -2,25 +2,26 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 model Website {
-    id                String   @id @default(uuid())
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
-    userId            String   @unique
-    url               String   @unique
-    subUrl            String   @unique
-    isPasswordEnabled Boolean  @default(false)
-    password          String?
+  id                String     @id @default(uuid())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  userId            String     @unique
+  url               String     @unique
+  subUrl            String     @unique
+  isPasswordEnabled Boolean    @default(false)
+  password          String?
+  generalQuestions  Question[] @relation(name: "Website_Question")
 }
 
 // model StoryItem {
@@ -45,137 +46,85 @@ model Website {
 // }
 
 model User {
-    id             String @id
-    websiteUrl     String @db.VarChar(255)
-    email          String @unique @db.VarChar(255)
-    groomFirstName String
-    groomLastName  String
-    brideFirstName String
-    brideLastName  String
+  id             String @id
+  websiteUrl     String @db.VarChar(255)
+  email          String @unique @db.VarChar(255)
+  groomFirstName String
+  groomLastName  String
+  brideFirstName String
+  brideLastName  String
 }
 
 model Household {
-    id        String   @id @default(uuid())
-    userId    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    address1  String?
-    address2  String?
-    city      String?
-    state     String?
-    zipCode   String?
-    country   String?
-    phone     String?
-    email     String?
-    notes     String?
-    gifts     Gift[]   @relation(name: "Household_Gifts")
-    guests    Guest[]  @relation(name: "Household_Guests")
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  address1  String?
+  address2  String?
+  city      String?
+  state     String?
+  zipCode   String?
+  country   String?
+  phone     String?
+  email     String?
+  notes     String?
+  gifts     Gift[]   @relation(name: "Household_Gifts")
+  guests    Guest[]  @relation(name: "Household_Guests")
 }
 
 model Gift {
-    householdId String
-    household   Household @relation(name: "Household_Gifts", fields: [householdId], references: [id], onDelete: Cascade)
-    eventId     String
-    event       Event     @relation(name: "Event_Gifts", fields: [eventId], references: [id], onDelete: Cascade)
-    description String?
-    thankyou    Boolean   @default(false)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+  householdId String
+  household   Household @relation(name: "Household_Gifts", fields: [householdId], references: [id], onDelete: Cascade)
+  eventId     String
+  event       Event     @relation(name: "Event_Gifts", fields: [eventId], references: [id], onDelete: Cascade)
+  description String?
+  thankyou    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-    @@id(name: "GiftId", [householdId, eventId])
-    @@index([householdId])
-    @@index([eventId])
+  @@id(name: "GiftId", [householdId, eventId])
+  @@index([householdId])
+  @@index([eventId])
 }
 
 model Guest {
-    id               Int          @id @default(autoincrement())
-    firstName        String
-    lastName         String
-    householdId      String
-    userId           String
-    isPrimaryContact Boolean
-    createdAt        DateTime     @default(now())
-    updatedAt        DateTime     @updatedAt
-    household        Household    @relation(name: "Household_Guests", fields: [householdId], references: [id], onDelete: Cascade)
-    invitations      Invitation[] @relation(name: "Guest_Invitation")
-    // optionResponses  OptionResponse[] @relation(name: "Guest_OptionResponse")
-    // answers          Answer[]         @relation(name: "Guest_Answer")
+  id               Int              @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  householdId      String
+  userId           String
+  isPrimaryContact Boolean
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  household        Household        @relation(name: "Household_Guests", fields: [householdId], references: [id], onDelete: Cascade)
+  invitations      Invitation[]     @relation(name: "Guest_Invitation")
+  optionResponses  OptionResponse[] @relation(name: "Guest_OptionResponse")
+  answers          Answer[]         @relation(name: "Guest_Answer")
 
-    @@index([householdId])
-    @@fulltext([firstName])
-    @@fulltext([lastName])
+  @@index([householdId])
+  @@fulltext([firstName])
+  @@fulltext([lastName])
 }
 
 model Event {
-    id          String       @id @default(uuid())
-    name        String
-    date        DateTime?    @db.Date
-    startTime   String?
-    endTime     String?
-    venue       String?
-    attire      String?
-    description String?
-    userId      String
-    collectRsvp Boolean      @default(false)
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
-    invitations Invitation[] @relation(name: "Event_Invitation")
-    gifts       Gift[]       @relation(name: "Event_Gifts")
-    // questions   Question[]   @relation(name: "Event_Question")
-    // subEvents   SubEvent[]   @relation(name: "Event_SubEvent")
+  id          String       @id @default(uuid())
+  name        String
+  date        DateTime?    @db.Date
+  startTime   String?
+  endTime     String?
+  venue       String?
+  attire      String?
+  description String?
+  userId      String
+  collectRsvp Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  invitations Invitation[] @relation(name: "Event_Invitation")
+  gifts       Gift[]       @relation(name: "Event_Gifts")
+  questions   Question[]   @relation(name: "Event_Question")
+  // subEvents   SubEvent[]   @relation(name: "Event_SubEvent")
 }
-
-// model Question {
-//     id         String   @id @default(uuid())
-//     eventId    String
-//     event      Event    @relation(name: "Event_Question", fields: [eventId], references: [id], onDelete: Cascade)
-//     text       String
-//     answerType String
-//     isRequired Boolean  @default(false)
-//     options    Option[] @relation(name: "Question_Options")
-//     answer     Answer[] @relation(name: "Question_Answer")
-
-//     @@index([eventId])
-// }
-
-// model Option {
-//     id              String           @id @default(uuid())
-//     responseCount   Int
-//     text            String
-//     description     String
-//     question        Question         @relation(name: "Question_Options", fields: [questionId], references: [id], onDelete: Cascade)
-//     questionId      String
-//     optionResponses OptionResponse[] @relation(name: "Option_OptionResponse")
-
-//     @@index([questionId])
-// }
-
-// model OptionResponse {
-//     guest     Guest?   @relation(name: "Guest_OptionResponse", fields: [guestId], references: [id], onDelete: Cascade)
-//     guestId   Int
-//     option    Option?  @relation(name: "Option_OptionResponse", fields: [optionId], references: [id], onDelete: Cascade)
-//     optionId  String
-//     invitedAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-
-//     @@id(name: "OptionResponseId", [guestId, optionId])
-//     @@index([guestId])
-//     @@index([optionId])
-// }
-
-// model Answer {
-//     response   String
-//     guest      Guest?    @relation(name: "Guest_Answer", fields: [guestId], references: [id], onDelete: Cascade)
-//     guestId    Int
-//     question   Question? @relation(name: "Question_Answer", fields: [questionId], references: [id], onDelete: Cascade)
-//     questionId String
-//     invitedAt  DateTime  @default(now())
-//     updatedAt  DateTime  @updatedAt
-
-//     @@id(name: "answerId", [guestId, questionId])
-//     @@index([guestId])
-//     @@index([questionId])
-// }
 
 // model SubEvent {
 //     id          String    @id @default(uuid())
@@ -192,17 +141,79 @@ model Event {
 //     @@index([eventId])
 // }
 
-model Invitation {
-    guest     Guest?   @relation(name: "Guest_Invitation", fields: [guestId], references: [id], onDelete: Cascade)
-    guestId   Int
-    event     Event?   @relation(name: "Event_Invitation", fields: [eventId], references: [id], onDelete: Cascade)
-    eventId   String
-    invitedAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    rsvp      String?  @default("Not Invited") // ['Invited', 'Attending', 'Declined']
-    userId    String
+// website relations are the general questions
+model Question {
+  id         String   @id @default(uuid())
+  eventId    String?
+  event      Event?   @relation(name: "Event_Question", fields: [eventId], references: [id], onDelete: Cascade)
+  websiteId  String?
+  website    Website? @relation(name: "Website_Question", fields: [websiteId], references: [id], onDelete: Cascade)
+  text       String
+  type       String // ['Custom', 'Kids', 'RSVPNote']
+  answerType String // ['Text', 'Option']
+  isRequired Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  options    Option[] @relation(name: "Question_Options")
+  answer     Answer[] @relation(name: "Question_Answer")
 
-    @@id(name: "invitationId", [guestId, eventId])
-    @@index([guestId])
-    @@index([eventId])
+  @@index([eventId])
+  @@index([websiteId])
+}
+
+model Option {
+  id              String           @id @default(uuid())
+  responseCount   Int
+  text            String
+  description     String
+  question        Question         @relation(name: "Question_Options", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId      String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  optionResponses OptionResponse[] @relation(name: "Option_OptionResponse")
+
+  @@index([questionId])
+}
+
+// for counting the number of guests that selected an option?
+model OptionResponse {
+  guest     Guest?   @relation(name: "Guest_OptionResponse", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId   Int
+  option    Option?  @relation(name: "Option_OptionResponse", fields: [optionId], references: [id], onDelete: Cascade)
+  optionId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id(name: "OptionResponseId", [guestId, optionId])
+  @@index([guestId])
+  @@index([optionId])
+}
+
+model Answer {
+  response   String
+  guest      Guest?    @relation(name: "Guest_Answer", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId    Int
+  question   Question? @relation(name: "Question_Answer", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@id(name: "answerId", [guestId, questionId])
+  @@index([guestId])
+  @@index([questionId])
+}
+
+model Invitation {
+  guest     Guest?   @relation(name: "Guest_Invitation", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId   Int
+  event     Event?   @relation(name: "Event_Invitation", fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   String
+  invitedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rsvp      String?  @default("Not Invited") // ['Invited', 'Attending', 'Declined']
+  userId    String
+
+  @@id(name: "invitationId", [guestId, eventId])
+  @@index([guestId])
+  @@index([eventId])
 }
