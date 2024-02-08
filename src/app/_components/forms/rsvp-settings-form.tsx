@@ -5,7 +5,10 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
 import { TiEyeOutline } from "react-icons/ti";
 import { Switch } from "~/components/ui/switch";
+import { GoArrowLeft } from "react-icons/go";
+import { useScrollToTop } from "../hooks";
 
+import { type Dispatch, type SetStateAction } from "react";
 import {
   type Event,
   type DashboardData,
@@ -14,35 +17,49 @@ import {
 
 export default function RsvpSettingsForm({
   dashboardData,
+  setShowRsvpSettings,
 }: {
   dashboardData: DashboardData;
+  setShowRsvpSettings: Dispatch<SetStateAction<boolean>>;
 }) {
+  useScrollToTop();
   return (
-    <div className="m-auto w-[750px]">
-      <div className="mt-10 flex items-end gap-2 bg-blue-50 p-4">
-        <TiEyeOutline size={27} color={sharedStyles.primaryColorHex} />
-        <p>
-          This form is <b>visible</b> on your Website. Guests on your Guest List
-          can RVSP <button className="underline">View Settings</button>
-        </p>
+    <>
+      <div className="absolute left-0 top-0 flex h-[120px] w-screen items-center bg-white pl-10">
+        <div
+          className="flex cursor-pointer gap-3"
+          onClick={() => setShowRsvpSettings(false)}
+        >
+          <GoArrowLeft size={36} />
+          <span className="text-2xl font-semibold">Online RSVP</span>
+        </div>
       </div>
-      <ul>
-        {dashboardData?.events.map((event) => {
-          const { attending, invited, declined } = event.guestResponses;
-          const numGuests = attending + invited + declined;
-          return (
-            <section key={event.id} className="border-b py-10">
-              <EventRsvpSection event={event} numGuests={numGuests} />
-            </section>
-          );
-        })}
-      </ul>
-      <GeneralQuestionsSection
-        generalQuestions={
-          dashboardData?.weddingData.website?.generalQuestions ?? []
-        }
-      />
-    </div>
+      <div className="m-auto w-[750px]">
+        <div className="mt-10 flex items-end gap-2 bg-blue-50 p-4">
+          <TiEyeOutline size={27} color={sharedStyles.primaryColorHex} />
+          <p>
+            This form is <b>visible</b> on your Website. Guests on your Guest
+            List can RVSP <button className="underline">View Settings</button>
+          </p>
+        </div>
+        <ul>
+          {dashboardData?.events.map((event) => {
+            const { attending, invited, declined } = event.guestResponses;
+            const numGuests = attending + invited + declined;
+            return (
+              <section key={event.id} className="border-b py-10">
+                <EventRsvpSection event={event} numGuests={numGuests} />
+              </section>
+            );
+          })}
+        </ul>
+        <GeneralQuestionsSection
+          generalQuestions={
+            dashboardData?.weddingData.website?.generalQuestions ?? []
+          }
+        />
+      </div>
+    </>
   );
 }
 

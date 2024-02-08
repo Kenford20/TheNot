@@ -45,7 +45,12 @@ export default function Dashboard({
   }, []);
 
   if (showRsvpSettings) {
-    return <RsvpSettingsForm dashboardData={dashboardData} />;
+    return (
+      <RsvpSettingsForm
+        dashboardData={dashboardData}
+        setShowRsvpSettings={setShowRsvpSettings}
+      />
+    );
   }
   return (
     <>
