@@ -12,6 +12,7 @@ import SidebarPanel from "./sidebar-panel";
 import HomeContent from "./section-content/home";
 import EventForm from "../forms/event-form";
 import DashboardSettingsForm from "../forms/dashboard-settings-form";
+import RsvpSettingsForm from "../forms/rsvp-settings-form";
 
 import {
   type DashboardData,
@@ -29,6 +30,7 @@ export default function Dashboard({
   const [events, setEvents] = useState(dashboardData?.events);
   const [prefillEvent, setPrefillEvent] = useState<EventFormData | undefined>();
   const [collapseSections, setCollapseSections] = useState<boolean>(false);
+  const [showRsvpSettings, setShowRsvpSettings] = useState<boolean>(false);
   const [showWebsiteSettings, setShowWebsiteSettings] =
     useState<boolean>(false);
 
@@ -42,6 +44,9 @@ export default function Dashboard({
     );
   }, []);
 
+  if (showRsvpSettings) {
+    return <RsvpSettingsForm dashboardData={dashboardData} />;
+  }
   return (
     <>
       {isEventFormOpen && <EventForm prefillFormData={prefillEvent} />}
@@ -91,7 +96,11 @@ export default function Dashboard({
             title={"Things to Do"}
             collapse={collapseSections}
           />
-          <PageSectionsTemplate title={"RSVP"} collapse={collapseSections}>
+          <PageSectionsTemplate
+            title={"RSVP"}
+            collapse={collapseSections}
+            setShowRsvpSettings={setShowRsvpSettings}
+          >
             <RsvpContent
               events={dashboardData?.events}
               totalGuests={dashboardData?.totalGuests ?? 0}

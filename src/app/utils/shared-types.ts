@@ -1,6 +1,15 @@
 import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 
+type Question = {
+  id: string;
+  eventId?: string | null;
+  websiteId?: string | null;
+  text: string;
+  type: string;
+  isRequired: boolean;
+};
+
 type Event = {
   id: string;
   name: string;
@@ -11,6 +20,7 @@ type Event = {
   attire: string | null;
   description: string | null;
   userId: string;
+  questions?: Question[];
 };
 
 type Invitation = {
@@ -124,6 +134,7 @@ type Website = {
   subUrl: string;
   isPasswordEnabled: boolean;
   password: string | null;
+  generalQuestions?: Question[];
 };
 
 type WeddingPageData = {
@@ -168,6 +179,7 @@ type HouseholdSearch = RouterOutput["household"]["findBySearch"];
 type RsvpPageData = RouterOutput["website"]["fetchWeddingData"];
 
 export {
+  type Question,
   type Event,
   type Invitation,
   type Household,
