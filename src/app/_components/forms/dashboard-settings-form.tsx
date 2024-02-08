@@ -18,12 +18,12 @@ import { type Dispatch, type SetStateAction } from "react";
 import { type Website } from "../../utils/shared-types";
 
 type DashboardSettingsFormProps = {
-  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
+  setShowWebsiteSettings: Dispatch<SetStateAction<boolean>>;
   website: Website | null | undefined;
 };
 
 export default function DashboardSettingsForm({
-  setIsWebsiteSettingsOpen,
+  setShowWebsiteSettings,
   website,
 }: DashboardSettingsFormProps) {
   const [showPasswordView, setShowPasswordView] = useState<boolean>(false);
@@ -43,7 +43,7 @@ export default function DashboardSettingsForm({
         />
       ) : (
         <Main
-          setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
+          setShowWebsiteSettings={setShowWebsiteSettings}
           website={website}
           setShowPasswordView={setShowPasswordView}
           setShowEditUrlView={setShowEditUrlView}
@@ -55,14 +55,14 @@ export default function DashboardSettingsForm({
 
 type MainProps = {
   website: Website | null | undefined;
-  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
+  setShowWebsiteSettings: Dispatch<SetStateAction<boolean>>;
   setShowPasswordView: Dispatch<SetStateAction<boolean>>;
   setShowEditUrlView: Dispatch<SetStateAction<boolean>>;
 };
 
 const Main = ({
   website,
-  setIsWebsiteSettingsOpen,
+  setShowWebsiteSettings,
   setShowPasswordView,
   setShowEditUrlView,
 }: MainProps) => {
@@ -98,7 +98,7 @@ const Main = ({
         <h1 className="text-2xl font-bold">Settings</h1>
         <span
           className="cursor-pointer"
-          onClick={() => setIsWebsiteSettingsOpen(false)}
+          onClick={() => setShowWebsiteSettings(false)}
         >
           <IoMdClose size={25} />
         </span>

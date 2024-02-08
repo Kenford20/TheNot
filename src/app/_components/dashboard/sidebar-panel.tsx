@@ -3,11 +3,11 @@ import { sharedStyles } from "../../utils/shared-styles";
 import { type Dispatch, type SetStateAction } from "react";
 
 type SidebarPanelProps = {
-  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
+  setShowWebsiteSettings: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function SidebarPanel({
-  setIsWebsiteSettingsOpen,
+  setShowWebsiteSettings,
 }: SidebarPanelProps) {
   return (
     <section className="px-3">
@@ -23,7 +23,7 @@ export default function SidebarPanel({
         <h2 className="text-xl font-semibold">Privacy Settings</h2>
         <span
           className={`text-${sharedStyles.primaryColor} cursor-pointer text-lg hover:underline`}
-          onClick={() => setIsWebsiteSettingsOpen(true)}
+          onClick={() => setShowWebsiteSettings(true)}
         >
           Manage
         </span>

@@ -6,12 +6,12 @@ import { type Dispatch, type SetStateAction } from "react";
 
 type DashboardHeaderProps = {
   websiteUrl: string | undefined;
-  setIsWebsiteSettingsOpen: Dispatch<SetStateAction<boolean>>;
+  setShowWebsiteSettings: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function DashboardHeader({
   websiteUrl,
-  setIsWebsiteSettingsOpen,
+  setShowWebsiteSettings,
 }: DashboardHeaderProps) {
   return (
     <section className="py-10">
@@ -28,7 +28,7 @@ export default function DashboardHeader({
             </span>
             <span
               className={`ml-5 cursor-pointer text-${sharedStyles.primaryColor} flex items-center gap-1`}
-              onClick={() => setIsWebsiteSettingsOpen(true)}
+              onClick={() => setShowWebsiteSettings(true)}
             >
               <FiEdit2 size={16} color={sharedStyles.primaryColorHex} />
               Edit

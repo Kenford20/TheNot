@@ -52,7 +52,7 @@ export default function QuestionMultipleChoice({
         {guestThatsAnswering.firstName} {guestThatsAnswering.lastName}
       </span>
       <ul>
-        {question.options.map((option, i) => {
+        {question.options.map((option) => {
           return (
             <li
               key={option.id}

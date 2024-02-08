@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { sharedStyles } from "../../utils/shared-styles";
 import { useEventForm } from "../contexts/event-form-context";
 
 import DashboardHeader from "./header";
@@ -30,7 +29,7 @@ export default function Dashboard({
   const [events, setEvents] = useState(dashboardData?.events);
   const [prefillEvent, setPrefillEvent] = useState<EventFormData | undefined>();
   const [collapseSections, setCollapseSections] = useState<boolean>(false);
-  const [isWebsiteSettingsOpen, setIsWebsiteSettingsOpen] =
+  const [showWebsiteSettings, setShowWebsiteSettings] =
     useState<boolean>(false);
 
   useEffect(() => {
@@ -46,15 +45,15 @@ export default function Dashboard({
   return (
     <>
       {isEventFormOpen && <EventForm prefillFormData={prefillEvent} />}
-      {isWebsiteSettingsOpen && (
+      {showWebsiteSettings && (
         <DashboardSettingsForm
-          setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
+          setShowWebsiteSettings={setShowWebsiteSettings}
           website={dashboardData?.weddingData?.website}
         />
       )}
       <DashboardHeader
         websiteUrl={dashboardData?.weddingData?.website?.url}
-        setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen}
+        setShowWebsiteSettings={setShowWebsiteSettings}
       />
       <hr className="relative -left-48 bottom-0 w-screen border-gray-300" />
       {showRegistrySetup && (
@@ -99,7 +98,7 @@ export default function Dashboard({
             />
           </PageSectionsTemplate>
         </div>
-        <SidebarPanel setIsWebsiteSettingsOpen={setIsWebsiteSettingsOpen} />
+        <SidebarPanel setShowWebsiteSettings={setShowWebsiteSettings} />
       </div>
     </>
   );
