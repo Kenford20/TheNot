@@ -1,6 +1,14 @@
 import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 
+type Option = {
+  id: string;
+  responseCount: number;
+  text: string;
+  description: string;
+  questionId: string;
+};
+
 type Question = {
   id: string;
   eventId?: string | null;
@@ -8,6 +16,7 @@ type Question = {
   text: string;
   type: string;
   isRequired: boolean;
+  options?: Option[];
 };
 
 type Event = {
@@ -179,6 +188,7 @@ type HouseholdSearch = RouterOutput["household"]["findBySearch"];
 type RsvpPageData = RouterOutput["website"]["fetchWeddingData"];
 
 export {
+  type Option,
   type Question,
   type Event,
   type Invitation,

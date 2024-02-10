@@ -7,8 +7,9 @@ import { TiEyeOutline } from "react-icons/ti";
 import { Switch } from "~/components/ui/switch";
 import { GoArrowLeft } from "react-icons/go";
 import { useScrollToTop } from "../hooks";
+import QuestionForm from "./rsvp/question-form";
 
-import { type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   type Event,
   type DashboardData,
@@ -23,8 +24,17 @@ export default function RsvpSettingsForm({
   setShowRsvpSettings: Dispatch<SetStateAction<boolean>>;
 }) {
   useScrollToTop();
+  const [showQuestionForm, setShowQuestionForm] = useState<boolean>(false);
+  const [prefillQuestion, setPrefillQuestion] = useState<Question>();
+
   return (
     <>
+      {showQuestionForm && (
+        <QuestionForm
+          question={prefillQuestion!}
+          setShowQuestionForm={setShowQuestionForm}
+        />
+      )}
       <div className="absolute left-0 top-0 flex h-[120px] w-screen items-center bg-white pl-10">
         <div
           className="flex cursor-pointer gap-3"
@@ -35,8 +45,8 @@ export default function RsvpSettingsForm({
         </div>
       </div>
       <div className="m-auto w-[750px]">
-        <div className="mt-10 flex items-end gap-2 bg-blue-50 p-4">
-          <TiEyeOutline size={27} color={sharedStyles.primaryColorHex} />
+        <div className="mt-10 flex items-center gap-2 bg-blue-50 p-4">
+          <TiEyeOutline size={30} color="blue" />
           <p>
             This form is <b>visible</b> on your Website. Guests on your Guest
             List can RVSP <button className="underline">View Settings</button>
@@ -48,7 +58,12 @@ export default function RsvpSettingsForm({
             const numGuests = attending + invited + declined;
             return (
               <section key={event.id} className="border-b py-10">
-                <EventRsvpSection event={event} numGuests={numGuests} />
+                <EventRsvpSection
+                  event={event}
+                  numGuests={numGuests}
+                  setPrefillQuestion={setPrefillQuestion}
+                  setShowQuestionForm={setShowQuestionForm}
+                />
               </section>
             );
           })}
@@ -63,13 +78,29 @@ export default function RsvpSettingsForm({
   );
 }
 
+type EventRsvpSectionProps = {
+  event: Event;
+  numGuests: number;
+  setPrefillQuestion: Dispatch<SetStateAction<Question | undefined>>;
+  setShowQuestionForm: Dispatch<SetStateAction<boolean>>;
+};
+
 const EventRsvpSection = ({
   event,
   numGuests,
-}: {
-  event: Event;
-  numGuests: number;
-}) => {
+  setPrefillQuestion,
+  setShowQuestionForm,
+}: EventRsvpSectionProps) => {
+  const onAddQuestion = (eventId: string) => {
+    setPrefillQuestion({
+      id: "",
+      eventId,
+      text: "",
+      type: "Text",
+      isRequired: false,
+    });
+    setShowQuestionForm(true);
+  };
   return (
     <div>
       <div className="flex items-center justify-between pb-5">
@@ -90,12 +121,19 @@ const EventRsvpSection = ({
             <li key={question.id} className="border-2 p-5">
               <div>
                 <p>{question.text}</p>
-                <BsPencil size={20} color={sharedStyles.primaryColorHex} />
+                <BsPencil
+                  size={20}
+                  color={sharedStyles.primaryColorHex}
+                  onClick={() => setPrefillQuestion(question)}
+                />
               </div>
             </li>
           );
         })}
-        <div className="flex cursor-pointer gap-2 pt-5">
+        <div
+          className="flex cursor-pointer gap-2 pt-5"
+          onClick={() => onAddQuestion(event.id)}
+        >
           <AiOutlinePlusCircle size={25} color={sharedStyles.primaryColorHex} />
           <span className={`text-${sharedStyles.primaryColor}`}>
             Add a Follow-Up Question
