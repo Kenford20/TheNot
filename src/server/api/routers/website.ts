@@ -41,7 +41,7 @@ export const websiteRouter = createTRPCRouter({
         basePath,
         email,
       } = input;
-      console.log("inputz", input);
+
       const subUrl =
         `${firstName}${lastName}and${partnerFirstName}${partnerLastName}`.toLowerCase();
       const url = `${basePath}/${subUrl}`;
@@ -70,6 +70,18 @@ export const websiteRouter = createTRPCRouter({
           userId,
           url,
           subUrl,
+          generalQuestions: {
+            create: [
+              {
+                text: "Will you be bringing any children under the age of 10?",
+                type: "Text",
+              },
+              {
+                text: "Send a note to the couple?",
+                type: "Text",
+              },
+            ],
+          },
         },
       });
     }),

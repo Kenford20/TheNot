@@ -62,11 +62,17 @@ export const dashboardRouter = createTRPCRouter({
       orderBy: {
         createdAt: "asc",
       },
+      include: {
+        questions: true,
+      },
     });
 
     const website = await ctx.db.website.findFirst({
       where: {
         userId: ctx.auth.userId,
+      },
+      include: {
+        generalQuestions: true,
       },
     });
 
