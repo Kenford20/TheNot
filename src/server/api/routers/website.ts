@@ -129,6 +129,24 @@ export const websiteRouter = createTRPCRouter({
       });
     }),
 
+  updateIsRsvpEnabled: protectedProcedure
+    .input(
+      z.object({
+        websiteId: z.string(),
+        isRsvpEnabled: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.website.update({
+        where: {
+          id: input.websiteId,
+        },
+        data: {
+          isRsvpEnabled: input.isRsvpEnabled,
+        },
+      });
+    }),
+
   getByUserId: publicProcedure.query(async ({ ctx }) => {
     console.log("idz", ctx.auth.userId);
     if (!ctx.auth) return;

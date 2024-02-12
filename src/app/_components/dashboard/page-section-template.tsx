@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useToggleEditRsvpSettingsForm } from "../contexts/edit-rsvp-settings-form-context";
 import { AiOutlineDown, AiOutlinePlusCircle } from "react-icons/ai";
 import { BsPencil, BsThreeDotsVertical } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
@@ -9,6 +10,8 @@ import { sharedStyles } from "../../utils/shared-styles";
 import { useOuterClick } from "../hooks";
 import { LiaEyeSlash } from "react-icons/lia";
 import { FaCog } from "react-icons/fa";
+
+import { type Dispatch, type SetStateAction } from "react";
 
 type PageSectionsTemplateProps = {
   title: string;
@@ -97,6 +100,7 @@ const EditSectionMenu = ({
   setShowRsvpSettings,
 }: EditSectionMenuProps) => {
   const editSectionMenuRef = useOuterClick(() => setShowMenu(false));
+  const toggleEditRsvpSettingsForm = useToggleEditRsvpSettingsForm();
   return (
     <div
       ref={editSectionMenuRef}
@@ -106,6 +110,7 @@ const EditSectionMenu = ({
         <>
           <div
             className={`flex cursor-pointer items-center gap-3 border-b p-4 hover:underline text-${sharedStyles.primaryColor}`}
+            onClick={() => setShowRsvpSettings && setShowRsvpSettings(true)}
           >
             <BsPencil size={20} color={sharedStyles.primaryColorHex} />
             <p className="text-lg">Edit Form</p>
@@ -118,7 +123,7 @@ const EditSectionMenu = ({
           </div>
           <div
             className={`flex cursor-pointer items-center gap-3 p-4 hover:underline text-${sharedStyles.primaryColor}`}
-            onClick={() => setShowRsvpSettings && setShowRsvpSettings(true)}
+            onClick={toggleEditRsvpSettingsForm}
           >
             <FaCog size={20} color={sharedStyles.primaryColorHex} />
             <p className="text-lg">RSVP Settings</p>

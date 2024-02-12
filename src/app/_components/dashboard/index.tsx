@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useEventForm } from "../contexts/event-form-context";
-
+import { useEditRsvpSettingsForm } from "../contexts/edit-rsvp-settings-form-context";
 import DashboardHeader from "./header";
 import RegistrySetup from "./registry-setup";
 import PageSectionsTemplate from "./page-section-template";
@@ -12,7 +12,8 @@ import SidebarPanel from "./sidebar-panel";
 import HomeContent from "./section-content/home";
 import EventForm from "../forms/event-form";
 import DashboardSettingsForm from "../forms/dashboard-settings-form";
-import RsvpSettingsForm from "../forms/rsvp-settings-form";
+import RsvpFormSettings from "../forms/rsvp-form-settings";
+import EditRsvpSettingsForm from "../forms/rsvp/edit-rsvp-settings";
 
 import {
   type DashboardData,
@@ -26,6 +27,7 @@ export default function Dashboard({
 }) {
   console.log("dashz", dashboardData);
   const isEventFormOpen = useEventForm();
+  const showEditRsvpSettings = useEditRsvpSettingsForm();
   const [showRegistrySetup, setShowRegistrySetup] = useState<boolean>(true);
   const [events, setEvents] = useState(dashboardData?.events);
   const [prefillEvent, setPrefillEvent] = useState<EventFormData | undefined>();
@@ -46,7 +48,7 @@ export default function Dashboard({
 
   if (showRsvpSettings) {
     return (
-      <RsvpSettingsForm
+      <RsvpFormSettings
         dashboardData={dashboardData}
         setShowRsvpSettings={setShowRsvpSettings}
       />
@@ -60,6 +62,9 @@ export default function Dashboard({
           setShowWebsiteSettings={setShowWebsiteSettings}
           website={dashboardData?.weddingData?.website}
         />
+      )}
+      {showEditRsvpSettings && (
+        <EditRsvpSettingsForm website={dashboardData?.weddingData.website} />
       )}
       <DashboardHeader
         websiteUrl={dashboardData?.weddingData?.website?.url}

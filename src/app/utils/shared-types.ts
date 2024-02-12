@@ -30,6 +30,7 @@ type Event = {
   description: string | null;
   userId: string;
   questions?: Question[];
+  collectRsvp?: boolean;
 };
 
 type Invitation = {
@@ -142,6 +143,7 @@ type Website = {
   url: string;
   subUrl: string;
   isPasswordEnabled: boolean;
+  isRsvpEnabled: boolean;
   password: string | null;
   generalQuestions?: Question[];
 };

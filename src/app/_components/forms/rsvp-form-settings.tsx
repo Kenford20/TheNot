@@ -1,5 +1,8 @@
 "use client";
 
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
+import { useToggleEditRsvpSettingsForm } from "../contexts/edit-rsvp-settings-form-context";
 import { sharedStyles } from "~/app/utils/shared-styles";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
@@ -7,6 +10,7 @@ import { TiEyeOutline } from "react-icons/ti";
 import { Switch } from "~/components/ui/switch";
 import { GoArrowLeft } from "react-icons/go";
 import { useScrollToTop } from "../hooks";
+import { LoadingSpinner } from "../loaders";
 import QuestionForm from "./rsvp/question-form";
 
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -16,7 +20,7 @@ import {
   type Question,
 } from "~/app/utils/shared-types";
 
-export default function RsvpSettingsForm({
+export default function RsvpFormSettings({
   dashboardData,
   setShowRsvpSettings,
 }: {
@@ -24,6 +28,7 @@ export default function RsvpSettingsForm({
   setShowRsvpSettings: Dispatch<SetStateAction<boolean>>;
 }) {
   useScrollToTop();
+  const toggleEditRsvpSettingsForm = useToggleEditRsvpSettingsForm();
   const [showQuestionForm, setShowQuestionForm] = useState<boolean>(false);
   const [prefillQuestion, setPrefillQuestion] = useState<Question>();
 
@@ -49,7 +54,10 @@ export default function RsvpSettingsForm({
           <TiEyeOutline size={30} color="blue" />
           <p>
             This form is <b>visible</b> on your Website. Guests on your Guest
-            List can RVSP <button className="underline">View Settings</button>
+            List can RVSP{" "}
+            <button className="underline" onClick={toggleEditRsvpSettingsForm}>
+              View Settings
+            </button>
           </p>
         </div>
         <ul>
@@ -91,6 +99,15 @@ const EventRsvpSection = ({
   setPrefillQuestion,
   setShowQuestionForm,
 }: EventRsvpSectionProps) => {
+  const router = useRouter();
+  const updateEventRsvpSetting = api.event.updateCollectRsvp.useMutation({
+    onSuccess: () => router.refresh(),
+    onError: (err) => {
+      if (err) window.alert(err);
+      else window.alert("Failed to update event! Please try again later.");
+    },
+  });
+
   const onAddQuestion = (eventId: string) => {
     setPrefillQuestion({
       id: "",
@@ -107,7 +124,20 @@ const EventRsvpSection = ({
         <h2 className="text-2xl font-bold">{event.name}</h2>
         <div className="flex items-center gap-3">
           <span>Collect RSVPs</span>
-          <Switch id={`${event.id}-rsvp-toggle`} />
+          {updateEventRsvpSetting.isLoading ? (
+            <LoadingSpinner size={20} />
+          ) : (
+            <Switch
+              id={`${event.id}-rsvp-toggle`}
+              checked={event.collectRsvp}
+              onClick={() =>
+                updateEventRsvpSetting.mutate({
+                  eventId: event.id,
+                  collectRsvp: !event.collectRsvp,
+                })
+              }
+            />
+          )}
         </div>
       </div>
       <p>
