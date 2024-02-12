@@ -1,12 +1,10 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { db } from "~/server/db";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-
-import { env } from "~/env";
-import { db } from "~/server/db";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
