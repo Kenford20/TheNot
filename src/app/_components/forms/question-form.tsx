@@ -91,7 +91,7 @@ export default function QuestionForm({
         noHandler={() => setShowDeleteConfirmation(false)}
         yesHandler={() =>
           deleteQuestion.mutate({
-            questionId: question.id,
+            questionId: question.id!,
           })
         }
       />
@@ -110,6 +110,7 @@ export default function QuestionForm({
             eventId: question.eventId,
             websiteId: question.websiteId,
             questionId: question.id,
+            options: questionOptions,
           });
         }}
         className="pb-32"

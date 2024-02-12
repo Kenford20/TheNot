@@ -11,13 +11,14 @@ import { Switch } from "~/components/ui/switch";
 import { GoArrowLeft } from "react-icons/go";
 import { useScrollToTop } from "../hooks";
 import { LoadingSpinner } from "../loaders";
-import QuestionForm from "./rsvp/question-form";
+import QuestionForm from "./question-form";
 
 import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   type Event,
   type DashboardData,
   type Question,
+  type Website,
 } from "~/app/utils/shared-types";
 
 export default function RsvpFormSettings({
@@ -31,11 +32,13 @@ export default function RsvpFormSettings({
   const toggleEditRsvpSettingsForm = useToggleEditRsvpSettingsForm();
   const [showQuestionForm, setShowQuestionForm] = useState<boolean>(false);
   const [prefillQuestion, setPrefillQuestion] = useState<Question>();
+  const [useEditMode, setUseEditMode] = useState<boolean>(false);
 
   return (
     <>
       {showQuestionForm && (
         <QuestionForm
+          isEditMode={useEditMode}
           question={prefillQuestion!}
           setShowQuestionForm={setShowQuestionForm}
         />
@@ -69,6 +72,7 @@ export default function RsvpFormSettings({
                 <EventRsvpSection
                   event={event}
                   numGuests={numGuests}
+                  setUseEditMode={setUseEditMode}
                   setPrefillQuestion={setPrefillQuestion}
                   setShowQuestionForm={setShowQuestionForm}
                 />
@@ -77,9 +81,10 @@ export default function RsvpFormSettings({
           })}
         </ul>
         <GeneralQuestionsSection
-          generalQuestions={
-            dashboardData?.weddingData.website?.generalQuestions ?? []
-          }
+          website={dashboardData?.weddingData.website}
+          setUseEditMode={setUseEditMode}
+          setPrefillQuestion={setPrefillQuestion}
+          setShowQuestionForm={setShowQuestionForm}
         />
       </div>
     </>
@@ -89,6 +94,7 @@ export default function RsvpFormSettings({
 type EventRsvpSectionProps = {
   event: Event;
   numGuests: number;
+  setUseEditMode: Dispatch<SetStateAction<boolean>>;
   setPrefillQuestion: Dispatch<SetStateAction<Question | undefined>>;
   setShowQuestionForm: Dispatch<SetStateAction<boolean>>;
 };
@@ -96,6 +102,7 @@ type EventRsvpSectionProps = {
 const EventRsvpSection = ({
   event,
   numGuests,
+  setUseEditMode,
   setPrefillQuestion,
   setShowQuestionForm,
 }: EventRsvpSectionProps) => {
@@ -110,7 +117,7 @@ const EventRsvpSection = ({
 
   const onAddQuestion = (eventId: string) => {
     setPrefillQuestion({
-      id: "",
+      id: undefined,
       eventId,
       text: "",
       type: "Text",
@@ -120,7 +127,7 @@ const EventRsvpSection = ({
   };
   return (
     <div>
-      <div className="flex items-center justify-between pb-5">
+      <div className="flex items-center justify-between pb-2">
         <h2 className="text-2xl font-bold">{event.name}</h2>
         <div className="flex items-center gap-3">
           <span>Collect RSVPs</span>
@@ -145,16 +152,30 @@ const EventRsvpSection = ({
         <span className="font-semibold underline">{event.name}</span> list who
         RSVP &apos;Yes&apos;
       </p>
-      <ul>
+      <ul className="mt-5 flex flex-col gap-3">
         {event.questions?.map((question) => {
           return (
-            <li key={question.id} className="border-2 p-5">
-              <div>
-                <p>{question.text}</p>
+            <li key={question.id} className="border-2 p-4">
+              <div className="flex items-center justify-between">
+                {question.type === "Text" ? (
+                  <p>{question.text}</p>
+                ) : (
+                  <div>
+                    <p>{question.text}</p>
+                    <span className="text-sm">
+                      {question.options?.length} options
+                    </span>
+                  </div>
+                )}
                 <BsPencil
                   size={20}
                   color={sharedStyles.primaryColorHex}
-                  onClick={() => setPrefillQuestion(question)}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setUseEditMode(true);
+                    setPrefillQuestion(question);
+                    setShowQuestionForm(true);
+                  }}
                 />
               </div>
             </li>
@@ -174,30 +195,69 @@ const EventRsvpSection = ({
   );
 };
 
+type GeneralQuestionsSectionProps = {
+  website: Website | undefined | null;
+  setUseEditMode: Dispatch<SetStateAction<boolean>>;
+  setPrefillQuestion: Dispatch<SetStateAction<Question | undefined>>;
+  setShowQuestionForm: Dispatch<SetStateAction<boolean>>;
+};
+
 const GeneralQuestionsSection = ({
-  generalQuestions,
-}: {
-  generalQuestions: Question[];
-}) => {
+  website,
+  setUseEditMode,
+  setPrefillQuestion,
+  setShowQuestionForm,
+}: GeneralQuestionsSectionProps) => {
+  if (!website)
+    return <div>Could not load questions. Please refresh the page.</div>;
+  const onAddQuestion = (websiteId: string) => {
+    setUseEditMode(false);
+    setPrefillQuestion({
+      id: "",
+      websiteId,
+      text: "",
+      type: "Text",
+      isRequired: false,
+    });
+    setShowQuestionForm(true);
+  };
   return (
     <div className="py-10">
-      <h1 className="py-5 text-2xl font-bold">General Questions</h1>
+      <h1 className="py-2 text-2xl font-bold">General Questions</h1>
       <p>
         These questions will be asked of all guests that RSVP, regardless of if
         they say &apos;Yes&apos; or &apos;No&apos;
       </p>
-      <ul>
-        {generalQuestions.map((question) => {
+      <ul className="mt-5 flex flex-col gap-3">
+        {website?.generalQuestions?.map((question) => {
           return (
-            <li key={question.id} className="border-2 p-5">
-              <div>
+            <li key={question.id} className="border-2 p-4">
+              <div className="flex justify-between">
                 <p>{question.text}</p>
-                <BsPencil size={20} color={sharedStyles.primaryColorHex} />
+                <BsPencil
+                  size={20}
+                  color={sharedStyles.primaryColorHex}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setUseEditMode(true);
+                    setPrefillQuestion(question);
+                    setShowQuestionForm(true);
+                  }}
+                />
               </div>
             </li>
           );
         })}
       </ul>
+      <div
+        className="flex w-fit cursor-pointer gap-2 pt-5"
+        onClick={() => onAddQuestion(website.id)}
+      >
+        <AiOutlinePlusCircle size={25} color={sharedStyles.primaryColorHex} />
+        <span className={`text-${sharedStyles.primaryColor}`}>
+          Add Another Question
+        </span>
+      </div>
     </div>
   );
 };

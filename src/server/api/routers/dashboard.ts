@@ -63,7 +63,11 @@ export const dashboardRouter = createTRPCRouter({
         createdAt: "asc",
       },
       include: {
-        questions: true,
+        questions: {
+          include: {
+            options: true,
+          },
+        },
       },
     });
 

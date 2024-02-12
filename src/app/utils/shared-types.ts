@@ -10,7 +10,7 @@ type Option = {
 };
 
 type Question = {
-  id: string;
+  id: string | undefined;
   eventId?: string | null;
   websiteId?: string | null;
   text: string;
