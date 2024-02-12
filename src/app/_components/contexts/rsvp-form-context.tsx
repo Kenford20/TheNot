@@ -14,7 +14,7 @@ type RsvpFormState = {
   selectedHousehold?: HouseholdSearch[0] | null;
   rsvpResponses: RsvpFormResponse[];
   answersToQuestions: Answer[];
-  weddingData: RsvpPageData;
+  weddingData: Partial<RsvpPageData>;
 };
 
 const INITIAL_STATE: RsvpFormState = {
@@ -31,7 +31,6 @@ const INITIAL_STATE: RsvpFormState = {
       standardFormat: "",
       numberFormat: "",
     },
-    password: null,
     daysRemaining: 0,
     events: [],
   },
