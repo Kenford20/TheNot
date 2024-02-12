@@ -52,6 +52,7 @@ export default function MainRsvpForm({
 
   const generateDynamicStepForms = useCallback(() => {
     const newSteps = weddingData?.events?.reduce((acc: ReactNode[], event) => {
+      if (!event.collectRsvp) return acc;
       // TODO: invitedGuests need to be filtered based on rsvp selection - shouldnt show question step forms for those who declined rsvp
       const invitedGuests = rsvpFormData.selectedHousehold?.guests.filter(
         (guest) =>

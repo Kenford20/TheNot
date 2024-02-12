@@ -78,7 +78,7 @@ export const eventRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
-        eventName: z.string().nonempty({ message: "Event name required" }),
+        eventName: z.string().min(1, { message: "Event name required" }),
         date: z.string().optional(),
         startTime: z.string().optional(),
         endTime: z.string().optional(),
@@ -101,6 +101,24 @@ export const eventRouter = createTRPCRouter({
           venue: input.venue,
           attire: input.attire,
           description: input.description,
+        },
+      });
+    }),
+
+  updateCollectRsvp: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        collectRsvp: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.event.update({
+        where: {
+          id: input.eventId,
+        },
+        data: {
+          collectRsvp: input.collectRsvp,
         },
       });
     }),
