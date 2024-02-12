@@ -157,7 +157,7 @@ type WeddingPageData = {
     standardFormat: string;
     numberFormat: string;
   };
-  password: string | null;
+  website: Website;
   daysRemaining: number;
   events: Event[];
 };

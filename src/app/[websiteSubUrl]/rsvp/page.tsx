@@ -13,7 +13,8 @@ export default async function RsvpPage() {
     .query({ subUrl: websiteSubUrl })
     .catch((err) => console.log("website#fetchWeddingData error", err));
 
-  if (weddingData === undefined) return <NotFoundPage />;
+  if (weddingData === undefined || !weddingData.website.isRsvpEnabled)
+    return <NotFoundPage />;
 
   return (
     <RsvpFormProvider>

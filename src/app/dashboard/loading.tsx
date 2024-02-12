@@ -21,8 +21,8 @@ export default function DashboardSkeleton() {
               </div>
             </div>
             <div className="flex gap-5">
-              <div className="mb-2.5 h-12 w-44 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              <div className="mb-2.5 h-12 w-36 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              <div className="w-54 mb-2.5 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              <div className="w-42 mb-2.5 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
             </div>
           </div>
         </section>

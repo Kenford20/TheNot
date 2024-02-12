@@ -171,19 +171,19 @@ export const websiteRouter = createTRPCRouter({
   fetchWeddingData: publicProcedure
     .input(z.object({ subUrl: z.string() }))
     .query(async ({ ctx, input }) => {
-      const currentWebsite = await ctx.db.website.findFirst({
+      const website = await ctx.db.website.findFirst({
         where: {
           subUrl: input.subUrl,
         },
       });
 
-      if (currentWebsite === null) {
+      if (website === null) {
         throw new TRPCClientError("This website does not exist.");
       }
 
       const weddingUser: User | null = await ctx.db.user.findFirst({
         where: {
-          id: currentWebsite.userId,
+          id: website.userId,
         },
       });
 
@@ -196,7 +196,7 @@ export const websiteRouter = createTRPCRouter({
 
       const events = await ctx.db.event.findMany({
         where: {
-          userId: currentWebsite.userId,
+          userId: website.userId,
         },
       });
 
@@ -219,7 +219,7 @@ export const websiteRouter = createTRPCRouter({
             }) ?? "October 30, 2024",
           numberFormat: formatDateNumber(weddingDate) ?? "10.30.2024",
         },
-        password: currentWebsite.password,
+        website,
         daysRemaining: 100,
         events,
       };

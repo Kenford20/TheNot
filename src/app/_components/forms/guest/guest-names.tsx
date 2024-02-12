@@ -102,7 +102,7 @@ export const GuestNameForm = ({
             />
           </div>
           {guestIndex > 0 && (
-            <div className="cursor-pointer" onClick={() => handleRemoveGuest()}>
+            <div className="cursor-pointer" onClick={handleRemoveGuest}>
               <FiMinusCircle size={28} color="gray" />
             </div>
           )}

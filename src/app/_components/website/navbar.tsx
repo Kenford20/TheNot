@@ -1,6 +1,12 @@
 import Link from "next/link";
 
-export default function Navbar({ path }: { path: string }) {
+export default function Navbar({
+  path,
+  isRsvpEnabled,
+}: {
+  path: string;
+  isRsvpEnabled: boolean;
+}) {
   return (
     <div className="mb-5 mt-10 px-20">
       <ul className="flex justify-between">
@@ -45,11 +51,13 @@ export default function Navbar({ path }: { path: string }) {
               Registry
             </Link>
           </li>
-          <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
-            <Link className="" href={`${path}/rsvp`}>
-              RSVP
-            </Link>
-          </li>
+          {isRsvpEnabled && (
+            <li className="border-b-2 border-transparent pb-1 hover:border-gray-600">
+              <Link className="" href={`${path}/rsvp`}>
+                RSVP
+              </Link>
+            </li>
+          )}
         </div>
       </ul>
     </div>

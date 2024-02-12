@@ -23,13 +23,15 @@ export default function WeddingPage({ weddingData, path }: WeddingPageProps) {
         {weddingData.daysRemaining > 0 && (
           <p className="text-lg">{weddingData.daysRemaining} Days To Go!</p>
         )}
-        <Navbar path={path} />
-        <Link
-          href={`${path}/rsvp`}
-          className={`rounded-sm px-6 py-3 tracking-widest text-white hover:bg-pink-500 hover:underline bg-${sharedStyles.primaryColor}`}
-        >
-          RSVP
-        </Link>
+        <Navbar path={path} isRsvpEnabled={weddingData.website.isRsvpEnabled} />
+        {weddingData.website.isRsvpEnabled && (
+          <Link
+            href={`${path}/rsvp`}
+            className={`rounded-sm px-6 py-3 tracking-widest text-white hover:bg-pink-500 hover:underline bg-${sharedStyles.primaryColor}`}
+          >
+            RSVP
+          </Link>
+        )}
       </div>
 
       <div className="w-48 text-center">

@@ -21,6 +21,7 @@ model Website {
   subUrl            String     @unique
   isPasswordEnabled Boolean    @default(false)
   password          String?
+  isRsvpEnabled     Boolean    @default(true)
   generalQuestions  Question[] @relation(name: "Website_Question")
 }
 
@@ -149,13 +150,13 @@ model Question {
   websiteId  String?
   website    Website? @relation(name: "Website_Question", fields: [websiteId], references: [id], onDelete: Cascade)
   text       String
-  type       String // ['Custom', 'Kids', 'RSVPNote']
-  answerType String // ['Text', 'Option']
+  //   type       String // idk what this is for yet tbh ['Custom', 'Kids', 'RSVPNote']
+  type       String   // ['Text', 'Option']
   isRequired Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   options    Option[] @relation(name: "Question_Options")
-  answer     Answer[] @relation(name: "Question_Answer")
+  answers    Answer[] @relation(name: "Question_Answer")
 
   @@index([eventId])
   @@index([websiteId])
