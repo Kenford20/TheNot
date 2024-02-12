@@ -12,16 +12,16 @@ type TformOption = {
 type QuestionOptionProps = {
   option: Option | TformOption;
   setQuestionOptions: Dispatch<SetStateAction<Option[] | TformOption[]>>;
-  questionIndex: number;
+  optionIndex: number;
 };
 
 export default function QuestionOption({
   option,
   setQuestionOptions,
-  questionIndex,
+  optionIndex,
 }: QuestionOptionProps) {
   const handleRemoveOption = () => {
-    setQuestionOptions((prev) => prev.filter((_, i) => i !== questionIndex));
+    setQuestionOptions((prev) => prev.filter((_, i) => i !== optionIndex));
   };
 
   const handleOnChange = ({
@@ -32,10 +32,15 @@ export default function QuestionOption({
     inputValue: string;
   }) => {
     setQuestionOptions((prev) => {
-      return {
-        ...prev,
-        [field]: inputValue,
-      };
+      return prev.map((prevOption, i) => {
+        if (i === optionIndex) {
+          return {
+            ...prevOption,
+            [field]: inputValue,
+          };
+        }
+        return prevOption;
+      });
     });
   };
 
@@ -43,9 +48,9 @@ export default function QuestionOption({
     <div className="flex w-full pb-5 pt-2">
       <FiMinusCircle
         size={32}
-        color={questionIndex < 2 ? "lightgray" : "gray"}
-        className={`-ml-0.5 mr-3 mt-2 ${questionIndex < 2 ? "cursor-not-allowed" : "cursor-pointer"}`}
-        onClick={() => questionIndex > 1 && handleRemoveOption()}
+        color={optionIndex < 2 ? "lightgray" : "gray"}
+        className={`-ml-0.5 mr-3 mt-2 ${optionIndex < 2 ? "cursor-not-allowed" : "cursor-pointer"}`}
+        onClick={() => optionIndex > 1 && handleRemoveOption()}
       />
       <div className="flex w-full flex-col gap-3">
         <AnimatedInputLabel

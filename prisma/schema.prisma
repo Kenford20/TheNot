@@ -164,7 +164,7 @@ model Question {
 
 model Option {
   id              String           @id @default(uuid())
-  responseCount   Int
+  responseCount   Int              @default(0)
   text            String
   description     String
   question        Question         @relation(name: "Question_Options", fields: [questionId], references: [id], onDelete: Cascade)

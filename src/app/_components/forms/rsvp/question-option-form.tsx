@@ -27,7 +27,7 @@ export default function QuestionOptionsForm({
             key={i}
             option={option}
             setQuestionOptions={setQuestionOptions}
-            questionIndex={i}
+            optionIndex={i}
           />
         );
       })}
