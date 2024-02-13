@@ -184,12 +184,20 @@ type Answer = {
   };
 };
 
+type formOption = {
+  id?: string;
+  text: string;
+  description: string;
+};
+type TQuestionOption = Option | formOption;
+
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type DashboardData = RouterOutput["dashboard"]["getByUserId"];
 type HouseholdSearch = RouterOutput["household"]["findBySearch"];
 type RsvpPageData = RouterOutput["website"]["fetchWeddingData"];
 
 export {
+  type TQuestionOption,
   type Option,
   type Question,
   type Event,

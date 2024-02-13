@@ -30,14 +30,25 @@ export const questionRouter = createTRPCRouter({
             message: "You need to have at least two options for this question!",
           })
           .optional(),
+        deletedOptions: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.deletedOptions && input.deletedOptions.length > 0) {
+        await ctx.db.option.deleteMany({
+          where: {
+            id: {
+              in: input.deletedOptions,
+            },
+          },
+        });
+      }
+
       const upsertOptions = {
         upsert: input.options?.map((option) => {
           return {
             where: {
-              id: option.id,
+              id: option.id ?? "-1",
             },
             update: {
               text: option.text ?? undefined,

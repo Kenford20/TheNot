@@ -3,21 +3,18 @@ import { sharedStyles } from "~/app/utils/shared-styles";
 import QuestionOption from "./question-option";
 
 import { type Dispatch, type SetStateAction } from "react";
-import { type Option } from "~/app/utils/shared-types";
-
-type TformOption = {
-  text: string;
-  description: string;
-};
+import { type TQuestionOption } from "~/app/utils/shared-types";
 
 type QuestionOptionsFormProps = {
-  questionOptions: TformOption[] | Option[];
-  setQuestionOptions: Dispatch<SetStateAction<Option[] | TformOption[]>>;
+  questionOptions: TQuestionOption[];
+  setQuestionOptions: Dispatch<SetStateAction<TQuestionOption[]>>;
+  setDeletedOptions: Dispatch<SetStateAction<string[]>>;
 };
 
 export default function QuestionOptionsForm({
   questionOptions,
   setQuestionOptions,
+  setDeletedOptions,
 }: QuestionOptionsFormProps) {
   return (
     <div className="px-5">
@@ -28,6 +25,7 @@ export default function QuestionOptionsForm({
             option={option}
             setQuestionOptions={setQuestionOptions}
             optionIndex={i}
+            setDeletedOptions={setDeletedOptions}
           />
         );
       })}

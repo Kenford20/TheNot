@@ -2,26 +2,24 @@ import { FiMinusCircle } from "react-icons/fi";
 import AnimatedInputLabel from "../animated-input-label";
 
 import { type Dispatch, type SetStateAction } from "react";
-import { type Option } from "~/app/utils/shared-types";
-
-type TformOption = {
-  text: string;
-  description: string;
-};
+import { type TQuestionOption } from "~/app/utils/shared-types";
 
 type QuestionOptionProps = {
-  option: Option | TformOption;
-  setQuestionOptions: Dispatch<SetStateAction<Option[] | TformOption[]>>;
+  option: TQuestionOption;
+  setQuestionOptions: Dispatch<SetStateAction<TQuestionOption[]>>;
   optionIndex: number;
+  setDeletedOptions: Dispatch<SetStateAction<string[]>>;
 };
 
 export default function QuestionOption({
   option,
   setQuestionOptions,
   optionIndex,
+  setDeletedOptions,
 }: QuestionOptionProps) {
-  const handleRemoveOption = () => {
+  const handleRemoveOption = (option: TQuestionOption) => {
     setQuestionOptions((prev) => prev.filter((_, i) => i !== optionIndex));
+    if (!!option.id) setDeletedOptions((prev) => [...prev, option.id!]);
   };
 
   const handleOnChange = ({
@@ -50,7 +48,7 @@ export default function QuestionOption({
         size={32}
         color={optionIndex < 2 ? "lightgray" : "gray"}
         className={`-ml-0.5 mr-3 mt-2 ${optionIndex < 2 ? "cursor-not-allowed" : "cursor-pointer"}`}
-        onClick={() => optionIndex > 1 && handleRemoveOption()}
+        onClick={() => optionIndex > 1 && handleRemoveOption(option)}
       />
       <div className="flex w-full flex-col gap-3">
         <AnimatedInputLabel

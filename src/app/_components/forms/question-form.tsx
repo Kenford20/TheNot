@@ -8,17 +8,12 @@ import { IoMdClose } from "react-icons/io";
 import SidePaneWrapper from "./wrapper";
 import AnimatedInputLabel from "./animated-input-label";
 import DeleteConfirmation from "./delete-confirmation";
-
-import { type Dispatch, type SetStateAction } from "react";
-import { type Option, type Question } from "~/app/utils/shared-types";
 import QuestionOptionsForm from "./rsvp/question-option-form";
 
-type TformOption = {
-  text: string;
-  description: string;
-};
+import { type Dispatch, type SetStateAction } from "react";
+import { type TQuestionOption, type Question } from "~/app/utils/shared-types";
 
-const defaultQuestionOptions: TformOption[] = [
+const defaultQuestionOptions: TQuestionOption[] = [
   {
     text: "",
     description: "",
@@ -41,9 +36,10 @@ export default function QuestionForm({
   setShowQuestionForm,
 }: QuestionFormProps) {
   const router = useRouter();
-  const [questionOptions, setQuestionOptions] = useState<
-    Option[] | TformOption[]
-  >(question.options ?? defaultQuestionOptions);
+  const [deletedOptions, setDeletedOptions] = useState<string[]>([]);
+  const [questionOptions, setQuestionOptions] = useState<TQuestionOption[]>(
+    question.options ?? defaultQuestionOptions,
+  );
   const [questionType, setQuestionType] = useState<string>(
     question.type ?? "Text",
   );
@@ -79,6 +75,24 @@ export default function QuestionForm({
     setQuestionInput(inputValue);
   };
 
+  const handleOnSubmit = () => {
+    // delete options in db when changing the question type to Option from Text
+    let deleteOptions = deletedOptions;
+    if (question.type === "Option" && questionType === "Text") {
+      deleteOptions = question.options?.map((option) => option.id) ?? [];
+    }
+    upsertQuestion.mutate({
+      type: questionType,
+      text: questionInput,
+      isRequired: question.type === "Option",
+      eventId: question.eventId,
+      websiteId: question.websiteId,
+      questionId: question.id,
+      options: questionOptions,
+      deletedOptions: deleteOptions,
+    });
+  };
+
   const isProcessing = upsertQuestion.isLoading || deleteQuestion.isLoading;
 
   if (showDeleteConfirmation) {
@@ -103,15 +117,7 @@ export default function QuestionForm({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          upsertQuestion.mutate({
-            type: questionType,
-            text: questionInput,
-            isRequired: question.type === "Option",
-            eventId: question.eventId,
-            websiteId: question.websiteId,
-            questionId: question.id,
-            options: questionOptions,
-          });
+          handleOnSubmit();
         }}
         className="pb-32"
       >
@@ -165,6 +171,7 @@ export default function QuestionForm({
           <QuestionOptionsForm
             questionOptions={questionOptions}
             setQuestionOptions={setQuestionOptions}
+            setDeletedOptions={setDeletedOptions}
           />
         )}
         <Buttons

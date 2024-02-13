@@ -182,8 +182,11 @@ const EventRsvpSection = ({
           );
         })}
         <div
-          className="flex cursor-pointer gap-2 pt-5"
-          onClick={() => onAddQuestion(event.id)}
+          className="flex w-fit cursor-pointer gap-2 pt-5"
+          onClick={() => {
+            setUseEditMode(false);
+            onAddQuestion(event.id);
+          }}
         >
           <AiOutlinePlusCircle size={25} color={sharedStyles.primaryColorHex} />
           <span className={`text-${sharedStyles.primaryColor}`}>
