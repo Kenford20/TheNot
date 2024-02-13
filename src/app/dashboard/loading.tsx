@@ -10,7 +10,7 @@ export default function DashboardSkeleton() {
         {/* header  */}
         <section className="border-b pb-10">
           <div
-            className={`${sharedStyles.desktopPaddingSides} flex items-center justify-between`}
+            className={`${sharedStyles.desktopPaddingSides} ${sharedStyles.minPageWidth} flex items-center justify-between`}
           >
             <div>
               <div className="mb-4 h-10 w-40 bg-gray-200 dark:bg-gray-700"></div>
@@ -21,15 +21,17 @@ export default function DashboardSkeleton() {
               </div>
             </div>
             <div className="flex gap-5">
-              <div className="w-54 mb-2.5 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              <div className="w-42 mb-2.5 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mb-2.5 h-12 w-56 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mb-2.5 h-12 w-44 rounded-full bg-gray-200 dark:bg-gray-700"></div>
             </div>
           </div>
         </section>
 
         {/* registry setup */}
         <section className="border-b py-10">
-          <div className={`${sharedStyles.desktopPaddingSides} flex`}>
+          <div
+            className={`${sharedStyles.desktopPaddingSides} ${sharedStyles.minPageWidth} flex`}
+          >
             <div className="flex h-32 w-32 items-center justify-center rounded bg-gray-300 dark:bg-gray-700">
               <svg
                 className="w-18 h-8 text-gray-200 dark:text-gray-600"
@@ -56,7 +58,7 @@ export default function DashboardSkeleton() {
 
         {/* top of home section */}
         <section
-          className={`grid grid-cols-[3fr_275px] gap-7 pt-14 ${sharedStyles.desktopPaddingSides}`}
+          className={`grid grid-cols-[3fr_275px] gap-7 pt-14 ${sharedStyles.desktopPaddingSides} ${sharedStyles.minPageWidth}`}
         >
           <div>
             <div className="flex justify-between pb-3">

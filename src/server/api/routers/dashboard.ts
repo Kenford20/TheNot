@@ -64,6 +64,9 @@ export const dashboardRouter = createTRPCRouter({
       },
       include: {
         questions: {
+          orderBy: {
+            createdAt: "asc",
+          },
           include: {
             options: true,
           },

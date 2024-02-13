@@ -33,6 +33,15 @@ type Event = {
   collectRsvp?: boolean;
 };
 
+interface EventWithResponses extends Event {
+  guestResponses: {
+    attending: number;
+    invited: number;
+    declined: number;
+    notInvited: number;
+  };
+}
+
 type Invitation = {
   eventId: string;
   rsvp: string | null;
@@ -201,6 +210,7 @@ export {
   type Option,
   type Question,
   type Event,
+  type EventWithResponses,
   type Invitation,
   type Household,
   type Gift,
