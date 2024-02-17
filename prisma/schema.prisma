@@ -151,7 +151,7 @@ model Question {
   website    Website? @relation(name: "Website_Question", fields: [websiteId], references: [id], onDelete: Cascade)
   text       String
   //   type       String // idk what this is for yet tbh ['Custom', 'Kids', 'RSVPNote']
-  type       String   // ['Text', 'Option']
+  type       String // ['Text', 'Option']
   isRequired Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -191,13 +191,15 @@ model OptionResponse {
 }
 
 model Answer {
-  response   String
-  guest      Guest?    @relation(name: "Guest_Answer", fields: [guestId], references: [id], onDelete: Cascade)
-  guestId    Int
-  question   Question? @relation(name: "Question_Answer", fields: [questionId], references: [id], onDelete: Cascade)
-  questionId String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  response       String
+  guest          Guest?    @relation(name: "Guest_Answer", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId        Int
+  guestFirstName String
+  guestLastName  String
+  question       Question? @relation(name: "Question_Answer", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId     String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@id(name: "answerId", [guestId, questionId])
   @@index([guestId])

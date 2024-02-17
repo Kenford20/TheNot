@@ -1,24 +1,6 @@
 import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 
-type Option = {
-  id: string;
-  responseCount: number;
-  text: string;
-  description: string;
-  questionId: string;
-};
-
-type Question = {
-  id: string | undefined;
-  eventId?: string | null;
-  websiteId?: string | null;
-  text: string;
-  type: string;
-  isRequired: boolean;
-  options?: Option[];
-};
-
 type Event = {
   id: string;
   name: string;
@@ -183,14 +165,40 @@ type RsvpFormResponse = {
   guestName: string;
 };
 
+type Option = {
+  id: string;
+  responseCount: number;
+  text: string;
+  description: string;
+  questionId: string;
+};
+
+type Question = {
+  id: string | undefined;
+  eventId?: string | null;
+  websiteId?: string | null;
+  text: string;
+  type: string;
+  isRequired: boolean;
+  options?: Option[];
+  answers?: Answer[];
+  recentAnswer?: Answer;
+  _count?: {
+    answers: number;
+  };
+};
+
 type Answer = {
   questionId: string;
   guestId: number;
-  response: {
-    type: string;
-    answer?: string;
-    selectedOptionId?: string;
-  };
+  guestFirstName: string;
+  guestLastName: string;
+  response: string;
+  // response: {
+  //   type: string;
+  //   answer?: string;
+  //   selectedOptionId?: string;
+  // };
 };
 
 type formOption = {

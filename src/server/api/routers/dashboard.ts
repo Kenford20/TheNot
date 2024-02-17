@@ -69,6 +69,11 @@ export const dashboardRouter = createTRPCRouter({
           },
           include: {
             options: true,
+            _count: {
+              select: {
+                answers: true,
+              },
+            },
           },
         },
       },
@@ -137,38 +142,53 @@ export const dashboardRouter = createTRPCRouter({
         };
       }),
 
-      events: events.map((event) => {
-        const guestResponses = {
-          invited: 0,
-          attending: 0,
-          declined: 0,
-          notInvited: 0,
-        };
+      events: await Promise.all(
+        events.map(async (event) => {
+          const guestResponses = {
+            invited: 0,
+            attending: 0,
+            declined: 0,
+            notInvited: 0,
+          };
 
-        invitations.forEach((rsvp) => {
-          if (event.id === rsvp.eventId) {
-            switch (rsvp.rsvp) {
-              case "Invited":
-                guestResponses.invited += 1;
-                break;
-              case "Attending":
-                guestResponses.attending += 1;
-                break;
-              case "Declined":
-                guestResponses.declined += 1;
-                break;
-              default:
-                guestResponses.notInvited += 1;
-                break;
+          invitations.forEach((rsvp) => {
+            if (event.id === rsvp.eventId) {
+              switch (rsvp.rsvp) {
+                case "Invited":
+                  guestResponses.invited += 1;
+                  break;
+                case "Attending":
+                  guestResponses.attending += 1;
+                  break;
+                case "Declined":
+                  guestResponses.declined += 1;
+                  break;
+                default:
+                  guestResponses.notInvited += 1;
+                  break;
+              }
             }
-          }
-        });
+          });
 
-        return {
-          ...event,
-          guestResponses,
-        };
-      }),
+          return {
+            ...event,
+            questions: await Promise.all(
+              event.questions.map(async (question) => {
+                return {
+                  ...question,
+                  recentAnswer: await ctx.db.answer.findFirst({
+                    where: {
+                      questionId: question.id,
+                    },
+                    take: -1, // grab most recent record
+                  }),
+                };
+              }),
+            ),
+            guestResponses,
+          };
+        }),
+      ),
     };
 
     return dashboardData;
