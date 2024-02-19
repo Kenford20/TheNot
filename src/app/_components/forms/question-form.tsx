@@ -38,7 +38,9 @@ export default function QuestionForm({
   const router = useRouter();
   const [deletedOptions, setDeletedOptions] = useState<string[]>([]);
   const [questionOptions, setQuestionOptions] = useState<TQuestionOption[]>(
-    question.options ?? defaultQuestionOptions,
+    question.options && question.options.length > 1
+      ? question.options
+      : defaultQuestionOptions,
   );
   const [questionType, setQuestionType] = useState<string>(
     question.type ?? "Text",
@@ -88,7 +90,7 @@ export default function QuestionForm({
       eventId: question.eventId,
       websiteId: question.websiteId,
       questionId: question.id,
-      options: questionOptions,
+      options: question.type === "Option" ? questionOptions : undefined,
       deletedOptions: deleteOptions,
     });
   };
