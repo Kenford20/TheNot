@@ -5,6 +5,7 @@ import { Doughnut } from "react-chartjs-2";
 import { MdPeopleOutline } from "react-icons/md";
 import { generateRandomColor } from "~/app/utils/helpers";
 import { sharedStyles } from "~/app/utils/shared-styles";
+import { IoMdDownload } from "react-icons/io";
 
 import { type Question, type Event } from "../../../utils/shared-types";
 
@@ -59,12 +60,21 @@ export default function RsvpContent({
                 event={event}
                 numInvitedGuests={numInvitedGuests}
               />
-              <QuestionCards questions={event.questions ?? []} />
+              <QuestionCards questions={event.questions} />
             </div>
           </div>
         );
       })}
-      <GeneralQuestions generalQuestions={generalQuestions} />
+      <div className="p-10">
+        <h3 className="pb-6 text-2xl font-semibold">General Questions</h3>
+        <div className="grid grid-cols-2 gap-x-7 gap-y-20">
+          <QuestionCards questions={generalQuestions} />
+        </div>
+      </div>
+      <div className="mt-16 flex cursor-pointer items-center gap-2 border-t px-10 py-6 text-blue-600">
+        <IoMdDownload size={20} />
+        <button type="button">Download All Responses</button>
+      </div>
     </div>
   );
 }
@@ -185,16 +195,16 @@ const TextQuestionCard = ({ question }: { question: Question }) => {
   )
     return <div>Failed to get responses for this question.</div>;
   return (
-    <div className="mb-4 h-[100%] rounded-md border p-5">
+    <div className="mb-4 flex h-[100%] flex-col rounded-md border p-5">
       <h5 className="text-lg font-semibold">{question.text}</h5>
-      <div className="flex h-full items-center py-10 pl-6">
-        <div className="flex h-full items-center border-r text-center">
+      <div className="flex grow py-6 pl-5">
+        <div className="flex items-center border-r text-center">
           <div className="flex flex-col pr-7">
             <span className="text-3xl">{question._count.answers}</span>
             <span className="text-sm">Responded</span>
           </div>
         </div>
-        <div className="flex h-full items-center pl-7">
+        <div className="flex items-center pl-7">
           {question._count.answers > 0 ? (
             <div className="flex h-full flex-col justify-between">
               <span className="font-light">Most Recent</span>
@@ -274,24 +284,6 @@ const OptionQuestionCard = ({ question }: { question: Question }) => {
           })}
         </div>
       </div>
-    </div>
-  );
-};
-
-const GeneralQuestions = ({
-  generalQuestions,
-}: {
-  generalQuestions: Question[];
-}) => {
-  return (
-    <div className="p-10">
-      <h3 className="pb-6 text-2xl font-semibold">General Questions</h3>
-      <div className="mb-3 grid grid-cols-2 gap-x-7 gap-y-20">
-        <QuestionCards questions={generalQuestions} />
-      </div>
-      <Link href="/" className="cursor-pointer text-blue-600">
-        Download All Responses
-      </Link>
     </div>
   );
 };

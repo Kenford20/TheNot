@@ -7,13 +7,6 @@ export const dashboardRouter = createTRPCRouter({
   getByUserId: publicProcedure.query(async ({ ctx }) => {
     if (!ctx.auth.userId) return null;
 
-    const currentUser: User | null = await ctx.db.user.findFirst({
-      where: {
-        id: ctx.auth.userId,
-      },
-    });
-    if (!currentUser) return null;
-
     const households = await ctx.db.household.findMany({
       where: {
         userId: ctx.auth.userId,
@@ -79,21 +72,56 @@ export const dashboardRouter = createTRPCRouter({
       },
     });
 
+    const currentUser: User | null = await ctx.db.user.findFirst({
+      where: {
+        id: ctx.auth.userId,
+      },
+    });
+
     const website = await ctx.db.website.findFirst({
       where: {
         userId: ctx.auth.userId,
       },
       include: {
-        generalQuestions: true,
+        generalQuestions: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          include: {
+            options: true,
+            _count: {
+              select: {
+                answers: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    if (!currentUser || !website) return null;
 
     const weddingDate = events.find(
       (event) => event.name === "Wedding Day",
     )?.date;
 
     const weddingData = {
-      website,
+      website: {
+        ...website,
+        generalQuestions: await Promise.all(
+          website.generalQuestions.map(async (question) => {
+            return {
+              ...question,
+              recentAnswer: await ctx.db.answer.findFirst({
+                where: {
+                  questionId: question.id,
+                },
+                take: -1, // grab most recent record
+              }),
+            };
+          }),
+        ),
+      },
       groomFirstName: currentUser.groomFirstName,
       groomLastName: currentUser.groomLastName,
       brideFirstName: currentUser.brideFirstName,
