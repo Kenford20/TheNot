@@ -114,6 +114,9 @@ export default function Dashboard({
             <RsvpContent
               events={dashboardData?.events}
               totalGuests={dashboardData?.totalGuests ?? 0}
+              generalQuestions={
+                dashboardData?.weddingData.website?.generalQuestions ?? []
+              }
             />
           </PageSectionsTemplate>
         </div>

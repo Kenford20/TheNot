@@ -1,10 +1,12 @@
+import "chart.js/auto";
 import Link from "next/link";
+import { useCallback, useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { MdPeopleOutline } from "react-icons/md";
+import { generateRandomColor } from "~/app/utils/helpers";
+import { sharedStyles } from "~/app/utils/shared-styles";
 
 import { type Question, type Event } from "../../../utils/shared-types";
-
-import "chart.js/auto";
 
 const chartOptions = {
   maintainAspectRatio: true,
@@ -29,7 +31,7 @@ interface EventWithGuestResponses extends Event {
 }
 
 type RsvpContentProps = {
-  events: EventWithGuestResponses[] | undefined;
+  events: EventWithGuestResponses[] | undefined | null;
   totalGuests: number;
   generalQuestions: Question[];
 };
@@ -201,7 +203,7 @@ const TextQuestionCard = ({ question }: { question: Question }) => {
               </span>
               <span className="font-light">
                 -{" "}
-                {`${question.recentAnswer.guestFirstName} ${question.recentAnswer.guestLastName}`}
+                {`${question.recentAnswer?.guestFirstName} ${question.recentAnswer?.guestLastName}`}
               </span>
             </div>
           ) : (
@@ -213,29 +215,33 @@ const TextQuestionCard = ({ question }: { question: Question }) => {
   );
 };
 
-// TODO: replace placeholders for question.options and dynamically generate the chart-to-response view based on list of options
 const OptionQuestionCard = ({ question }: { question: Question }) => {
-  const getChartData = () => {
+  const questionResponses = useMemo(
+    () =>
+      question.options?.reduce((acc, option) => acc + option.responseCount, 0),
+    [question.options],
+  );
+  const chartColors = useMemo(
+    () => question.options?.map((_) => generateRandomColor()),
+    [question.options],
+  );
+
+  const getChartData = useCallback(() => {
     return {
-      labels: ["Yes", "No", "No Response"],
+      labels: question.options?.map((option) => option.text),
       datasets: [
         {
-          data: [6, 2, 11],
-          backgroundColor: [
-            "rgb(250 204 21)",
-            "rgb(96 165 250)",
-            "rgb(229, 231, 235)",
-          ],
+          data: question.options?.map((option) => option.responseCount),
+          backgroundColor: chartColors,
           hoverOffset: 2,
         },
       ],
     };
-  };
+  }, [question.options, chartColors]);
 
-  const questionResponses = 1337;
   return (
     <div className="mb-4 h-[100%] rounded-md border p-5">
-      <h5 className="pb-6 text-lg font-semibold">Song Request?</h5>
+      <h5 className="pb-6 text-lg font-semibold">{question.text}</h5>
       <div className="flex items-center justify-between gap-7">
         <div className="relative h-full w-40">
           <Doughnut data={getChartData()} options={chartOptions} />
@@ -245,30 +251,27 @@ const OptionQuestionCard = ({ question }: { question: Question }) => {
           </div>
         </div>
         <div className="flex w-48 flex-col pr-4">
-          <div className="flex items-center justify-between border-b">
-            {/* map through multiple choice options */}
-            <div className="flex items-center gap-3 py-3">
-              <span className={`h-2 w-2 rounded-full bg-yellow-400`} />
-              Justin Bieber
-            </div>
-            <div className="font-medium">6</div>
-          </div>
-          <div className="flex items-center justify-between border-b">
-            {/* map through multiple choice options */}
-            <div className="flex items-center gap-3 py-3">
-              <span className={`h-2 w-2 rounded-full bg-blue-400`} />
-              Ariana Grande
-            </div>
-            <div className="font-medium">2</div>
-          </div>
-          <div className="flex items-center justify-between border-b">
-            {/* map through multiple choice options */}
-            <div className="flex items-center gap-3 py-3">
-              <span className={`h-2 w-2 rounded-full bg-gray-200`} />
-              Adele
-            </div>
-            <div className="font-medium">11</div>
-          </div>
+          {question.options?.map((option, i) => {
+            return (
+              <div
+                key={option.id}
+                className="flex items-center justify-between border-b"
+              >
+                <div className="flex items-center gap-3 py-3">
+                  <span
+                    className={`h-2 w-2 rounded-full`}
+                    style={{ backgroundColor: chartColors?.[i] }}
+                  />
+                  <span
+                    className={`max-w-[146px] ${sharedStyles.ellipsisOverflow}`}
+                  >
+                    {option.text}
+                  </span>
+                </div>
+                <div className="font-medium">{option.responseCount}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

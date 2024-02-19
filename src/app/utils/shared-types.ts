@@ -11,7 +11,7 @@ type Event = {
   attire: string | null;
   description: string | null;
   userId: string;
-  questions?: Question[];
+  questions: Question[];
   collectRsvp?: boolean;
 };
 
@@ -182,7 +182,7 @@ type Question = {
   isRequired: boolean;
   options?: Option[];
   answers?: Answer[];
-  recentAnswer?: Answer;
+  recentAnswer?: Answer | null;
   _count?: {
     answers: number;
   };
