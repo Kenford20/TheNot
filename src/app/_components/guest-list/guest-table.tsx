@@ -88,7 +88,7 @@ export default function GuestTable({
     <>
       <div className="max-h-[75vh] overflow-auto">
         <table>
-          <tbody>
+          <thead>
             <tr
               className="sticky top-0 grid min-w-fit items-center gap-12 border-b bg-white px-8 py-6 italic text-gray-600"
               style={{
@@ -140,7 +140,9 @@ export default function GuestTable({
                 <th className="font-light">Thank You</th>
               )}
             </tr>
+          </thead>
 
+          <tbody>
             {sortedHouseholds?.map((household) =>
               selectedEventId === "all" ? (
                 <DefaultTableRow

@@ -38,7 +38,7 @@ export default function PageSectionsTemplate({
       <div className="w-full border">
         <div className="flex justify-between px-5 py-7">
           <div className="flex">
-            <button onClick={() => setShowSection(true)}>
+            <button onClick={() => setShowSection((prev) => !prev)}>
               {showSection ? <IoIosArrowForward /> : <AiOutlineDown />}
             </button>
             <h2 className="ml-3 text-xl font-semibold">{title}</h2>
@@ -69,18 +69,19 @@ export default function PageSectionsTemplate({
         {showSection && (
           <>
             {children}
-            <div className="border-t"></div>
-            <div className="p-5">
-              <div className="flex cursor-pointer">
-                <AiOutlinePlusCircle
-                  size={25}
-                  color={sharedStyles.primaryColorHex}
-                />
-                <p className={`pl-3 text-${sharedStyles.primaryColor}`}>
-                  Add More to {title}
-                </p>
+            {title !== "RSVP" && (
+              <div className="border-t p-5">
+                <div className="flex cursor-pointer">
+                  <AiOutlinePlusCircle
+                    size={25}
+                    color={sharedStyles.primaryColorHex}
+                  />
+                  <p className={`pl-3 text-${sharedStyles.primaryColor}`}>
+                    Add More to {title}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>
