@@ -64,21 +64,28 @@ export default function MainRsvpForm({
       );
 
       if (invitedGuests !== undefined && invitedGuests.length > 0) {
-        acc.push(
-          <EventRsvpForm event={event} invitedGuests={invitedGuests} />,
-          <QuestionShortAnswer />,
-          <QuestionMultipleChoice />,
-        );
-        // TODO: when questions are implemented
-        // for (let question of event.questions) {
-        //   invitedGuests.forEach(guest => {
-        //     if (question.type === 'text') acc.push(<QuestionShortAnswer question={question} guest={guest} event={event} />)
-        //     else acc.push(<QuestionMultipleChoice question={question} guest={guest} event={event} />)
-        //   })
-        // }
+        acc.push(<EventRsvpForm event={event} invitedGuests={invitedGuests} />);
+        for (const question of event.questions) {
+          invitedGuests.forEach((guest) => {
+            question.type === "text"
+              ? acc.push(
+                  <QuestionShortAnswer question={question} guest={guest} />,
+                )
+              : acc.push(
+                  <QuestionMultipleChoice question={question} guest={guest} />,
+                );
+          });
+        }
       }
       return acc;
     }, []);
+
+    weddingData?.website.generalQuestions.forEach((question) => {
+      question.type === "text"
+        ? newSteps.push(<QuestionShortAnswer question={question} />)
+        : newSteps.push(<QuestionMultipleChoice question={question} />);
+    });
+
     numSteps.current = newSteps.length + NUM_STATIC_STEPS;
     return newSteps;
   }, [weddingData, rsvpFormData.selectedHousehold]);

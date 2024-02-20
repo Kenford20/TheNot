@@ -7,17 +7,22 @@ import {
   useUpdateRsvpForm,
 } from "~/app/_components/contexts/rsvp-form-context";
 
-import { type Guest, type StepFormProps } from "~/app/utils/shared-types";
+import {
+  type Question,
+  type Guest,
+  type StepFormProps,
+} from "~/app/utils/shared-types";
 
 interface QuestionMultipleChoiceProps extends StepFormProps {
   guest?: Guest;
-  // question: Question
+  question: Question;
 }
 
 export default function QuestionMultipleChoice({
   goNext,
   goBack,
   guest,
+  question,
 }: QuestionMultipleChoiceProps) {
   const rsvpFormData = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
@@ -25,34 +30,16 @@ export default function QuestionMultipleChoice({
     string | undefined
   >();
 
-  const question = {
-    text: "What music?",
-    isRequired: true,
-    options: [
-      {
-        id: "1",
-        text: "option title",
-        description: "option description",
-      },
-      {
-        id: "2",
-        text: "option title2",
-        description: "option description2",
-      },
-    ],
-  };
-  const guestThatsAnswering = {
-    firstName: "john",
-    lastName: "doe",
-  };
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-2xl tracking-widest">{question.text}</h2>
-      <span>
-        {guestThatsAnswering.firstName} {guestThatsAnswering.lastName}
-      </span>
+      {!!guest && (
+        <span>
+          {guest.firstName} {guest.lastName}
+        </span>
+      )}
       <ul>
-        {question.options.map((option) => {
+        {question.options?.map((option) => {
           return (
             <li
               key={option.id}
@@ -81,13 +68,12 @@ export default function QuestionMultipleChoice({
             answersToQuestions: [
               ...rsvpFormData.answersToQuestions,
               {
-                questionId: "123",
-                // TODO: update guestId when Questions are implemented - can remove optional in the prop types
-                guestId: guest?.id ?? 0,
-                response: {
-                  type: "Option",
-                  selectedOptionId,
-                },
+                questionId: question.id ?? "-1",
+                guestId: guest?.id ?? -1,
+                householdId: rsvpFormData.selectedHousehold?.id ?? "-1",
+                response: selectedOptionId!,
+                guestFirstName: guest?.firstName,
+                guestLastName: guest?.lastName,
               },
             ],
           });

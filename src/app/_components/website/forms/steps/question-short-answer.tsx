@@ -6,36 +6,35 @@ import {
   useUpdateRsvpForm,
 } from "~/app/_components/contexts/rsvp-form-context";
 
-import { type Guest, type StepFormProps } from "~/app/utils/shared-types";
+import {
+  type Question,
+  type Guest,
+  type StepFormProps,
+} from "~/app/utils/shared-types";
 
 interface QuestionShortAnswerProps extends StepFormProps {
   guest?: Guest;
-  // question: Question
+  question: Question;
 }
 
 export default function QuestionShortAnswer({
   goNext,
   goBack,
   guest,
+  question,
 }: QuestionShortAnswerProps) {
   const rsvpFormData = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
   const [answer, setAnswer] = useState("");
 
-  const guestThatsAnswering = {
-    firstName: "john",
-    lastName: "doe",
-  };
-  const question = {
-    text: "will you be bringing any children under the age of 10?",
-    isRequired: false,
-  };
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-2xl tracking-widest">{question.text}</h2>
-      <span>
-        {guestThatsAnswering.firstName} {guestThatsAnswering.lastName}
-      </span>
+      {!!guest && (
+        <span>
+          {guest.firstName} {guest.lastName}
+        </span>
+      )}
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -49,13 +48,12 @@ export default function QuestionShortAnswer({
             answersToQuestions: [
               ...rsvpFormData.answersToQuestions,
               {
-                questionId: "123",
-                // TODO: update guestId when Questions are implemented - can remove optional in the prop types
+                questionId: question.id ?? "-1",
                 guestId: guest?.id ?? 0,
-                response: {
-                  type: "Text",
-                  answer,
-                },
+                householdId: rsvpFormData.selectedHousehold?.id,
+                response: answer,
+                guestFirstName: guest?.firstName,
+                guestLastName: guest?.lastName,
               },
             ],
           });

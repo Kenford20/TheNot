@@ -190,9 +190,10 @@ type Question = {
 
 type Answer = {
   questionId: string;
-  guestId: number;
-  guestFirstName: string;
-  guestLastName: string;
+  guestId?: number | null;
+  householdId?: string | null;
+  guestFirstName?: string;
+  guestLastName?: string;
   response: string;
   // response: {
   //   type: string;
