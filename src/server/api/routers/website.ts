@@ -175,6 +175,21 @@ export const websiteRouter = createTRPCRouter({
         where: {
           subUrl: input.subUrl,
         },
+        include: {
+          generalQuestions: {
+            orderBy: {
+              createdAt: "asc",
+            },
+            include: {
+              options: true,
+              _count: {
+                select: {
+                  answers: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (website === null) {
@@ -197,6 +212,24 @@ export const websiteRouter = createTRPCRouter({
       const events = await ctx.db.event.findMany({
         where: {
           userId: website.userId,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        include: {
+          questions: {
+            orderBy: {
+              createdAt: "asc",
+            },
+            include: {
+              options: true,
+              _count: {
+                select: {
+                  answers: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -239,13 +272,13 @@ export const websiteRouter = createTRPCRouter({
         ),
         answersToQuestions: z.array(
           z.object({
-            guestId: z.number(),
+            guestId: z.number().optional().nullish(),
+            householdId: z.string().optional().nullish(),
             questionId: z.string(),
-            response: z.object({
-              type: z.string(),
-              answer: z.string().optional(),
-            }),
+            response: z.string(),
             selectedOptionId: z.string().optional(),
+            guestFirstName: z.string().optional(),
+            guestLastName: z.string().optional(),
           }),
         ),
       }),
