@@ -46,6 +46,15 @@ export default function RsvpContent({
     <div className="border-t">
       {events?.map((event) => {
         const numInvitedGuests = totalGuests - event.guestResponses.notInvited;
+        if (!event.collectRsvp)
+          return (
+            <div className="flex items-center gap-4 border-b p-10">
+              <h3 className="text-xl font-semibold">{event.name}</h3>
+              <span className="bg-gray-200 px-2 py-1 text-xs font-bold text-gray-600">
+                Not Collecting RSVPs
+              </span>
+            </div>
+          );
         return (
           <div key={event.id} className="border-b px-10 pb-20 pt-10">
             <div className="flex items-center gap-3 pb-5">

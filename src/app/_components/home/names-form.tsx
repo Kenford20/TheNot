@@ -82,6 +82,8 @@ export default function NamesForm() {
             onChange={(e) => handleOnChange("partnerLastName", e.target.value)}
           />
           <button
+            type="button"
+            disabled={createWebsite.isLoading}
             onClick={() =>
               createWebsite.mutate({
                 ...nameData,

@@ -117,6 +117,14 @@ export const dashboardRouter = createTRPCRouter({
                   questionId: question.id,
                 },
                 take: -1, // grab most recent record
+                // select: {
+                //   guest: {
+                //     select: {
+                //       firstName: true,
+                //       lastName: true,
+                //     }
+                //   }
+                // }
               }),
             };
           }),
