@@ -26,7 +26,10 @@ export default function DashboardHeader({
               className={`ml-5 cursor-pointer text-${sharedStyles.primaryColor} flex items-center gap-1`}
               onClick={async () => {
                 await navigator.clipboard.writeText(websiteUrl ?? "");
-                toast({ description: "Website link copied!" });
+                toast({
+                  description: "Website link copied!",
+                  variant: "success",
+                });
               }}
             >
               <FaRegCopy size={16} color={sharedStyles.primaryColorHex} />
