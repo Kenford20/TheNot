@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { EventFormProvider } from "./_components/contexts/event-form-context";
 import { GuestFormProvider } from "./_components/contexts/guest-form-context";
+import { Toaster } from "~/components/ui/toaster";
 import { type Viewport } from "next/types";
 
 const inter = Inter({
@@ -35,7 +36,10 @@ export default function RootLayout({
         <body className={`font-sans ${inter.variable}`}>
           <TRPCReactProvider>
             <EventFormProvider>
-              <GuestFormProvider>{children}</GuestFormProvider>
+              <GuestFormProvider>
+                {children}
+                <Toaster />
+              </GuestFormProvider>
             </EventFormProvider>
           </TRPCReactProvider>
         </body>

@@ -1,6 +1,7 @@
 import { sharedStyles } from "../../utils/shared-styles";
 import { FiEdit2 } from "react-icons/fi";
 import { FaRegCopy } from "react-icons/fa";
+import { useToast } from "~/components/ui/use-toast";
 
 import { type Dispatch, type SetStateAction } from "react";
 
@@ -13,6 +14,7 @@ export default function DashboardHeader({
   websiteUrl,
   setShowWebsiteSettings,
 }: DashboardHeaderProps) {
+  const { toast } = useToast();
   return (
     <section className="py-10">
       <div className="flex items-center justify-between">
@@ -22,6 +24,10 @@ export default function DashboardHeader({
             <p>{websiteUrl}</p>
             <span
               className={`ml-5 cursor-pointer text-${sharedStyles.primaryColor} flex items-center gap-1`}
+              onClick={async () => {
+                await navigator.clipboard.writeText(websiteUrl ?? "");
+                toast({ description: "Website link copied!" });
+              }}
             >
               <FaRegCopy size={16} color={sharedStyles.primaryColorHex} />
               Copy
