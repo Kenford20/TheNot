@@ -48,7 +48,10 @@ export default function RsvpContent({
         const numInvitedGuests = totalGuests - event.guestResponses.notInvited;
         if (!event.collectRsvp)
           return (
-            <div className="flex items-center gap-4 border-b p-10">
+            <div
+              key={event.id}
+              className="flex items-center gap-4 border-b p-10"
+            >
               <h3 className="text-xl font-semibold">{event.name}</h3>
               <span className="bg-gray-200 px-2 py-1 text-xs font-bold text-gray-600">
                 Not Collecting RSVPs
