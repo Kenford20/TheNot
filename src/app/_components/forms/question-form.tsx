@@ -86,11 +86,11 @@ export default function QuestionForm({
     upsertQuestion.mutate({
       type: questionType,
       text: questionInput,
-      isRequired: question.type === "Option",
+      isRequired: questionType === "Option",
       eventId: question.eventId,
       websiteId: question.websiteId,
       questionId: question.id,
-      options: question.type === "Option" ? questionOptions : undefined,
+      options: questionType === "Option" ? questionOptions : undefined,
       deletedOptions: deleteOptions,
     });
   };
@@ -239,7 +239,7 @@ const Buttons = ({
               : `text-${sharedStyles.primaryColor} hover:underline`
           }`}
         >
-          {isProcessing ? "Processing..." : "Delete Party"}
+          {isProcessing ? "Processing..." : "Delete Question"}
         </button>
       )}
     </div>
