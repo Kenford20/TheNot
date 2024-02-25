@@ -1,9 +1,9 @@
+import { sharedStyles } from "~/app/utils/shared-styles";
+import { formatDateStandard } from "~/app/utils/helpers";
 import Link from "next/link";
 import Navbar from "./navbar";
 
 import { type WeddingPageData } from "~/app/utils/shared-types";
-import { formatDateStandard } from "~/app/utils/helpers";
-import { sharedStyles } from "~/app/utils/shared-styles";
 
 type WeddingPageProps = {
   weddingData: WeddingPageData;
@@ -12,7 +12,7 @@ type WeddingPageProps = {
 
 export default function WeddingPage({ weddingData, path }: WeddingPageProps) {
   return (
-    <main className='flex flex-col items-center justify-center gap-20 py-24 text-center font-["Crimson_Text"] tracking-widest text-zinc-500'>
+    <main className='flex flex-col items-center justify-center gap-20 pb-24 text-center font-["Crimson_Text"] tracking-widest text-zinc-500'>
       <div className="text-center">
         <h1 className="my-5 text-6xl font-medium tracking-widest">
           {weddingData.groomFirstName} & {weddingData.brideFirstName}

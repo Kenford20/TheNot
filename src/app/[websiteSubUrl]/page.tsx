@@ -9,7 +9,7 @@ import { type Metadata } from "next";
 export async function generateMetadata(): Promise<Metadata> {
   const user = await api.user.get.query();
   return {
-    title: `${user?.groomFirstName} ${user?.groomLastName} and ${user?.brideFirstName} ${user?.brideLastName}`,
+    title: `${user?.groomFirstName} ${user?.groomLastName} and ${user?.brideFirstName} ${user?.brideLastName}'s Wedding Website`,
   };
 }
 

@@ -8,8 +8,6 @@ import {
 } from "../../contexts/rsvp-form-context";
 import { useConfirmReloadPage } from "../../hooks";
 import { IoMdClose } from "react-icons/io";
-import Image from "next/image";
-import DefaultBanner from "../../images/default-banner.jpg";
 import FindYourInvitationForm from "./steps/find-your-invitation";
 import ConfirmNameForm from "./steps/confirm-name";
 import EventRsvpForm from "./steps/event-rsvp";
@@ -17,7 +15,6 @@ import QuestionShortAnswer from "./steps/question-short-answer";
 import QuestionMultipleChoice from "./steps/question-multiple-choice";
 import SendRsvp from "./steps/send-rsvp";
 import MultistepRsvpForm from "./multi-step-form";
-import SendNoteForm from "./steps/send-note";
 import RsvpConfirmation from "../rsvp-confirmation";
 
 import { type ReactNode } from "react";
@@ -81,7 +78,7 @@ export default function MainRsvpForm({
     }, []);
 
     weddingData?.website.generalQuestions.forEach((question) => {
-      question.type === "text"
+      question.type === "Text"
         ? newSteps.push(<QuestionShortAnswer question={question} />)
         : newSteps.push(<QuestionMultipleChoice question={question} />);
     });
@@ -98,13 +95,6 @@ export default function MainRsvpForm({
         numSteps={numSteps.current}
         basePath={basePath}
       />
-      <div className="relative mt-20 h-48">
-        <Image
-          alt="Pink Romantic Fresh Art Wedding Banner Background from pngtree.com"
-          src={DefaultBanner}
-          fill
-        />
-      </div>
       <form
         className="m-auto w-[450px] py-5"
         onSubmit={(e) => {
@@ -119,8 +109,6 @@ export default function MainRsvpForm({
           <FindYourInvitationForm />
           <ConfirmNameForm />
           {...generateDynamicStepForms()}
-          {/* TODO: replace SendNoteForm for logic similar to above except reducing over website.questions instead for "general" questions */}
-          <SendNoteForm />
           <SendRsvp isFetching={submitRsvpForm.isLoading} />
           <RsvpConfirmation
             basePath={basePath}

@@ -4,6 +4,15 @@ import { RsvpFormProvider } from "~/app/_components/contexts/rsvp-form-context";
 import MainRsvpForm from "~/app/_components/website/forms/main";
 import NotFoundPage from "~/app/_components/404";
 
+import { type Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await api.user.get.query();
+  return {
+    title: `${user?.groomFirstName} ${user?.groomLastName} and ${user?.brideFirstName} ${user?.brideLastName}'s Wedding Website`,
+  };
+}
+
 export default async function RsvpPage() {
   const headersList = headers();
   const path = headersList.get("x-url");
@@ -20,7 +29,7 @@ export default async function RsvpPage() {
     <RsvpFormProvider>
       <MainRsvpForm
         weddingData={weddingData}
-        basePath={`/${websiteSubUrl}` ?? "/"}
+        basePath={`/${websiteSubUrl ?? ""}`}
       />
     </RsvpFormProvider>
   );
