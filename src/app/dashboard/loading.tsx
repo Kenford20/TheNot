@@ -14,10 +14,10 @@ export default function DashboardSkeleton() {
           >
             <div>
               <div className="mb-4 h-10 w-40 bg-gray-200 dark:bg-gray-700"></div>
-              <div className="mt-2 flex gap-3">
-                <div className="mb-2.5 h-4 w-56 bg-gray-200 dark:bg-gray-700"></div>
-                <div className="mb-2.5 h-4 w-8 bg-gray-200 dark:bg-gray-700"></div>
-                <div className="mb-2.5 h-4 w-8 bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mt-2 flex gap-5">
+                <div className="mb-2.5 h-4 w-80 bg-gray-200 dark:bg-gray-700"></div>
+                <div className="mb-2.5 h-4 w-16 bg-gray-200 dark:bg-gray-700"></div>
+                <div className="mb-2.5 h-4 w-16 bg-gray-200 dark:bg-gray-700"></div>
               </div>
             </div>
             <div className="flex gap-5">

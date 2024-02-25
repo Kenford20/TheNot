@@ -4,6 +4,15 @@ import PasswordPage from "../_components/website/password-page";
 import NotFoundPage from "../_components/404";
 import WeddingWebsite from "../_components/website/wedding";
 
+import { type Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await api.user.get.query();
+  return {
+    title: `${user?.groomFirstName} ${user?.groomLastName} and ${user?.brideFirstName} ${user?.brideLastName}`,
+  };
+}
+
 type RootRouteHandlerProps = {
   params: {
     websiteSubUrl: string;
