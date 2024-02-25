@@ -1,5 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { formatDateNumber } from "~/app/utils/helpers";
+import { calculateDaysRemaining, formatDateNumber } from "~/app/utils/helpers";
 
 import { type Invitation, type User } from "~/app/utils/shared-types";
 
@@ -135,16 +135,15 @@ export const dashboardRouter = createTRPCRouter({
       brideFirstName: currentUser.brideFirstName,
       brideLastName: currentUser.brideLastName,
       date: {
-        standardFormat:
-          weddingDate?.toLocaleDateString("en-us", {
-            weekday: "long",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          }) ?? "October 30, 2024",
-        numberFormat: formatDateNumber(weddingDate) ?? "10.30.2024",
+        standardFormat: weddingDate?.toLocaleDateString("en-us", {
+          weekday: "long",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+        numberFormat: formatDateNumber(weddingDate),
       },
-      daysRemaining: 100,
+      daysRemaining: calculateDaysRemaining(weddingDate) ?? -1,
     };
 
     const dashboardData = {

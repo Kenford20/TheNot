@@ -24,7 +24,7 @@ function formatDateNumber(date: Date | null | undefined) {
 
 // format: 2024-01-24 - this is the accepted format for HTML5 input pattern
 function formatDateHTML5(date: Date | null | undefined) {
-  if (!date) return;
+  if (!date) return undefined;
   const d = new Date(date);
   let month = "" + (d.getMonth() + 1);
   let day = "" + d.getDate();
@@ -70,6 +70,21 @@ function convertDate(date: Date | null) {
   return `${daysOfTheWeek[day]}, ${abbreviatedMonths[month]} ${datee + 1}`;
 }
 
+function calculateDaysRemaining(weddingDate: Date | null | undefined) {
+  if (!weddingDate) return undefined;
+
+  const treatAsUTC = (date: Date): number => {
+    const result = new Date(date);
+    result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
+    return result.getTime();
+  };
+
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  return Math.ceil(
+    (treatAsUTC(weddingDate) - treatAsUTC(new Date())) / millisecondsPerDay,
+  );
+}
+
 // returns an array of times from 12pm to 11:45am (24hrs) in 15min increments
 function generateTimes() {
   const times = [];
@@ -96,4 +111,5 @@ export {
   convertDate,
   generateTimes,
   generateRandomColor,
+  calculateDaysRemaining,
 };

@@ -145,8 +145,8 @@ type WeddingPageData = {
   brideFirstName: string;
   brideLastName: string;
   date: {
-    standardFormat: string;
-    numberFormat: string;
+    standardFormat: string | undefined;
+    numberFormat: string | undefined;
   };
   website: Website;
   daysRemaining: number;
