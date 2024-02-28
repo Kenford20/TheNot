@@ -69,11 +69,12 @@ export default function QuestionMultipleChoice({
               ...rsvpFormData.answersToQuestions,
               {
                 questionId: question.id ?? "-1",
-                guestId: guest?.id ?? -1,
-                householdId: rsvpFormData.selectedHousehold?.id ?? "-1",
+                questionType: "Option",
                 response: selectedOptionId!,
-                guestFirstName: guest?.firstName,
-                guestLastName: guest?.lastName,
+                guestId: guest?.id ?? null,
+                householdId: rsvpFormData.selectedHousehold?.id ?? null,
+                guestFirstName: guest?.firstName ?? null,
+                guestLastName: guest?.lastName ?? null,
               },
             ],
           });

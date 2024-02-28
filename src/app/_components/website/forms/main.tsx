@@ -64,7 +64,7 @@ export default function MainRsvpForm({
         acc.push(<EventRsvpForm event={event} invitedGuests={invitedGuests} />);
         for (const question of event.questions) {
           invitedGuests.forEach((guest) => {
-            question.type === "text"
+            question.type === "Text"
               ? acc.push(
                   <QuestionShortAnswer question={question} guest={guest} />,
                 )

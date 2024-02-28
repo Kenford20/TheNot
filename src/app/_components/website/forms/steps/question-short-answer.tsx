@@ -49,11 +49,12 @@ export default function QuestionShortAnswer({
               ...rsvpFormData.answersToQuestions,
               {
                 questionId: question.id ?? "-1",
-                guestId: guest?.id ?? 0,
-                householdId: rsvpFormData.selectedHousehold?.id,
+                questionType: "Text",
                 response: answer,
-                guestFirstName: guest?.firstName,
-                guestLastName: guest?.lastName,
+                guestId: guest?.id ?? null,
+                householdId: rsvpFormData.selectedHousehold?.id ?? null,
+                guestFirstName: guest?.firstName ?? null,
+                guestLastName: guest?.lastName ?? null,
               },
             ],
           });

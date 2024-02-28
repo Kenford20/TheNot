@@ -9,11 +9,15 @@ import {
   type Answer,
 } from "~/app/utils/shared-types";
 
+interface AnswerWithType extends Answer {
+  questionType: string;
+}
+
 type RsvpFormState = {
   matchedHouseholds?: HouseholdSearch;
   selectedHousehold?: HouseholdSearch[0] | null;
   rsvpResponses: RsvpFormResponse[];
-  answersToQuestions: Answer[];
+  answersToQuestions: AnswerWithType[];
   weddingData: Partial<RsvpPageData>;
 };
 

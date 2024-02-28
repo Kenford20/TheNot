@@ -57,22 +57,23 @@ model User {
 }
 
 model Household {
-  id        String   @id @default(uuid())
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  address1  String?
-  address2  String?
-  city      String?
-  state     String?
-  zipCode   String?
-  country   String?
-  phone     String?
-  email     String?
-  notes     String?
-  gifts     Gift[]   @relation(name: "Household_Gifts")
-  guests    Guest[]  @relation(name: "Household_Guests")
-  answers   Answer[] @relation(name: "Household_Answers")
+  id             String           @id @default(uuid())
+  userId         String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  address1       String?
+  address2       String?
+  city           String?
+  state          String?
+  zipCode        String?
+  country        String?
+  phone          String?
+  email          String?
+  notes          String?
+  gifts          Gift[]           @relation(name: "Household_Gifts")
+  guests         Guest[]          @relation(name: "Household_Guests")
+  answers        Answer[]         @relation(name: "Household_Answers")
+  optionReponses OptionResponse[] @relation(name: "Household_OptionResponses")
 }
 
 model Gift {
@@ -179,31 +180,34 @@ model Option {
 
 // for counting the number of guests that selected an option?
 model OptionResponse {
-  guest          Guest?   @relation(name: "Guest_OptionResponses", fields: [guestId], references: [id], onDelete: Cascade)
-  guestId        Int
-  guestFirstName String
-  guestLastName  String
-  option         Option?  @relation(name: "Option_OptionResponses", fields: [optionId], references: [id], onDelete: Cascade)
+  id             String     @id @default(cuid())
+  option         Option     @relation(name: "Option_OptionResponses", fields: [optionId], references: [id], onDelete: Cascade)
   optionId       String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  guest          Guest?     @relation(name: "Guest_OptionResponses", fields: [guestId], references: [id], onDelete: Cascade)
+  guestId        Int?
+  household      Household? @relation(name: "Household_OptionResponses", fields: [householdId], references: [id], onDelete: Cascade)
+  householdId    String?
+  guestFirstName String?
+  guestLastName  String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
-  @@id(name: "OptionResponseId", [guestId, optionId])
   @@index([guestId])
+  @@index([householdId])
   @@index([optionId])
 }
 
 model Answer {
   id             String     @id @default(cuid())
   response       String
+  question       Question   @relation(name: "Question_Answers", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId     String
   guest          Guest?     @relation(name: "Guest_Answers", fields: [guestId], references: [id], onDelete: Cascade)
   guestId        Int?
   household      Household? @relation(name: "Household_Answers", fields: [householdId], references: [id], onDelete: Cascade)
   householdId    String?
-  guestFirstName String
-  guestLastName  String
-  question       Question?  @relation(name: "Question_Answers", fields: [questionId], references: [id], onDelete: Cascade)
-  questionId     String
+  guestFirstName String?
+  guestLastName  String?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
@@ -213,9 +217,9 @@ model Answer {
 }
 
 model Invitation {
-  guest     Guest?   @relation(name: "Guest_Invitations", fields: [guestId], references: [id], onDelete: Cascade)
+  guest     Guest    @relation(name: "Guest_Invitations", fields: [guestId], references: [id], onDelete: Cascade)
   guestId   Int
-  event     Event?   @relation(name: "Event_Invitations", fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event    @relation(name: "Event_Invitations", fields: [eventId], references: [id], onDelete: Cascade)
   eventId   String
   invitedAt DateTime @default(now())
   updatedAt DateTime @updatedAt

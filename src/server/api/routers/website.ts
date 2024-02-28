@@ -274,15 +274,17 @@ export const websiteRouter = createTRPCRouter({
             guestId: z.number().optional().nullish(),
             householdId: z.string().optional().nullish(),
             questionId: z.string(),
+            questionType: z.string(),
             response: z.string(),
             selectedOptionId: z.string().optional(),
-            guestFirstName: z.string().optional(),
-            guestLastName: z.string().optional(),
+            guestFirstName: z.string().optional().nullish(),
+            guestLastName: z.string().optional().nullish(),
           }),
         ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      console.log("inputzz", input);
       await Promise.all(
         input.rsvpResponses.map(async (response) => {
           await ctx.db.invitation.update({
@@ -298,6 +300,43 @@ export const websiteRouter = createTRPCRouter({
           });
         }),
       );
-      // TODO: will need to mutate Answer and OptionResponse tables
+      await Promise.all(
+        input.answersToQuestions.map(async (answer) => {
+          if (answer.questionType === "Option") {
+            //
+            await ctx.db.optionResponse.create({
+              data: {
+                optionId: answer.response,
+                guestId: answer.guestId,
+                guestFirstName: answer.guestFirstName,
+                guestLastName: answer.guestLastName,
+                householdId: answer.householdId,
+              },
+            });
+            await ctx.db.option.update({
+              where: {
+                id: answer.response,
+              },
+              data: {
+                responseCount: {
+                  increment: 1,
+                },
+              },
+            });
+          } else {
+            // TODO: may need to change this to upsert for updating an existing answer when user revisits rsvp form and fills it out again
+            await ctx.db.answer.create({
+              data: {
+                response: answer.response,
+                questionId: answer.questionId,
+                guestId: answer.guestId,
+                guestFirstName: answer.guestFirstName,
+                guestLastName: answer.guestLastName,
+                householdId: answer.householdId,
+              },
+            });
+          }
+        }),
+      );
     }),
 });
