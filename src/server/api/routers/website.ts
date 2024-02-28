@@ -284,8 +284,6 @@ export const websiteRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      console.log("inputzz", input);
-
       await ctx.db.$transaction(async (prisma) => {
         await Promise.all(
           input.rsvpResponses.map(async (response) => {

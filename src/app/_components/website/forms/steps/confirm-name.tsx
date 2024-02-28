@@ -11,7 +11,20 @@ import { type StepFormProps } from "~/app/utils/shared-types";
 export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
   const { matchedHouseholds } = useRsvpForm();
   const updateRsvpForm = useUpdateRsvpForm();
-  const [selectedHousehold, setSelectedHousehold] = useState<string>();
+  const [selectedHouseholdId, setSelectedHouseholdId] = useState<string>();
+
+  const onContinue = () => {
+    const selectedHousehold = matchedHouseholds?.find(
+      (household) => household.id === selectedHouseholdId,
+    );
+    const primaryContact = selectedHousehold?.guests.find(
+      (guest) => guest.isPrimaryContact,
+    );
+    updateRsvpForm({
+      selectedHousehold: Object.assign({ primaryContact }, selectedHousehold),
+    });
+    goNext && goNext();
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -25,8 +38,8 @@ export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
             <input
               type="radio"
               id={household.id}
-              checked={selectedHousehold === household.id}
-              onChange={() => setSelectedHousehold(household.id)}
+              checked={selectedHouseholdId === household.id}
+              onChange={() => setSelectedHouseholdId(household.id)}
             />
             <label htmlFor={household.id}>
               {household.guests
@@ -38,17 +51,10 @@ export default function ConfirmNameForm({ goNext, goBack }: StepFormProps) {
       })}
 
       <button
-        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white ${selectedHousehold === undefined ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
+        className={`mt-3 bg-stone-400 py-3 text-xl tracking-wide text-white ${selectedHouseholdId === undefined ? "cursor-not-allowed bg-stone-400" : "bg-stone-700"}`}
         type="button"
-        disabled={selectedHousehold === undefined}
-        onClick={() => {
-          updateRsvpForm({
-            selectedHousehold: matchedHouseholds?.find(
-              (household) => household.id === selectedHousehold,
-            ),
-          });
-          goNext && goNext();
-        }}
+        disabled={selectedHouseholdId === undefined}
+        onClick={onContinue}
       >
         CONTINUE
       </button>

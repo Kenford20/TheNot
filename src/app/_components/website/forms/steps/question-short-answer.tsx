@@ -51,10 +51,14 @@ export default function QuestionShortAnswer({
                 questionId: question.id ?? "-1",
                 questionType: "Text",
                 response: answer,
-                guestId: guest?.id ?? null,
-                householdId: rsvpFormData.selectedHousehold?.id ?? null,
-                guestFirstName: guest?.firstName ?? null,
-                guestLastName: guest?.lastName ?? null,
+                guestId: guest?.id,
+                householdId: rsvpFormData.selectedHousehold?.id,
+                guestFirstName:
+                  guest?.firstName ??
+                  rsvpFormData.selectedHousehold?.primaryContact?.firstName,
+                guestLastName:
+                  guest?.lastName ??
+                  rsvpFormData.selectedHousehold?.primaryContact?.lastName,
               },
             ],
           });

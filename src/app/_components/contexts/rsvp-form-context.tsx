@@ -7,15 +7,21 @@ import {
   type HouseholdSearch,
   type RsvpFormResponse,
   type Answer,
+  type Guest,
 } from "~/app/utils/shared-types";
 
 interface AnswerWithType extends Answer {
   questionType: string;
 }
 
+type H = HouseholdSearch[0];
+interface SelectedHousehold extends H {
+  primaryContact: Guest | undefined;
+}
+
 type RsvpFormState = {
   matchedHouseholds?: HouseholdSearch;
-  selectedHousehold?: HouseholdSearch[0] | null;
+  selectedHousehold?: SelectedHousehold;
   rsvpResponses: RsvpFormResponse[];
   answersToQuestions: AnswerWithType[];
   weddingData: Partial<RsvpPageData>;
@@ -23,7 +29,7 @@ type RsvpFormState = {
 
 const INITIAL_STATE: RsvpFormState = {
   matchedHouseholds: [],
-  selectedHousehold: null,
+  // selectedHousehold: null,
   rsvpResponses: [],
   answersToQuestions: [],
   weddingData: {
