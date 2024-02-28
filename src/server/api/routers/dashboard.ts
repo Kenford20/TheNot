@@ -116,7 +116,10 @@ export const dashboardRouter = createTRPCRouter({
                 where: {
                   questionId: question.id,
                 },
-                take: -1, // grab most recent record
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
                 // select: {
                 //   guest: {
                 //     select: {
@@ -215,7 +218,10 @@ export const dashboardRouter = createTRPCRouter({
                     where: {
                       questionId: question.id,
                     },
-                    take: -1, // grab most recent record
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
                   }),
                 };
               }),
