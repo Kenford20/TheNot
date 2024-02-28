@@ -271,11 +271,11 @@ export const websiteRouter = createTRPCRouter({
         ),
         answersToQuestions: z.array(
           z.object({
-            guestId: z.number().optional().nullish(),
-            householdId: z.string().optional().nullish(),
             questionId: z.string(),
             questionType: z.string(),
             response: z.string(),
+            guestId: z.number().nullish(),
+            householdId: z.string().nullish(),
             selectedOptionId: z.string().optional(),
             guestFirstName: z.string().optional().nullish(),
             guestLastName: z.string().optional().nullish(),
@@ -285,58 +285,80 @@ export const websiteRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       console.log("inputzz", input);
-      await Promise.all(
-        input.rsvpResponses.map(async (response) => {
-          await ctx.db.invitation.update({
-            where: {
-              invitationId: {
-                guestId: response.guestId,
-                eventId: response.eventId,
-              },
-            },
-            data: {
-              rsvp: response.rsvp,
-            },
-          });
-        }),
-      );
-      await Promise.all(
-        input.answersToQuestions.map(async (answer) => {
-          if (answer.questionType === "Option") {
-            //
-            await ctx.db.optionResponse.create({
-              data: {
-                optionId: answer.response,
-                guestId: answer.guestId,
-                guestFirstName: answer.guestFirstName,
-                guestLastName: answer.guestLastName,
-                householdId: answer.householdId,
-              },
-            });
-            await ctx.db.option.update({
+
+      await ctx.db.$transaction(async (prisma) => {
+        await Promise.all(
+          input.rsvpResponses.map(async (response) => {
+            await prisma.invitation.update({
               where: {
-                id: answer.response,
-              },
-              data: {
-                responseCount: {
-                  increment: 1,
+                invitationId: {
+                  guestId: response.guestId,
+                  eventId: response.eventId,
                 },
               },
-            });
-          } else {
-            // TODO: may need to change this to upsert for updating an existing answer when user revisits rsvp form and fills it out again
-            await ctx.db.answer.create({
               data: {
-                response: answer.response,
-                questionId: answer.questionId,
-                guestId: answer.guestId,
-                guestFirstName: answer.guestFirstName,
-                guestLastName: answer.guestLastName,
-                householdId: answer.householdId,
+                rsvp: response.rsvp,
               },
             });
-          }
-        }),
-      );
+          }),
+        );
+        await Promise.all(
+          input.answersToQuestions.map(async (answer) => {
+            if (answer.questionType === "Option") {
+              await prisma.optionResponse.upsert({
+                where: {
+                  optionResponseId: {
+                    optionId: answer.response ?? "-1",
+                    guestId: answer.guestId ?? -1,
+                    householdId: answer.householdId ?? "-1",
+                  },
+                },
+                update: {
+                  optionId: answer.response,
+                },
+                create: {
+                  optionId: answer.response,
+                  guestId: answer.guestId ?? -1,
+                  guestFirstName: answer.guestFirstName,
+                  guestLastName: answer.guestLastName,
+                  householdId: answer.householdId ?? "-1",
+                },
+              });
+              // TODO: need dynamic logic to determine whether to increment or decrement based on whether user is changing the selected option or not
+              await prisma.option.update({
+                where: {
+                  id: answer.response,
+                },
+                data: {
+                  responseCount: {
+                    increment: 1,
+                  },
+                },
+              });
+            } else {
+              await prisma.answer.upsert({
+                where: {
+                  answerId: {
+                    questionId: answer.questionId,
+                    guestId: answer.guestId ?? -1,
+                    householdId: answer.householdId ?? "-1",
+                  },
+                },
+                update: {
+                  response: answer.response,
+                },
+                create: {
+                  response: answer.response,
+                  questionId: answer.questionId,
+                  guestId: answer.guestId ?? -1,
+                  guestFirstName: answer.guestFirstName,
+                  guestLastName: answer.guestLastName,
+                  householdId: answer.householdId ?? "-1",
+                },
+              });
+            }
+          }),
+        );
+      });
     }),
 });
