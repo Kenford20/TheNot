@@ -44,6 +44,10 @@ export default function MainRsvpForm({
     onSuccess: () => {
       setCurrentStep((prev) => prev + 1);
     },
+    onError: (err) => {
+      if (err) window.alert(err);
+      else window.alert("Failed to submit rsvp! Please try again later.");
+    },
   });
   const progress = (currentStep / numSteps.current) * 100;
 

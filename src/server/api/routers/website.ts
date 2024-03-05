@@ -148,7 +148,6 @@ export const websiteRouter = createTRPCRouter({
     }),
 
   getByUserId: publicProcedure.query(async ({ ctx }) => {
-    console.log("idz", ctx.auth.userId);
     if (!ctx.auth) return;
     return ctx.db.website.findFirst({
       where: {
@@ -294,45 +293,68 @@ export const websiteRouter = createTRPCRouter({
                   eventId: response.eventId,
                 },
               },
-              data: {
-                rsvp: response.rsvp,
-              },
+              data: { rsvp: response.rsvp },
             });
           }),
         );
         await Promise.all(
           input.answersToQuestions.map(async (answer) => {
             if (answer.questionType === "Option") {
-              await prisma.optionResponse.upsert({
+              const optionResponse = await prisma.optionResponse.findFirst({
                 where: {
-                  optionResponseId: {
-                    optionId: answer.response ?? "-1",
+                  AND: [
+                    { questionId: answer.questionId ?? "-1" },
+                    {
+                      OR: [
+                        { guestId: answer.guestId ?? -1 },
+                        { householdId: answer.householdId ?? "-1" },
+                      ],
+                    },
+                  ],
+                },
+              });
+              if (optionResponse === null) {
+                await prisma.optionResponse.create({
+                  data: {
+                    questionId: answer.questionId,
+                    optionId: answer.response,
                     guestId: answer.guestId ?? -1,
+                    guestFirstName: answer.guestFirstName,
+                    guestLastName: answer.guestLastName,
                     householdId: answer.householdId ?? "-1",
                   },
-                },
-                update: {
-                  optionId: answer.response,
-                },
-                create: {
-                  optionId: answer.response,
-                  guestId: answer.guestId ?? -1,
-                  guestFirstName: answer.guestFirstName,
-                  guestLastName: answer.guestLastName,
-                  householdId: answer.householdId ?? "-1",
-                },
-              });
-              // TODO: need dynamic logic to determine whether to increment or decrement based on whether user is changing the selected option or not
-              await prisma.option.update({
-                where: {
-                  id: answer.response,
-                },
-                data: {
-                  responseCount: {
-                    increment: 1,
+                });
+                await prisma.option.update({
+                  where: { id: answer.response },
+                  data: {
+                    responseCount: { increment: 1 },
                   },
-                },
-              });
+                });
+                // only update if user's previous selected option is different from currently selected one
+              } else if (optionResponse.optionId !== answer.response) {
+                await prisma.optionResponse.update({
+                  where: {
+                    optionResponseId: {
+                      questionId: answer.questionId ?? "-1",
+                      guestId: answer.guestId ?? -1,
+                      householdId: answer.householdId ?? "-1",
+                    },
+                  },
+                  data: { optionId: answer.response },
+                });
+                await prisma.option.update({
+                  where: { id: optionResponse.optionId },
+                  data: {
+                    responseCount: { decrement: 1 },
+                  },
+                });
+                await prisma.option.update({
+                  where: { id: answer.response },
+                  data: {
+                    responseCount: { increment: 1 },
+                  },
+                });
+              }
             } else {
               await prisma.answer.upsert({
                 where: {
@@ -342,9 +364,7 @@ export const websiteRouter = createTRPCRouter({
                     householdId: answer.householdId ?? "-1",
                   },
                 },
-                update: {
-                  response: answer.response,
-                },
+                update: { response: answer.response },
                 create: {
                   response: answer.response,
                   questionId: answer.questionId,

@@ -180,6 +180,7 @@ model Option {
 
 // for counting the number of guests that selected an option?
 model OptionResponse {
+  questionId     String
   option         Option     @relation(name: "Option_OptionResponses", fields: [optionId], references: [id], onDelete: Cascade)
   optionId       String
   guest          Guest?     @relation(name: "Guest_OptionResponses", fields: [guestId], references: [id], onDelete: Cascade)
@@ -191,10 +192,11 @@ model OptionResponse {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  @@id(name: "optionResponseId", [optionId, guestId, householdId])
+  @@id(name: "optionResponseId", [questionId, guestId, householdId])
+  @@index([questionId])
+  @@index([optionId])
   @@index([guestId])
   @@index([householdId])
-  @@index([optionId])
 }
 
 model Answer {
