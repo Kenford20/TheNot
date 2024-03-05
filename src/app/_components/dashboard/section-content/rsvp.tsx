@@ -120,7 +120,7 @@ const AttendanceChart = ({ event, numInvitedGuests }: AttendanceChartProps) => {
 
   return (
     <div>
-      <div className="mb-4 h-[100%] rounded-lg border p-5 pb-0">
+      <div className="mb-4 h-full rounded-lg border p-5">
         <h5 className="pb-6 text-lg font-semibold">Will you be attending?</h5>
         <div className="flex items-center justify-between gap-7">
           <div className="relative h-full w-40">
@@ -207,7 +207,7 @@ const TextQuestionCard = ({ question }: { question: Question }) => {
   )
     return <div>Failed to get responses for this question.</div>;
   return (
-    <div className="mb-4 flex h-[100%] flex-col rounded-md border p-5">
+    <div className="mb-4 flex h-full min-h-60 flex-col rounded-md border p-5">
       <h5 className="text-lg font-semibold">{question.text}</h5>
       <div className="flex grow py-6 pl-5">
         <div className="flex items-center border-r text-center">
@@ -262,7 +262,7 @@ const OptionQuestionCard = ({ question }: { question: Question }) => {
   }, [question.options, chartColors]);
 
   return (
-    <div className="mb-4 h-[100%] rounded-md border p-5">
+    <div className="mb-4 h-full rounded-md border p-5">
       <h5 className="pb-6 text-lg font-semibold">{question.text}</h5>
       <div className="flex items-center justify-between gap-7">
         <div className="relative h-full w-40">

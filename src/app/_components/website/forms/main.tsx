@@ -25,7 +25,7 @@ type MainRsvpFormProps = {
   basePath: string;
 };
 
-const NUM_STATIC_STEPS = 5; // find invitation step, confirm household step, final step, and confirmation
+const NUM_STATIC_STEPS = 4; // find invitation step, confirm household step, final step, and confirmation
 
 export default function MainRsvpForm({
   weddingData,
