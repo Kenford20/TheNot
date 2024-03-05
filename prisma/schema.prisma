@@ -19,6 +19,10 @@ model Website {
   userId            String     @unique
   url               String     @unique
   subUrl            String     @unique
+  groomFirstName    String
+  groomLastName     String
+  brideFirstName    String
+  brideLastName     String
   isPasswordEnabled Boolean    @default(false)
   password          String?
   isRsvpEnabled     Boolean    @default(true)

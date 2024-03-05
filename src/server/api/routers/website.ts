@@ -70,6 +70,10 @@ export const websiteRouter = createTRPCRouter({
           userId,
           url,
           subUrl,
+          groomFirstName: firstName,
+          groomLastName: lastName,
+          brideFirstName: partnerFirstName,
+          brideLastName: partnerLastName,
           generalQuestions: {
             create: [
               {

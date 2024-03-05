@@ -7,9 +7,17 @@ import NotFoundPage from "~/app/_components/404";
 import { type Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const user = await api.user.get.query();
+  const headersList = headers();
+  const path = headersList.get("x-url");
+  const websiteSubUrl = path?.replace("/", "").replace("/rsvp", "") ?? "";
+  const website = await api.website.getBySubUrl.query({
+    subUrl: websiteSubUrl,
+  });
+
   return {
-    title: `${user?.groomFirstName} ${user?.groomLastName} and ${user?.brideFirstName} ${user?.brideLastName}'s Wedding Website`,
+    title: !!website
+      ? `${website?.groomFirstName} ${website?.groomLastName} and ${website?.brideFirstName} ${website?.brideLastName}'s Wedding Website`
+      : "Wedding Website",
   };
 }
 
