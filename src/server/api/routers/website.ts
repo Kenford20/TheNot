@@ -10,14 +10,6 @@ import { TRPCError } from "@trpc/server";
 import { TRPCClientError } from "@trpc/client";
 
 export const websiteRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
   create: protectedProcedure
     .input(
       z.object({

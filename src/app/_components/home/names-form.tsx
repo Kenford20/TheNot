@@ -7,7 +7,6 @@ import { LoadingSpinner } from "../loaders";
 import { sharedStyles } from "../../utils/shared-styles";
 
 export default function NamesForm() {
-  const hello = api.website.hello.useQuery({ text: "from tRPC" });
   const { isLoaded, isSignedIn, user } = useUser();
 
   const createWebsite = api.website.create.useMutation({
@@ -55,7 +54,6 @@ export default function NamesForm() {
               <LoadingSpinner />
             </div>
           )}
-          <p>{hello.data ? hello.data.greeting : "Loading tRPC query..."}</p>
           <h1 className="text-3xl">Welcome ya love birds! Enter your names</h1>
           <input
             placeholder="First name"
