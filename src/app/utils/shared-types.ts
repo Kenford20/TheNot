@@ -1,5 +1,6 @@
-import { type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
+import { type inferRouterOutputs } from "@trpc/server";
+import { type FileWithPath } from "react-dropzone";
 
 type Event = {
   id: string;
@@ -209,6 +210,10 @@ type formOption = {
 };
 type TQuestionOption = Option | formOption;
 
+interface CoverPhoto extends FileWithPath {
+  preview: string;
+}
+
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type DashboardData = RouterOutput["dashboard"]["getByUserId"];
 type HouseholdSearch = RouterOutput["household"]["findBySearch"];
@@ -238,4 +243,5 @@ export {
   type RsvpPageData,
   type RsvpFormResponse,
   type Answer,
+  type CoverPhoto,
 };

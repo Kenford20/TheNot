@@ -16,17 +16,20 @@ import {
   type EventFormData,
   type DashboardData,
 } from "~/app/utils/shared-types";
+import CoverPhotoUploader from "../cover-photo-uploader";
 
 type HomeContentProps = {
   dashboardData: DashboardData;
   events: Event[] | undefined;
   setPrefillEvent: Dispatch<SetStateAction<EventFormData | undefined>>;
+  uploadImage: (formData: FormData) => void;
 };
 
 export default function HomeContent({
   dashboardData,
   events,
   setPrefillEvent,
+  uploadImage,
 }: HomeContentProps) {
   const toggleEventForm = useToggleEventForm();
 
@@ -48,19 +51,7 @@ export default function HomeContent({
 
   return (
     <>
-      <div className="px-10">
-        <div className="flex cursor-pointer items-center justify-center border py-16 transition-colors duration-300 ease-in-out hover:bg-gray-100">
-          <div className="flex">
-            <AiOutlinePlusCircle
-              size={25}
-              color={sharedStyles.primaryColorHex}
-            />
-            <p className={`pl-3 text-${sharedStyles.primaryColor}`}>
-              Add a Cover Photo
-            </p>
-          </div>
-        </div>
-      </div>
+      <CoverPhotoUploader uploadImage={uploadImage} />
       <div className="border-b py-5">
         <div className="px-10">
           <h2 className="my-3 text-xl font-semibold">

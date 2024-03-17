@@ -22,8 +22,10 @@ import {
 
 export default function Dashboard({
   dashboardData,
+  uploadImage,
 }: {
   dashboardData: DashboardData;
+  uploadImage: (formData: FormData) => void;
 }) {
   console.log("dashz", dashboardData);
   const isEventFormOpen = useEventForm();
@@ -89,6 +91,7 @@ export default function Dashboard({
               dashboardData={dashboardData}
               events={events}
               setPrefillEvent={setPrefillEvent}
+              uploadImage={uploadImage}
             />
           </PageSectionsTemplate>
           <PageSectionsTemplate
