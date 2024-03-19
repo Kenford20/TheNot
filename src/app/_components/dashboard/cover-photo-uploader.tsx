@@ -54,6 +54,10 @@ export default function CoverPhotoUploader({
 
   return (
     <form action={upload}>
+      <ImageCropperModal
+        coverPhoto={coverPhoto}
+        setCoverPhoto={setCoverPhoto}
+      />
       <input {...getInputProps({ name: "file" })} />
       <div {...getRootProps({ className: "dropzone px-10" })}>
         <div className="flex cursor-pointer items-center justify-center border py-16 transition-colors duration-300 ease-in-out hover:bg-gray-100">
@@ -67,18 +71,6 @@ export default function CoverPhotoUploader({
             </p>
           </div>
         </div>
-        {/* <div className="relative h-[400px] w-full">
-            {coverPhoto.map((photo) => (
-              <Image
-                key={photo.name}
-                fill
-                src={photo.preview}
-                alt={photo.name}
-                onLoad={() => URL.revokeObjectURL(photo.preview)}
-                className="h-full w-full object-cover"
-              />
-            ))}
-          </div> */}
       </div>
     </form>
   );
