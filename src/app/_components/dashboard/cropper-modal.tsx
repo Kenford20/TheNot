@@ -4,6 +4,7 @@ import { useDisablePageScroll } from "../hooks";
 import { GrRotateRight } from "react-icons/gr";
 import { GrRotateLeft } from "react-icons/gr";
 import Cropper, { type ReactCropperElement } from "react-cropper";
+import { debounce } from "~/app/utils/helpers";
 import "cropperjs/dist/cropper.css";
 
 import { type CoverPhoto } from "~/app/utils/shared-types";
@@ -47,7 +48,7 @@ export default function ImageCropperModal({
               key={photo.name}
               src={photo.preview}
               className="h-[400px] w-full"
-              crop={onCrop}
+              crop={debounce(onCrop, 200)}
               ref={cropperRef}
               background={false}
               viewMode={1}

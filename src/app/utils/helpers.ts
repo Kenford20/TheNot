@@ -104,6 +104,36 @@ const generateRandomColor = () => {
   return "#000000".replace(/0/g, () => (~~(Math.random() * 16)).toString(16));
 };
 
+function debounce<T = unknown, R = void>(
+  callback: (...args: unknown[]) => R,
+  wait: number,
+  context?: T,
+  immediate?: boolean,
+) {
+  let timeout: ReturnType<typeof setTimeout> | null;
+
+  return (...args: unknown[]) => {
+    const later = () => {
+      timeout = null;
+
+      if (!immediate) {
+        callback.apply(context, args);
+      }
+    };
+    const callNow = immediate && !timeout;
+
+    if (typeof timeout === "number") {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(later, wait);
+
+    if (callNow) {
+      callback.apply(context, args);
+    }
+  };
+}
+
 export {
   formatDateStandard,
   formatDateNumber,
@@ -112,4 +142,5 @@ export {
   generateTimes,
   generateRandomColor,
   calculateDaysRemaining,
+  debounce,
 };
