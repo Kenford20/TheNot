@@ -54,10 +54,12 @@ export default function CoverPhotoUploader({
 
   return (
     <form action={upload}>
-      <ImageCropperModal
-        coverPhoto={coverPhoto}
-        setCoverPhoto={setCoverPhoto}
-      />
+      {coverPhoto.length > 0 && (
+        <ImageCropperModal
+          coverPhoto={coverPhoto}
+          setCoverPhoto={setCoverPhoto}
+        />
+      )}
       <input {...getInputProps({ name: "file" })} />
       <div {...getRootProps({ className: "dropzone px-10" })}>
         <div className="flex cursor-pointer items-center justify-center border py-16 transition-colors duration-300 ease-in-out hover:bg-gray-100">
