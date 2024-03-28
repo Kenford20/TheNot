@@ -1,26 +1,36 @@
-import { type Dispatch, type SetStateAction, useRef } from "react";
+import { type Dispatch, type SetStateAction, useRef, useState } from "react";
 import { sharedStyles } from "~/app/utils/shared-styles";
 import { useDisablePageScroll } from "../hooks";
 import { GrRotateRight } from "react-icons/gr";
 import { GrRotateLeft } from "react-icons/gr";
 import Cropper, { type ReactCropperElement } from "react-cropper";
-import { debounce } from "~/app/utils/helpers";
+import { dataUrlToFile, debounce } from "~/app/utils/helpers";
 import "cropperjs/dist/cropper.css";
 
 import { type CoverPhoto } from "~/app/utils/shared-types";
+import { LoadingSpinner } from "../loaders";
 
 export default function ImageCropperModal({
   coverPhoto,
   setCoverPhoto,
+  isUploading,
 }: {
   coverPhoto: CoverPhoto[];
   setCoverPhoto: Dispatch<SetStateAction<CoverPhoto[]>>;
+  isUploading: boolean;
 }) {
   useDisablePageScroll();
   const cropperRef = useRef<ReactCropperElement>(null);
+  const [cropData, setCropData] = useState("#");
+  const getCropData = () => {
+    if (!!cropperRef.current) {
+      setCropData(cropperRef.current.cropper.getCroppedCanvas().toDataURL());
+    }
+  };
   const onCrop = () => {
     const cropper = cropperRef.current?.cropper;
-    console.log(cropper?.getCroppedCanvas().toDataURL());
+    // console.log(cropper?.getCroppedCanvas().toDataURL());
+    console.log(cropperRef.current?.cropper);
   };
 
   return (
@@ -54,24 +64,44 @@ export default function ImageCropperModal({
               viewMode={1}
               aspectRatio={18 / 9}
               autoCropArea={1}
+              responsive={true}
+              zoomable={false}
+              cropBoxResizable={false}
+              dragMode="none"
             />
           ))}
         </div>
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            className={sharedStyles.secondaryButton({ py: "py-2" })}
-            onClick={() => setCoverPhoto([])}
-          >
-            Cancel Changes
-          </button>
-          <button
-            type="submit"
-            className={sharedStyles.primaryButton({ py: "py-2" })}
-          >
-            Crop Photo
-          </button>
-        </div>
+        {/* <img style={{ width: "100%" }} src={cropData} alt="cropped" /> */}
+        {isUploading ? (
+          <LoadingSpinner size={40} />
+        ) : (
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              className={sharedStyles.secondaryButton({ py: "py-2" })}
+              onClick={() => setCoverPhoto([])}
+            >
+              Cancel Changes
+            </button>
+            <button
+              type="submit"
+              className={sharedStyles.primaryButton({ py: "py-2" })}
+              onClick={() => {
+                getCropData();
+                setCoverPhoto((prev) => [
+                  dataUrlToFile(
+                    cropperRef?.current?.cropper
+                      .getCroppedCanvas()
+                      .toDataURL() ?? "",
+                    prev[0]!.name,
+                  ),
+                ]);
+              }}
+            >
+              Crop Photo
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

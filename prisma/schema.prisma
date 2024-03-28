@@ -26,7 +26,7 @@ model Website {
   isPasswordEnabled Boolean    @default(false)
   password          String?
   isRsvpEnabled     Boolean    @default(true)
-  coverPhotoUrl     String
+  coverPhotoUrl     String?
   generalQuestions  Question[] @relation(name: "Website_Questions")
 }
 

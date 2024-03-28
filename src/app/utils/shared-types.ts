@@ -137,6 +137,7 @@ type Website = {
   isPasswordEnabled: boolean;
   isRsvpEnabled: boolean;
   password: string | null;
+  coverPhotoUrl?: string | null;
   generalQuestions?: Question[];
 };
 
@@ -211,7 +212,7 @@ type formOption = {
 type TQuestionOption = Option | formOption;
 
 interface CoverPhoto extends FileWithPath {
-  preview: string;
+  preview?: string;
 }
 
 type RouterOutput = inferRouterOutputs<AppRouter>;

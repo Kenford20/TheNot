@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { sharedStyles } from "~/app/utils/shared-styles";
 import { useDropzone, type FileWithPath } from "react-dropzone";
+import { useRouter } from "next/navigation";
 import ImageCropperModal from "./cropper-modal";
 
 import { type CoverPhoto } from "~/app/utils/shared-types";
@@ -11,9 +12,11 @@ import { type CoverPhoto } from "~/app/utils/shared-types";
 export default function CoverPhotoUploader({
   uploadImage,
 }: {
-  uploadImage: (formData: FormData) => void;
+  uploadImage: (formData: FormData) => Promise<{ ok: boolean }>;
 }) {
+  const router = useRouter();
   const [coverPhoto, setCoverPhoto] = useState<CoverPhoto[]>([]);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
     if (acceptedFiles?.length) {
@@ -25,7 +28,7 @@ export default function CoverPhotoUploader({
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
@@ -38,10 +41,10 @@ export default function CoverPhotoUploader({
     console.log("photoz", coverPhoto);
     // Revoke the data uris to avoid memory leaks
     return () =>
-      coverPhoto.forEach((photo) => URL.revokeObjectURL(photo.preview));
+      coverPhoto.forEach((photo) => URL.revokeObjectURL(photo.preview ?? ""));
   }, [coverPhoto]);
 
-  const upload = () => {
+  const upload = async () => {
     const file = coverPhoto[0];
     if (!file) return;
 
@@ -49,7 +52,13 @@ export default function CoverPhotoUploader({
     formData.append("file", file);
     formData.append("name", file.name);
     formData.append("type", file.type);
-    uploadImage(formData);
+    setIsUploading(true);
+    const { ok } = await uploadImage(formData);
+    if (ok) {
+      setCoverPhoto([]);
+      router.refresh();
+    }
+    setIsUploading(false);
   };
 
   return (
@@ -58,6 +67,7 @@ export default function CoverPhotoUploader({
         <ImageCropperModal
           coverPhoto={coverPhoto}
           setCoverPhoto={setCoverPhoto}
+          isUploading={isUploading}
         />
       )}
       <input {...getInputProps({ name: "file" })} />

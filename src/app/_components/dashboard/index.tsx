@@ -25,7 +25,7 @@ export default function Dashboard({
   uploadImage,
 }: {
   dashboardData: DashboardData;
-  uploadImage: (formData: FormData) => void;
+  uploadImage: (formData: FormData) => Promise<{ ok: boolean }>;
 }) {
   console.log("dashz", dashboardData);
   const isEventFormOpen = useEventForm();
