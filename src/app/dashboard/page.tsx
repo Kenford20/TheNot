@@ -1,13 +1,15 @@
 import { api } from "~/trpc/server";
+import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { sharedStyles } from "../utils/shared-styles";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import Dashboard from "../_components/dashboard";
 
-const Bucket = process.env.AWS_s3_BUCKET_NAME;
+const Bucket = process.env.AWS_S3_BUCKET_NAME;
+const region = process.env.AWS_S3_REGION;
 const s3 = new S3Client({
-  region: process.env.AWS_S3_REGION,
+  region,
   credentials: {
     accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY!,
@@ -19,7 +21,7 @@ const uploadImage = async (formData: FormData) => {
   const files = formData.getAll("file") as File[];
   const fileType = formData.get("type") as string;
 
-  const response = await Promise.all(
+  return Promise.all(
     files.map(async (file) => {
       const Body = (await file.arrayBuffer()) as Buffer;
       await s3.send(
@@ -28,11 +30,26 @@ const uploadImage = async (formData: FormData) => {
           Key: file.name,
           Body,
           ContentType: fileType,
+          ContentEncoding: "base64",
         }),
       );
     }),
-  ).then((data) => console.log("dataz", data));
-  console.log("sa response", response);
+  )
+    .then(async (data) => {
+      console.log("File upload successful!", data);
+      const user = await currentUser();
+      const photoName = files[0]!.name;
+      const objectUrl = `https://${Bucket}.s3.${region}.amazonaws.com/${photoName}`;
+      await api.website.updateCoverPhoto.mutate({
+        userId: user?.id,
+        coverPhotoUrl: objectUrl,
+      });
+      return { ok: true };
+    })
+    .catch((err) => {
+      console.log("File upload failed. Error: ", err);
+      return { ok: false };
+    });
 };
 
 export default async function DashboardPage() {

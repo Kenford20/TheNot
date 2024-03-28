@@ -143,6 +143,24 @@ export const websiteRouter = createTRPCRouter({
       });
     }),
 
+  updateCoverPhoto: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string().optional(),
+        coverPhotoUrl: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.website.update({
+        where: {
+          userId: input.userId,
+        },
+        data: {
+          coverPhotoUrl: input.coverPhotoUrl,
+        },
+      });
+    }),
+
   getByUserId: publicProcedure.query(async ({ ctx }) => {
     if (!ctx.auth) return;
     return ctx.db.website.findFirst({
