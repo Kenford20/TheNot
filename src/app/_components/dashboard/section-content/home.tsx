@@ -4,6 +4,7 @@ import { convertDate, formatDateHTML5 } from "~/app/utils/helpers";
 import { CiLocationOn } from "react-icons/ci";
 import { BsPencil } from "react-icons/bs";
 import { TfiNewWindow } from "react-icons/tfi";
+import Image from "next/image";
 import {
   AiOutlineCalendar,
   AiOutlineClockCircle,
@@ -22,7 +23,7 @@ type HomeContentProps = {
   dashboardData: DashboardData;
   events: Event[] | undefined;
   setPrefillEvent: Dispatch<SetStateAction<EventFormData | undefined>>;
-  uploadImage: (formData: FormData) => void;
+  uploadImage: (formData: FormData) => Promise<{ ok: boolean }>;
 };
 
 export default function HomeContent({
@@ -51,7 +52,18 @@ export default function HomeContent({
 
   return (
     <>
-      <CoverPhotoUploader uploadImage={uploadImage} />
+      {dashboardData?.weddingData.website.coverPhotoUrl ? (
+        <div className="relative h-80 w-full px-10">
+          <Image
+            src={dashboardData.weddingData.website.coverPhotoUrl}
+            layout="fill"
+            objectFit="contain"
+            alt="Website Cover Photo"
+          />
+        </div>
+      ) : (
+        <CoverPhotoUploader uploadImage={uploadImage} />
+      )}
       <div className="border-b py-5">
         <div className="px-10">
           <h2 className="my-3 text-xl font-semibold">
