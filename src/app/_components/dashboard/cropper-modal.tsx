@@ -30,7 +30,15 @@ export default function ImageCropperModal({
   const onCrop = () => {
     const cropper = cropperRef.current?.cropper;
     // console.log(cropper?.getCroppedCanvas().toDataURL());
-    console.log(cropperRef.current?.cropper);
+    console.log(cropperRef?.current?.cropper);
+    if (!cropper) return;
+    // setCoverPhoto((prev) => {
+    //   const file = dataUrlToFile(
+    //     cropper.getCroppedCanvas()?.toDataURL() ?? "",
+    //     prev[0]!.name,
+    //   );
+    //   return [Object.assign(file, { preview: cropper.url ?? "" })];
+    // });
   };
 
   return (
@@ -72,36 +80,42 @@ export default function ImageCropperModal({
           ))}
         </div>
         {/* <img style={{ width: "100%" }} src={cropData} alt="cropped" /> */}
-        {isUploading ? (
-          <LoadingSpinner size={40} />
-        ) : (
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              className={sharedStyles.secondaryButton({ py: "py-2" })}
-              onClick={() => setCoverPhoto([])}
-            >
-              Cancel Changes
-            </button>
-            <button
-              type="submit"
-              className={sharedStyles.primaryButton({ py: "py-2" })}
-              onClick={() => {
-                getCropData();
-                setCoverPhoto((prev) => [
-                  dataUrlToFile(
-                    cropperRef?.current?.cropper
-                      .getCroppedCanvas()
-                      .toDataURL() ?? "",
-                    prev[0]!.name,
-                  ),
-                ]);
-              }}
-            >
-              Crop Photo
-            </button>
-          </div>
-        )}
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            disabled={isUploading}
+            className={sharedStyles.secondaryButton({
+              py: "py-2",
+              isLoading: isUploading,
+            })}
+            onClick={() => setCoverPhoto([])}
+          >
+            Cancel Changes
+          </button>
+          <button
+            type="submit"
+            disabled={isUploading}
+            className={`${sharedStyles.primaryButton({ py: "py-2", isLoading: isUploading })} min-w-48 text-center`}
+            // TODO: cropped photo is uploading successfully to s3 but something gets corrupted along the way, so the objectURL fails to display the cropped image; hunch is something with how the dataUrlToFile function converts the croppedCanvas to a file
+            // onClick={() => {
+            //   getCropData();
+            //   setCoverPhoto((prev) => [
+            //     dataUrlToFile(
+            //       cropperRef?.current?.cropper
+            //         .getCroppedCanvas()
+            //         .toDataURL() ?? "",
+            //       prev[0]!.name,
+            //     ),
+            //   ]);
+            // }}
+          >
+            {isUploading ? (
+              <LoadingSpinner size={24} useAccentColor={true} />
+            ) : (
+              "Crop Photo"
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
