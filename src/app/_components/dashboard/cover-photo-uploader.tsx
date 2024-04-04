@@ -52,7 +52,6 @@ export default function CoverPhotoUploader({
     formData.append("file", file);
     formData.append("name", file.name);
     formData.append("type", file.type);
-    setIsUploading(true);
     const { ok } = await uploadImage(formData);
     if (ok) {
       setCoverPhoto([]);
@@ -62,7 +61,12 @@ export default function CoverPhotoUploader({
   };
 
   return (
-    <form action={upload}>
+    <form
+      action={() => {
+        setIsUploading(true);
+        void upload();
+      }}
+    >
       {coverPhoto.length > 0 && (
         <ImageCropperModal
           coverPhoto={coverPhoto}
