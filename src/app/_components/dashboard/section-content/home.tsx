@@ -88,12 +88,11 @@ export default function HomeContent({
           </div>
           <div className="mt-1 flex gap-1">
             <CiLocationOn size={20} />
-            <span>
-              <button
-                className={`cursor-pointer text-${sharedStyles.primaryColor}`}
-              >
-                Add your wedding location
-              </button>
+            <span
+              className={`cursor-pointer text-${sharedStyles.primaryColor}`}
+              onClick={toggleEventForm}
+            >
+              Add your wedding location
             </span>
           </div>
         </div>
