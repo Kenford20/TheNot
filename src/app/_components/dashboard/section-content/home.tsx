@@ -72,8 +72,10 @@ export default function HomeContent({
           </h2>
           <div className="flex gap-1 text-neutral-500">
             <AiOutlineCalendar size={20} />
-            {dashboardData?.weddingData?.date?.standardFormat && (
+            {dashboardData?.weddingData?.date?.standardFormat ? (
               <span>{dashboardData?.weddingData?.date?.standardFormat}</span>
+            ) : (
+              <span>Date to be Announced</span>
             )}
             {(dashboardData?.weddingData?.daysRemaining ?? 0) > 0 && (
               <>
