@@ -1,5 +1,6 @@
 import { sharedStyles } from "~/app/utils/shared-styles";
 import { formatDateStandard } from "~/app/utils/helpers";
+import Image from "next/image";
 import Link from "next/link";
 import Navbar from "./navbar";
 
@@ -34,11 +35,16 @@ export default function WeddingPage({ weddingData, path }: WeddingPageProps) {
         )}
       </div>
 
-      <div className="w-48 text-center">
-        image placeholder will need to look into uploading on dashboard and
-        storing in some storage bucket to be fetched and rendered here s3
-        bucket?
-      </div>
+      {weddingData.website.coverPhotoUrl && (
+        <div className="relative h-80 w-full px-10">
+          <Image
+            src={weddingData.website.coverPhotoUrl}
+            layout="fill"
+            objectFit="contain"
+            alt="Website Cover Photo"
+          />
+        </div>
+      )}
 
       {weddingData.events.map((event) => {
         return (
