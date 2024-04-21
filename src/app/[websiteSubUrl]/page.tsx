@@ -1,7 +1,7 @@
 import { api } from "~/trpc/server";
 import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 import PasswordPage from "../_components/website/password-page";
-import NotFoundPage from "../_components/404";
 import WeddingWebsite from "../_components/website/wedding";
 
 import { type Metadata } from "next";
@@ -26,7 +26,7 @@ export default async function RootRouteHandler({
     subUrl: websiteSubUrl,
   });
 
-  if (website === null) return <NotFoundPage />;
+  if (website === null) return notFound();
   if (!website.isPasswordEnabled) return <WeddingWebsite />;
 
   const hasPassword = cookies().get("wws_password")?.value === website.password;

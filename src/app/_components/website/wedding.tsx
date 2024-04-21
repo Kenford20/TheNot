@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { api } from "~/trpc/server";
+import { notFound } from "next/navigation";
 import WeddingPage from "./wedding-page";
-import NotFoundPage from "../404";
 
 export default async function WeddingWebsite() {
   const headersList = headers();
@@ -13,7 +13,7 @@ export default async function WeddingWebsite() {
     })
     .catch((err) => console.log("website#fetchWeddingData error", err));
 
-  if (weddingData === undefined) return <NotFoundPage />;
+  if (weddingData === undefined) return notFound();
 
   return <WeddingPage weddingData={weddingData} path={websiteSubUrl ?? ""} />;
 }

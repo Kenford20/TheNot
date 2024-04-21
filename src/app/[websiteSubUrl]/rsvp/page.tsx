@@ -1,8 +1,8 @@
 import { api } from "~/trpc/server";
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { RsvpFormProvider } from "~/app/_components/contexts/rsvp-form-context";
 import MainRsvpForm from "~/app/_components/website/forms/main";
-import NotFoundPage from "~/app/_components/404";
 
 import { type Metadata } from "next";
 
@@ -31,7 +31,7 @@ export default async function RsvpPage() {
     .catch((err) => console.log("website#fetchWeddingData error", err));
 
   if (weddingData === undefined || !weddingData.website.isRsvpEnabled)
-    return <NotFoundPage />;
+    return notFound();
 
   return (
     <RsvpFormProvider>
