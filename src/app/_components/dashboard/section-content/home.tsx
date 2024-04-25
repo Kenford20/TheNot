@@ -4,7 +4,9 @@ import { convertDate, formatDateHTML5 } from "~/app/utils/helpers";
 import { CiLocationOn } from "react-icons/ci";
 import { BsPencil } from "react-icons/bs";
 import { TfiNewWindow } from "react-icons/tfi";
-import Image from "next/image";
+import CoverPhotoUploader from "../cover-photo-uploader";
+import CoverPhotoImage from "../cover-photo-image";
+
 import {
   AiOutlineCalendar,
   AiOutlineClockCircle,
@@ -17,7 +19,6 @@ import {
   type EventFormData,
   type DashboardData,
 } from "~/app/utils/shared-types";
-import CoverPhotoUploader from "../cover-photo-uploader";
 
 type HomeContentProps = {
   dashboardData: DashboardData;
@@ -56,15 +57,10 @@ export default function HomeContent({
     <>
       <div className="px-10">
         {dashboardData?.weddingData.website.coverPhotoUrl ? (
-          <div className="relative aspect-video h-auto w-full">
-            {/* TODO: implement delete cover photo or edit to recrop */}
-            <Image
-              src={dashboardData.weddingData.website.coverPhotoUrl}
-              layout="fill"
-              objectFit="contain"
-              alt="Website Cover Photo"
-            />
-          </div>
+          <CoverPhotoImage
+            coverPhotoUrl={dashboardData.weddingData.website.coverPhotoUrl}
+            deleteImage={deleteImage}
+          />
         ) : (
           <CoverPhotoUploader uploadImage={uploadImage} />
         )}
