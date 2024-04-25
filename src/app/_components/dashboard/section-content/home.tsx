@@ -24,6 +24,7 @@ type HomeContentProps = {
   events: Event[] | undefined;
   setPrefillEvent: Dispatch<SetStateAction<EventFormData | undefined>>;
   uploadImage: (formData: FormData) => Promise<{ ok: boolean }>;
+  deleteImage: (imageKey: string) => Promise<{ ok: boolean }>;
 };
 
 export default function HomeContent({
@@ -31,6 +32,7 @@ export default function HomeContent({
   events,
   setPrefillEvent,
   uploadImage,
+  deleteImage,
 }: HomeContentProps) {
   const toggleEventForm = useToggleEventForm();
 
@@ -52,18 +54,21 @@ export default function HomeContent({
 
   return (
     <>
-      {dashboardData?.weddingData.website.coverPhotoUrl ? (
-        <div className="relative h-80 w-full px-10">
-          <Image
-            src={dashboardData.weddingData.website.coverPhotoUrl}
-            layout="fill"
-            objectFit="contain"
-            alt="Website Cover Photo"
-          />
-        </div>
-      ) : (
-        <CoverPhotoUploader uploadImage={uploadImage} />
-      )}
+      <div className="px-10">
+        {dashboardData?.weddingData.website.coverPhotoUrl ? (
+          <div className="relative aspect-video h-auto w-full">
+            {/* TODO: implement delete cover photo or edit to recrop */}
+            <Image
+              src={dashboardData.weddingData.website.coverPhotoUrl}
+              layout="fill"
+              objectFit="contain"
+              alt="Website Cover Photo"
+            />
+          </div>
+        ) : (
+          <CoverPhotoUploader uploadImage={uploadImage} />
+        )}
+      </div>
       <div className="border-b py-5">
         <div className="px-10">
           <h2 className="my-3 text-xl font-semibold">
