@@ -50,9 +50,13 @@ export default function CoverPhotoImage({
         alt="Website Cover Photo"
       />
       {showActions && (
-        <div className="absolute left-0 top-0 flex aspect-video h-auto w-full items-center justify-center bg-transparent/[0.75]">
+        <div className="group absolute left-0 top-0 flex aspect-video h-auto w-full items-center justify-center bg-transparent/75 opacity-0 transition-all duration-300 ease-in-out hover:opacity-100">
           <div className="flex gap-20">
-            <button type="button" disabled={isDeleting} className="text-white">
+            <button
+              type="button"
+              disabled={isDeleting}
+              className="-translate-y-36 text-white transition-all duration-500 group-hover:translate-y-0"
+            >
               <div
                 className={`rounded-full bg-${sharedStyles.primaryColor} p-4`}
               >
@@ -68,7 +72,7 @@ export default function CoverPhotoImage({
               <button
                 type="button"
                 disabled={isDeleting}
-                className="text-white"
+                className="translate-y-36 text-white transition-all duration-500 group-hover:translate-y-0"
                 onClick={handleDeleteCoverPhoto}
               >
                 <div className="rounded-full border-2 border-white p-4">

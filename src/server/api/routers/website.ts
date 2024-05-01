@@ -42,6 +42,7 @@ export const websiteRouter = createTRPCRouter({
         data: {
           name: "Wedding Day",
           userId,
+          collectRsvp: true,
         },
       });
 
@@ -147,7 +148,7 @@ export const websiteRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string().optional(),
-        coverPhotoUrl: z.string(),
+        coverPhotoUrl: z.string().nullable(),
       }),
     )
     .mutation(async ({ input, ctx }) => {

@@ -23,9 +23,11 @@ import {
 export default function Dashboard({
   dashboardData,
   uploadImage,
+  deleteImage,
 }: {
   dashboardData: DashboardData;
   uploadImage: (formData: FormData) => Promise<{ ok: boolean }>;
+  deleteImage: (imageKey: string) => Promise<{ ok: boolean }>;
 }) {
   console.log("dashz", dashboardData);
   const isEventFormOpen = useEventForm();
@@ -92,6 +94,7 @@ export default function Dashboard({
               events={events}
               setPrefillEvent={setPrefillEvent}
               uploadImage={uploadImage}
+              deleteImage={deleteImage}
             />
           </PageSectionsTemplate>
           <PageSectionsTemplate
